@@ -1,0 +1,26 @@
+{
+  "name": "tiketera",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^4.2.1"
+  },
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "firebase": "^9.0.0-2021720181311",
+    "formik": "^2.2.9",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.7.4",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.10.0",
+    "reactfire": "^4.0.0-rc.2",
+    "swiper": "^9.2.0"
+  }
+}
