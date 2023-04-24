@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Ruta from "./routes/Routes.jsx"
 import "bootstrap/dist/css/bootstrap.min.css";
 
+
 const App = () => {
   return (
     <div>

@@ -2,6 +2,8 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import './style.css'; 
 import React, { useEffect, useState } from 'react';
 import logo from "../IMG/img23.jpg.jpeg"
+import { Link } from 'react-router-dom';
+
 
 const Inicio = () => {
   const [estado, setEstado] = useState(null);
@@ -43,14 +45,13 @@ const Inicio = () => {
     <div>
       <section className='section-header'>
         <header className='header_home'>
-       <a className='container'><img className='logo' src={logo}></img></a>
+        <a className='container'><img className='logo' src={logo}></img></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
-              <li><a href="#INICIO" className="seleccionado" onClick={() => seleccionar(this)}>INICIO</a></li>
-              <li><a href="#HOME" className="seleccionado" onClick={() => seleccionar(this)}>HOME</a></li>
-              <li><a href="#PRECIO" className="seleccionado" onClick={() => seleccionar(this)}>PRECIO</a></li>
-              <li><a href="#TICKETS" className="seleccionado" onClick={() => seleccionar(this)}>TICKETS</a></li>
-              <li><a href="#LISTA" className="seleccionado" onClick={() => seleccionar(this)}>LISTA</a></li>
+            <Link  className='l-inicial' to="/home">HOME</Link>
+            <Link  className='l-inicial' to="/precio">PRECIO</Link>
+            <Link className='l-inicial' to="/tickets">TICKETS</Link>
+            <Link  className='l-inicial' to="/lista">LISTA</Link>
             </ul>
           </nav>
         </header>
@@ -77,7 +78,7 @@ const Inicio = () => {
             <button type="button" onClick={loginWithEmail}>
               Iniciar sesión
             </button>
-            <p className="crear-cuenta">¿No tienes una cuenta? <a href="#">Crea una</a></p>
+            <p className="crear-cuenta">¿No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
             <p className="olvide-contrasena"><a href="#">¿Olvidaste tu contraseña?</a></p>
           </form>
           {user && (

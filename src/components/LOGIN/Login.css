@@ -1,0 +1,116 @@
+.body2 {
+  background-image: url('../IMG/img16.jpg.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  background-color: orange;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.titulo {
+  font-size: 50px;
+  margin-top: 40px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.t1{
+  font-size: 80px;
+}
+.l1{
+  font-size: 50px;
+  color: #000;
+  text-decoration: none;
+}
+
+
+.form2 {
+  position: absolute;
+  width: 300px;
+  padding: 20px;
+  background-color: orange;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 50px; 
+  margin-bottom: 50px; 
+}
+
+.form2 .input2 {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 1px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+.logo3{
+  width: 100px; 
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px #888;
+  border: 2px solid #000;
+  margin: 20 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: right;
+  
+}
+
+form .label2 {
+  margin-bottom: 1px;
+}
+
+.form2 button {
+  width: 100%;
+  height: 40px;
+  margin-top: 30px; /* aumenta el margen superior */
+  margin-bottom: 10px; /* aumenta el margen inferior */
+  background-color: white;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 0px 5px rgba
+  }
+
+
+
+button:hover {
+  background-color: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-container2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.orange-stripe {
+ 
+    font-family: 'Fugaz One', cursive;
+    background-color: orange; 
+    color: rgb(14, 13, 13);  
+    padding: 60px; 
+    background-size: cover;
+    background-position: center center;
+    height: 10vh;
+    position: relative;
+    display: flex;
+    justify-content: space-around; 
+    align-items: center; 
+  }
+  .form2 .input2:hover {
+    border: 2px solid #333;
+  }
+
+a.container2{
+  width: 300px;
+  margin: -108px;
+}
