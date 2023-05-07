@@ -1,34 +1,197 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo3 from "../IMG/img23.jpg.jpeg"
+import { v4 as uuid } from 'uuid';
+import logo3 from '../IMG/img23.jpg.jpeg';
+import './Tickets.css';
 
 const Tickets = () => {
-    return (
-        <div>
-      <section className='section-header'>
-        <header className='header_home'>
-        <a className='container'><img className='logo3' src={logo3}></img></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-            <Link className="l-inicial" to="/">INICIO</Link>
-            <Link  className='l-inicial' to="/home">HOME</Link>
-            <Link  className='l-inicial' to="/precio">PRECIO</Link>
-            <Link  className='l-inicial' to="/lista">LISTA</Link>
-            </ul>
-          </nav>
-        </header>
-      </section>
-      <section className='body2' ></section>
-      <footer className='section-footer'>
-          <p>Número de contacto: +54 637-62-89-25</p>
-          <a href="https://github.com/MendoSeba" target="_blank" ><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZdJREFUSEu1lYExBVEMRe+vABWgAlSAClABKkAFqAAdUMGnAlSADuiACpgzk+zkZ7L735rZzOzs7puXe5P7kryZJrbZxPhqITiUdCBp2x5ierfnRdLDUJBDBADfSNpYkuWnpAtJj9W+PoIrSZcj5bs1ogW3iuA/4A56J+k8MmSCPUnPtuFJEmQnks5s7cPeW/ZG/3vbc2xrR1GuTICe67bx2gj4XZX0nSSLazFrMDZ9byTgUOcBhOiIvsWyrKeW2UKZkqqnCei+JMqwxSjhtyq4mAFgu0FrnMZY9KdPdnCOBGi8YoivkjjwMRYJOuxI8BvQJiGIEZDN2pjwrcpcgS+fADGDfMi0P93ZYjQXY8Wtq8C+Mv2x86D86M7cAw5EL1B5OZCyTHGiSUiTEiUqL1u6mp5wIoDJmKrjO1onT64i/n1UAESZOUjsagfLkvr6Qv9Uw871LKdjCLUaikuHnfs7CQ1DNj7UohSZoMpy8EZDLmRg+FXOToDmnE85VlquTIjIgmyiMUq47cqbzDe2ELT0Qe+eyQn+AIklVhnz1DvpAAAAAElFTkSuQmCC"/></a>
+  const [gastos, setGastos] = useState([]);
+  const [descripcion, setDescripcion] = useState('');
+  const [cantidad, setCantidad] = useState(0);
+  const [opcion, setOpcion] = useState('');
+  const [totalSemana, setTotalSemana] = useState(0);
+  const [totalMes, setTotalMes] = useState(0);
+  const [totalAnio, setTotalAnio] = useState(0);
+  const [fecha, setFecha] = useState('');
+  const [ordenamiento, setOrdenamiento] = useState("fecha");
+  const [ordenActual, setOrdenActual] = useState('fecha');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const id = uuid();
+    const date = new Date().toLocaleDateString();
+    const nuevoGasto = { id, descripcion, cantidad: +cantidad, opcion, fecha: date };
+    const nuevosGastos = [...gastos, nuevoGasto];
+    setGastos(nuevosGastos);
+    setDescripcion('');
+    setCantidad(0);
+    setOpcion('');
+    setFecha('');
+  };
+
+  const handleDelete = (id) => {
+    const nuevosGastos = gastos.filter((gasto) => gasto.id !== id);
+    setGastos(nuevosGastos);
+  };
+
+  const calcularTotales = (nuevosGastos) => {
+    let totalSemanaTemp = 0;
+    let totalMesTemp = 0;
+    let totalAnioTemp = 0;
+  
+    const hoy = new Date();
+    const semanaActual = hoy.getDate() - hoy.getDay() + 1; // Primer día de la semana actual (lunes)
+    const mesActual = hoy.getMonth() + 1; // Mes actual (enero = 1, febrero = 2, ...)
+    const anioActual = hoy.getFullYear(); // Año actual (ej. 2023)
+  
+    for (let gasto of nuevosGastos) {
+      const fechaGasto = new Date(gasto.fecha);
+      const semanaGasto = fechaGasto.getDate() - fechaGasto.getDay() + 1; // Primer día de la semana en que se hizo el gasto
+      const mesGasto = fechaGasto.getMonth() + 1; // Mes en que se hizo el gasto
+      const anioGasto = fechaGasto.getFullYear(); // Año en que se hizo el gasto
+  
+      switch (gasto.opcion) {
+        case 'Semana':
+          if (anioGasto === anioActual && mesGasto === mesActual && semanaGasto === semanaActual) {
+            totalSemanaTemp += Number(gasto.cantidad);
+          }
+          break;
+        case 'Mes':
+          if (anioGasto === anioActual && mesGasto === mesActual) {
+            totalMesTemp += Number(gasto.cantidad);
+          }
+          break;
+        case 'Año':
+          if (anioGasto === anioActual) {
+            totalAnioTemp += Number(gasto.cantidad);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  
+    return { totalSemana: totalSemanaTemp, totalMes: totalMesTemp, totalAnio: totalAnioTemp };
+  };
+  
+  useEffect(() => {
+    const totales = calcularTotales(gastos);
+    setTotalSemana(totales.totalSemana);
+    setTotalMes(totales.totalMes);
+    setTotalAnio(totales.totalAnio);
+  }, [gastos]);
+  
+  
+
+  
+  const ordenarGastos = (a, b) => {
+    switch (ordenActual) {
+      case 'cantidad':
+        return ordenamiento === 'asc' ? a.cantidad - b.cantidad : b.cantidad - a.cantidad;
+      case 'opcion':
+        return ordenamiento === 'asc' ? a.opcion.localeCompare(b.opcion) : b.opcion.localeCompare(a.opcion);
+      default:
+        return ordenamiento === 'asc' ? new Date(a.fecha) - new Date(b.fecha) : new Date(b.fecha) - new Date(a.fecha);
+    }
+  };
+
+  const handleOrden = (campo) => {
+    if (campo === ordenActual) {
+      // Si se hizo clic en el mismo campo, se cambia el ordenamiento
+      setOrdenamiento(ordenamiento === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Si se hizo clic en un campo diferente, se cambia el campo y se ordena ascendentemente
+      setOrdenActual(campo);
+      setOrdenamiento('asc');
+    }
+  };
+  
+  const gastosOrdenados = gastos.sort(ordenarGastos);
+  
+  return (
+      <div>
+    <section className='section-header'>
+      <header className='header_home'>
+      <a className='container'><img className='logo3' src={logo3}></img></a>
+        <nav id="nav" className="">
+          <ul id="links" className="links-horizontal" >
+          <h2 className='titulo2'> TICKETERA</h2>
+          <Link className="l-inicial" to="/">INICIO</Link>
           
-          <a href="https://www.linkedin.com/in/sebastian-stallocca-10b40690/" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAOdJREFUSEvllWENwjAQhb8pAAk4AAeAA1AAEnCCBXAACgAHSEACKIC85Eqabg0s1y0h3K82ub5vd++6VnQcVcf69A44A1NnVdKYB420gqdTvKabAzyAg2UvgEFL8Fs3B9gDaxPdAaufA9yTFg1LVyAPriY6MQ8uth8BAsqjGyCPxskHfPRAYjM7FEY3HJI3EleVITbANtq7ALluCRimzQVQe06AWreMvIovqQug1gmgOJoHWncCaPJKsGIV/DFAIxdfNE2OTFRorQlSNOV95UHLP0MtPWtyiQcnNr7/J9Pbmnyviiub4As/E0wZX0UvUwAAAABJRU5ErkJggg=="/></a>
-          
-          <a href="http://ssdesarrolloweb.000webhostapp.com/" target="_blank">Sitio web de SS Desarrollo Web</a>
-        </footer>
+          <Link  className='l-inicial' to="/precio">PRECIO</Link>
+          <Link  className='l-inicial' to="/lista">LISTA</Link>
+          </ul>
+        </nav>
+      </header>
+    </section>
+    <section className='body2'>
+  <div>
+    <form className='form3' onSubmit={handleSubmit}>
+      <h3>AGREGAR GASTO:</h3>
+      <label className='label-form3' htmlFor="gasto">Gasto:</label>
+      <input className='input-form3' type="number" id="gasto" value={cantidad} onChange={(e) => setCantidad(e.target.value)} required />
+      
+      <label className='label-form3' htmlFor="opcion">Opcion:</label>
+      <select id="opcion-t" value={opcion} onChange={(e) => setOpcion(e.target.value)} required>
+        <option value="">Seleccione una opcion</option>
+        <option value="LA DONA">LA DONA</option>
+        <option value="LILI">LILI</option>
+        <option value="CORTE PERUANO">CORTE PERUANO</option>
+        <option value="CONSUMO">CONSUMO</option>
+        <option value="OTROS">OTROS</option>
+      </select>
+      <button className='boton-tickets' type="submit">AGREGAR</button>
+    </form>
+    <div className='div-del-body2'>
+      <table className='table1'>
+        <thead>
+          <tr>
+            <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
+              Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+            </th>
+            <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
+              Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+            </th>
+            <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
+              Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+            </th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gastosOrdenados.map((gasto) => (
+            <tr key={gasto.id}>
+              <td>{gasto.fecha}</td>
+              <td>{gasto.opcion}</td>
+              <td>{gasto.cantidad}</td>
+              <td>
+                <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='totales'>
+        <p>Total Semana: {totalSemana}</p>
+        <p>Total Mes: {totalMes}</p>
+        <p>Total Anio: {totalAnio}</p>
       </div>
-    )
-  }
+    </div>
+  </div>
+</section>
+
+
+
+    <footer className='section-footer'>
+        <p>Número de contacto: +54 637-62-89-25</p>
+        <a href="https://github.com/MendoSeba" target="_blank" ><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZdJREFUSEu1lYExBVEMRe+vABWgAlSAClABKkAFqAAdUMGnAlSADuiACpgzk+zkZ7L735rZzOzs7puXe5P7kryZJrbZxPhqITiUdCBp2x5ierfnRdLDUJBDBADfSNpYkuWnpAtJj9W+PoIrSZcj5bs1ogW3iuA/4A56J+k8MmSCPUnPtuFJEmQnks5s7cPeW/ZG/3vbc2xrR1GuTICe67bx2gj4XZX0nSSLazFrMDZ9byTgUOcBhOiIvsWyrKeW2UKZkqqnCei+JMqwxSjhtyq4mAFgu0FrnMZY9KdPdnCOBGi8YoivkjjwMRYJOuxI8BvQJiGIEZDN2pjwrcpcgS+fADGDfMi0P93ZYjQXY8Wtq8C+Mv2x86D86M7cAw5EL1B5OZCyTHGiSUiTEiUqL1u6mp5wIoDJmKrjO1onT64i/n1UAESZOUjsagfLkvr6Qv9Uw871LKdjCLUaikuHnfs7CQ1DNj7UohSZoMpy8EZDLmRg+FXOToDmnE85VlquTIjIgmyiMUq47cqbzDe2ELT0Qe+eyQn+AIklVhnz1DvpAAAAAElFTkSuQmCC"/></a>
+        
+        <a href="https://www.linkedin.com/in/sebastian-stallocca-10b40690/" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAOdJREFUSEvllWENwjAQhb8pAAk4AAeAA1AAEnCCBXAACgAHSEACKIC85Eqabg0s1y0h3K82ub5vd++6VnQcVcf69A44A1NnVdKYB420gqdTvKabAzyAg2UvgEFL8Fs3B9gDaxPdAaufA9yTFg1LVyAPriY6MQ8uth8BAsqjGyCPxskHfPRAYjM7FEY3HJI3EleVITbANtq7ALluCRimzQVQe06AWreMvIovqQug1gmgOJoHWncCaPJKsGIV/DFAIxdfNE2OTFRorQlSNOV95UHLP0MtPWtyiQcnNr7/J9Pbmnyviiub4As/E0wZX0UvUwAAAABJRU5ErkJggg=="/></a>
+        
+        <a href="http://ssdesarrolloweb.000webhostapp.com/" target="_blank">Sitio web de SS Desarrollo Web</a>
+      </footer>
+    </div>
+  )
+            }
 
 export default Tickets;

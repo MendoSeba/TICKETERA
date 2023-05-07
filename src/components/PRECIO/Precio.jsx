@@ -10,8 +10,9 @@ const Precio = () => {
         <a className='container'><img className='logo3' src={logo3}></img></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
+            <h2 className='titulo2'> TICKETERA</h2>
             <Link className="l-inicial" to="/">INICIO</Link>
-            <Link  className='l-inicial' to="/home">HOME</Link>
+            
             <Link className='l-inicial' to="/tickets">TICKETS</Link>
             <Link  className='l-inicial' to="/lista">LISTA</Link>
             </ul>

@@ -48,7 +48,7 @@ const Inicio = () => {
         <a className='container'><img className='logo' src={logo}></img></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
-            <Link  className='l-inicial' to="/home">HOME</Link>
+            <h2 className='titulo2'> TICKETERA</h2>
             <Link  className='l-inicial' to="/precio">PRECIO</Link>
             <Link className='l-inicial' to="/tickets">TICKETS</Link>
             <Link  className='l-inicial' to="/lista">LISTA</Link>
@@ -62,21 +62,21 @@ const Inicio = () => {
             BIENVENIDOS A TICKETERA
           </h1>
           <p className='p_2'>WEB APP PARA LLEVAR UN CONTROL DE TUS GASTOS, TUS TICKETS Y TUS COMPRAS</p>
-          <form>
-            <input
+          <form className='form1'>
+            <input className='input-form1'
               type="email"
               placeholder="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <input
+            <input className='input-form1'
               type="password"
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="button" onClick={loginWithEmail}>
-              Iniciar sesión
+            <button className='boton-form1' type="button" onClick={loginWithEmail}>
+              INICIAR SESION
             </button>
             <p className="crear-cuenta">¿No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
             <p className="olvide-contrasena"><a href="#">¿Olvidaste tu contraseña?</a></p>

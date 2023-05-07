@@ -13,7 +13,7 @@ export function Ruta() {
       <Routes>
         <Route exact path="/" element={<Inicio />} />
         <Route path="/registro" element={<Login />} /> 
-        <Route path="/home" element={<Home />} />
+        {/*<Route path="/home" element={<Home />} />*/}
         <Route path="/lista" element={<Lista />} />
         <Route path="/precio" element={<Precio />} />
         <Route path="/tickets" element={<Tickets />} />

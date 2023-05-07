@@ -1,0 +1,150 @@
+.caja-list {
+  display: flex;
+  justify-content: space-between;
+ 
+}
+
+
+/*PRIMERA SECCION*/
+
+.nueva-lista {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  float: right;
+  border: 6px double #000;
+  margin-left:30px ;
+  margin-right: 5px;
+  min-height: 320px;
+  max-height: 500px;
+  overflow-y: auto;
+  
+}
+
+
+.titulo-mi-lista {
+  border-bottom: 2px solid orange;
+  width: auto;
+}
+
+
+
+.tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.producto {
+  flex: 1;
+  
+}
+
+
+.cantidad, .precio {
+  width: 50px;
+  text-align: center;
+  margin-right: 50px;
+}
+
+.check {
+  margin-left: 5px;
+  
+}
+
+.eliminar ,.eliminar1 ,.eliminar2{
+  background-color: orange;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+ border: 2px solid transparent;
+ margin: 5px;
+ display: inline-block;
+font-weight: bold;
+}
+
+/* SEGUNDA SECCION */
+.botones-lista {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  float: right;
+  border: 6px double #000;
+  margin-left:30px ;
+  margin-right: 20px;
+  min-height: 320px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.botones-lista label, .botones-lista input, .botones-lista select, .botones-lista button {
+  margin-bottom: 15px;
+  
+}
+
+
+
+
+/* TERCERA SECCION */
+
+.mis-listas {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  float: right;
+  border: 6px double #000;
+  margin-left:30px ;
+  margin-right: 20px;
+  min-height: 320px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.guardar-list {
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-top: clamp(20%, 40%);
+  margin-left: 5px;
+ 
+}
+
+.guardar-list:hover {
+ 
+  background-color: orangered;
+}
+
+.eliminar:hover , .eliminar1:hover, .eliminar2:hover{
+  background-color: orangered;
+  border: 2px solid black;
+  color: white;
+}
+
+.eliminar1 {
+  float: left;
+
+  
+}
+
+.eliminar2 {
+  float: right;
+ 
+}
