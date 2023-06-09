@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import logo3 from "../IMG/img23.jpg.jpeg"
+import './Precio.css';
 
 const Precio = () => {
     return (
@@ -12,14 +13,26 @@ const Precio = () => {
             <ul id="links" className="links-horizontal" >
             <h2 className='titulo2'> TICKETERA</h2>
             <Link className="l-inicial" to="/">INICIO</Link>
-            
             <Link className='l-inicial' to="/tickets">TICKETS</Link>
             <Link  className='l-inicial' to="/lista">LISTA</Link>
             </ul>
+            <div class="responsive-menu">
+          <ul>
+            <li><Link to="/">INICIO</Link></li>
+            <li><Link to="/tickets">TICKETS</Link></li>
+            <li><Link to="/lista">LISTA</Link></li>
+            
+            </ul>
+            </div>
+
           </nav>
         </header>
       </section>
-      <section className='body2' ></section>
+      <section className='body2' >
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <p className="reservado">Reservado para espacio publicitario de Awin</p>
+        </div>
+      </section>
       <footer className='section-footer'>
           <p>Número de contacto: +54 637-62-89-25</p>
           <a href="https://github.com/MendoSeba" target="_blank" ><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZdJREFUSEu1lYExBVEMRe+vABWgAlSAClABKkAFqAAdUMGnAlSADuiACpgzk+zkZ7L735rZzOzs7puXe5P7kryZJrbZxPhqITiUdCBp2x5ierfnRdLDUJBDBADfSNpYkuWnpAtJj9W+PoIrSZcj5bs1ogW3iuA/4A56J+k8MmSCPUnPtuFJEmQnks5s7cPeW/ZG/3vbc2xrR1GuTICe67bx2gj4XZX0nSSLazFrMDZ9byTgUOcBhOiIvsWyrKeW2UKZkqqnCei+JMqwxSjhtyq4mAFgu0FrnMZY9KdPdnCOBGi8YoivkjjwMRYJOuxI8BvQJiGIEZDN2pjwrcpcgS+fADGDfMi0P93ZYjQXY8Wtq8C+Mv2x86D86M7cAw5EL1B5OZCyTHGiSUiTEiUqL1u6mp5wIoDJmKrjO1onT64i/n1UAESZOUjsagfLkvr6Qv9Uw871LKdjCLUaikuHnfs7CQ1DNj7UohSZoMpy8EZDLmRg+FXOToDmnE85VlquTIjIgmyiMUq47cqbzDe2ELT0Qe+eyQn+AIklVhnz1DvpAAAAAElFTkSuQmCC"/></a>

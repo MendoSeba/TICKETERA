@@ -148,3 +148,53 @@ font-weight: bold;
   float: right;
  
 }
+@media (max-width: 768px) {
+  .caja-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nueva-lista,
+  .botones-lista,
+  .mis-listas {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  .nueva-lista,
+  .botones-lista,
+  .mis-listas {
+    min-height: auto;
+    max-height: none;
+  }
+  
+  .nueva-lista,
+  .botones-lista,
+  .mis-listas {
+    overflow-y: visible;
+  }
+  
+  .eliminar1 {
+    float: none;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .eliminar2 {
+    float: none;
+    display: block;
+  }
+  
+  .botones-lista label,
+  .botones-lista input,
+  .botones-lista select,
+  .botones-lista button {
+    margin-bottom: 10px;
+  }
+  
+  .guardar-list {
+    margin-top: 10px;
+  }
+}
+

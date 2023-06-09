@@ -129,14 +129,13 @@ html, body {
   font-weight: bold;
 }
 .crear-cuenta, .olvide-contrasena {
+
   margin-top: 10px;
   text-align: center;
+  
 }
 
-.crear-cuenta a, .olvide-contrasena a {
-  
-  text-decoration: none;
-}
+
 .section-footer {
   background-color: orange;
   display: flex;
@@ -149,14 +148,16 @@ html, body {
 }
 
 .form1 .crear-cuenta a:hover, form .olvide-contrasena a:hover {
-  border-bottom: 2px solid #333;
+  border: none;
 }
 .boton-form1:hover {
   border: 2px solid #333;
   background-color: orangered;
   color: white;
 }
-
+.responsive-menu {
+  display: none; 
+}
 
 .section-footer p {
   margin: 0;
@@ -173,3 +174,101 @@ html, body {
   margin-right: 0;
 }
 
+@media screen and (max-width: 800px) {
+ 
+
+  .header_home {
+    font-size: 40px;
+  }
+
+  .section-body {
+    display: contents;
+    
+    background-color: black;
+    width: 100%;
+    left: 0px;
+    
+  }
+  
+  .section-body.responsive > * {
+    margin: 0;
+  }
+  
+  
+
+  .header_home {
+    font-size: 40px;
+  }
+
+  .section-footer {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+ 
+  
+
+  .logo {
+    margin: 10px auto;
+  }
+
+  .form1 {
+    position: static;
+   
+    transform: none;
+    width: 100%;
+   
+  }
+
+  .input-form1,
+  .boton-form1 {
+    width: 100%;
+  }
+  .links-horizontal {
+    display: none; /* Oculta los enlaces en pantallas pequeñas */
+  }
+
+  .responsive-menu {
+    display: block; /* Muestra el menú desplegable en pantallas pequeñas */
+  }
+
+  .responsive-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .responsive-menu li {
+    margin-bottom: 10px;
+  }
+
+  .responsive-menu a {
+    display: block;
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .h1_2 {
+      font-size: 40px;
+    }
+  }
+  
+  
+  @media screen and (min-width: 601px) and (max-width: 1024px) {
+    .h1_2 {
+      font-size: 50px;
+    }
+  }
+  
+  
+  @media screen and (min-width: 1025px) {
+    .h1_2 {
+      font-size: 70px;
+    }
+  }
+
+  
+}

@@ -88,6 +88,7 @@ const Lista = ({ guardarLista }) => {
     setListasGuardadas(JSON.parse(listasGuardadasJson));
     }
     }, []);
+    
 
   return (
     <div>
@@ -110,12 +111,19 @@ const Lista = ({ guardarLista }) => {
                 TICKETS
               </Link>
             </ul>
+            <div class="responsive-menu">
+          <ul>
+            <li><Link to="/">INICIO</Link></li>
+            <li><Link to="/precio">PRECIO</Link></li>
+            <li><Link to="/tickets">TICKETS</Link></li>
+          </ul>
+        </div>
           </nav>
         </header>
       </section>
       <section className="body2">
       <div className='caja-list'>
-        <form className='botones-lista'>
+        <form className='botones-lista' >
           <label htmlFor="producto">PRODUCTO:</label>
           <input type="text" id="producto" name="producto" style={{textTransform: 'uppercase'}} />
   
@@ -187,7 +195,6 @@ const Lista = ({ guardarLista }) => {
               <li key={producto.id}>
                 {producto.producto.toUpperCase()} - {producto.cantidad} - {producto.opciones}
                 <input type="checkbox" className="check" onChange={() => {
-                  // código para manejar el cambio de estado del checkbox
                 }} />
               </li>
             ))}
