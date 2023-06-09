@@ -61,3 +61,23 @@ font-weight: bold;
   border: 2px solid black;
   color: white;
 }
+@media (max-width: 768px) {
+  .body2 {
+    display: flow-root;
+    
+  }
+  
+  .div-del-body2 {
+    width: 100%; 
+    margin: 0 ;
+    padding: 0px;
+    overflow-x: hidden;
+  }
+  .form3 {
+    width: 100%; 
+    margin: 0 auto;
+    
+  }
+}
+
+

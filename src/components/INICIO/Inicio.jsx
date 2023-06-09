@@ -1,8 +1,9 @@
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import './style.css'; 
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import logo from "../IMG/img23.jpg.jpeg"
 import { Link } from 'react-router-dom';
+
 
 
 const Inicio = () => {
@@ -24,11 +25,6 @@ const Inicio = () => {
         setEstado('Error: ' + errorMessage);
       });
   };
-      
-  useEffect(() => {
-    // aquí puedes poner cualquier efecto secundario que quieras ejecutar
-    // cuando el componente se monta o se actualiza
-  }, []);
 
   const loginWithEmail = () => {
     const auth = getAuth();
@@ -42,20 +38,29 @@ const Inicio = () => {
   };
 
   return (
+    
     <div>
-      <section className='section-header'>
-        <header className='header_home'>
-        <a className='container'><img className='logo' src={logo}></img></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-            <h2 className='titulo2'> TICKETERA</h2>
-            <Link  className='l-inicial' to="/precio">PRECIO</Link>
-            <Link className='l-inicial' to="/tickets">TICKETS</Link>
-            <Link  className='l-inicial' to="/lista">LISTA</Link>
-            </ul>
-          </nav>
-        </header>
-      </section>
+  <section className='section-header'>
+    <header className='header_home'>
+      <a className='container'><img className='logo' src={logo}></img></a>
+      <nav id="nav" className="">
+        <ul id="links" className="links-horizontal">
+          <h2 className='titulo2'> TICKETERA</h2>
+          <Link className='l-inicial' to="/precio">PRECIO</Link>
+          <Link className='l-inicial' to="/tickets">TICKETS</Link>
+          <Link className='l-inicial' to="/lista">LISTA</Link>
+        </ul>
+        <div className="responsive-menu">
+          <ul>
+            <li><Link to="/precio">PRECIO</Link></li>
+            <li><Link to="/tickets">TICKETS</Link></li>
+            <li><Link to="/lista">LISTA</Link></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+  </section>
+
       <section className='section-body' >
         <div className='part1'>
           <h1 className='h1_2'>
@@ -95,8 +100,11 @@ const Inicio = () => {
           <a href="http://ssdesarrolloweb.000webhostapp.com/" target="_blank">Sitio web de SS Desarrollo Web</a>
         </footer>
     </div>  
+    
   );
+  
 };
+
 
 
 

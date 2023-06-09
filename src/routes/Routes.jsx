@@ -6,6 +6,7 @@ import Home from "../components/HOME/Home"
 import Lista from "../components/LISTA/Lista"
 import Precio from "../components/PRECIO/Precio"
 import Tickets from "../components/TICKETS/Tickets"
+import Error from "../components/404/404"
 
 export function Ruta() {
   return (

@@ -1,34 +1,23 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import logo2 from "../IMG/img23.jpg.jpeg";
-import "./Login.css";
-import starUi from "/src/service/fireservice.jsx";
+import React from 'react';
+import logo2 from "../IMG/img23.jpg.jpeg"
+import { Link } from 'react-router-dom';
+import "../LOGIN/Login.css";
 
-
-
-const Login = () => {
-  useEffect(() => {
-    starUi("#firebaseUI");
-  }, []);
-
+function NotFound() {
   return (
     <div>
-      <header className='header_home'>
+     <header className='header_home'>
       <a className='container2'><img className='logo3' src={logo2}></img></a>
       <h1 className="titulo">TICKETERA</h1>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
             <Link className="l1" to="/">INICIO</Link>
             </ul>
-            <div className="responsive-menu">
-          <ul>
-            <li><Link to="/">INICIO</Link></li>
-            </ul>
-            </div>
           </nav>
         </header>
-      <div className="body2">
-       <did id="firebaseui"></did>
+        <div className='div-error'>
+      <h1 className='h1-error'>404 - Página no encontrada </h1>
+      <p className='perror'>  Lo sentimos, Ticketera a encontrado un error.</p>
       </div>
       <footer className='section-footer'>
           <p>Número de contacto: +54 637-62-89-25</p>
@@ -40,6 +29,6 @@ const Login = () => {
         </footer>
     </div>
   );
-};
+}
 
-export default Login;
+export default NotFound;

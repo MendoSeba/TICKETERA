@@ -7,83 +7,11 @@ import './Tickets.css';
 const Tickets = () => {
   const [gastos, setGastos] = useState([]);
   const [descripcion, setDescripcion] = useState('');
-  const [cantidad, setCantidad] = useState(0);
+  const [cantidad, setCantidad] = useState('');
   const [opcion, setOpcion] = useState('');
-  const [totalSemana, setTotalSemana] = useState(0);
-  const [totalMes, setTotalMes] = useState(0);
-  const [totalAnio, setTotalAnio] = useState(0);
-  const [fecha, setFecha] = useState('');
-  const [ordenamiento, setOrdenamiento] = useState("fecha");
+  const [ordenamiento, setOrdenamiento] = useState('asc');
   const [ordenActual, setOrdenActual] = useState('fecha');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const id = uuid();
-    const date = new Date().toLocaleDateString();
-    const nuevoGasto = { id, descripcion, cantidad: +cantidad, opcion, fecha: date };
-    const nuevosGastos = [...gastos, nuevoGasto];
-    setGastos(nuevosGastos);
-    setDescripcion('');
-    setCantidad(0);
-    setOpcion('');
-    setFecha('');
-  };
-
-  const handleDelete = (id) => {
-    const nuevosGastos = gastos.filter((gasto) => gasto.id !== id);
-    setGastos(nuevosGastos);
-  };
-
-  const calcularTotales = (nuevosGastos) => {
-    let totalSemanaTemp = 0;
-    let totalMesTemp = 0;
-    let totalAnioTemp = 0;
-  
-    const hoy = new Date();
-    const semanaActual = hoy.getDate() - hoy.getDay() + 1; // Primer día de la semana actual (lunes)
-    const mesActual = hoy.getMonth() + 1; // Mes actual (enero = 1, febrero = 2, ...)
-    const anioActual = hoy.getFullYear(); // Año actual (ej. 2023)
-  
-    for (let gasto of nuevosGastos) {
-      const fechaGasto = new Date(gasto.fecha);
-      const semanaGasto = fechaGasto.getDate() - fechaGasto.getDay() + 1; // Primer día de la semana en que se hizo el gasto
-      const mesGasto = fechaGasto.getMonth() + 1; // Mes en que se hizo el gasto
-      const anioGasto = fechaGasto.getFullYear(); // Año en que se hizo el gasto
-  
-      switch (gasto.opcion) {
-        case 'Semana':
-          if (anioGasto === anioActual && mesGasto === mesActual && semanaGasto === semanaActual) {
-            totalSemanaTemp += Number(gasto.cantidad);
-          }
-          break;
-        case 'Mes':
-          if (anioGasto === anioActual && mesGasto === mesActual) {
-            totalMesTemp += Number(gasto.cantidad);
-          }
-          break;
-        case 'Año':
-          if (anioGasto === anioActual) {
-            totalAnioTemp += Number(gasto.cantidad);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  
-    return { totalSemana: totalSemanaTemp, totalMes: totalMesTemp, totalAnio: totalAnioTemp };
-  };
-  
-  useEffect(() => {
-    const totales = calcularTotales(gastos);
-    setTotalSemana(totales.totalSemana);
-    setTotalMes(totales.totalMes);
-    setTotalAnio(totales.totalAnio);
-  }, [gastos]);
-  
-  
-
-  
   const ordenarGastos = (a, b) => {
     switch (ordenActual) {
       case 'cantidad':
@@ -95,19 +23,101 @@ const Tickets = () => {
     }
   };
 
+  Date.prototype.getWeek = function() {
+    const onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil(((this - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+  };
+
+  useEffect(() => {
+    const storedGastos = localStorage.getItem('gastos');
+    if (storedGastos) {
+      setGastos(JSON.parse(storedGastos));
+      console.log('Gastos cargados desde el Local Storage:', gastos);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedGastos = localStorage.getItem('gastos');
+    if (storedGastos) {
+      const parsedGastos = JSON.parse(storedGastos);
+      const gastosOrdenados = parsedGastos.sort(ordenarGastos);
+      setGastos(gastosOrdenados);
+      console.log('Gastos cargados desde el Local Storage:', gastosOrdenados);
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const id = uuid();
+    const date = new Date().toLocaleDateString();
+    const nuevoGasto = {
+      id,
+      descripcion,
+      cantidad: parseInt(cantidad),
+      opcion,
+      fecha: date
+    };
+    const nuevosGastos = [...gastos, nuevoGasto];
+    const gastosOrdenados = nuevosGastos.sort(ordenarGastos);
+    setGastos(gastosOrdenados);
+    setDescripcion('');
+    setCantidad('');
+
+    localStorage.setItem('gastos', JSON.stringify(gastosOrdenados));
+  };
+
+  const calcularTotalSemana = () => {
+    const total = gastos.reduce((acum, gasto) => acum + gasto.cantidad, 0);
+    return total;
+  };
+
+  const calcularTotalMes = () => {
+    const totalSemana = calcularTotalSemana();
+    const fechaActual = new Date();
+    const mesActual = fechaActual.getMonth() + 1;
+    const gastosMesActual = gastos.filter((gasto) => {
+      const fechaGasto = new Date(gasto.fecha);
+      return fechaGasto.getMonth() + 1 === mesActual;
+    });
+    const totalMes = gastosMesActual.reduce((acum, gasto) => acum + gasto.cantidad, 0);
+    return totalSemana + totalMes;
+  };
+
+  const calcularTotalAnio = () => {
+    const totalSemana = calcularTotalSemana();
+    const fechaActual = new Date();
+    const anioActual = fechaActual.getFullYear();
+    const gastosAnioActual = gastos.filter((gasto) => {
+      const fechaGasto = new Date(gasto.fecha);
+      return fechaGasto.getFullYear() === anioActual;
+    });
+    const totalAnio = gastosAnioActual.reduce((acum, gasto) => acum + gasto.cantidad, 0);
+    return totalSemana + totalAnio;
+  };
+ 
+
+  const handleDelete = (id) => {
+    const nuevosGastos = gastos.filter((gasto) => gasto.id !== id);
+    setGastos(nuevosGastos);
+    localStorage.setItem('gastos', JSON.stringify(nuevosGastos));
+  };
+
   const handleOrden = (campo) => {
     if (campo === ordenActual) {
-      // Si se hizo clic en el mismo campo, se cambia el ordenamiento
       setOrdenamiento(ordenamiento === 'asc' ? 'desc' : 'asc');
     } else {
-      // Si se hizo clic en un campo diferente, se cambia el campo y se ordena ascendentemente
       setOrdenActual(campo);
       setOrdenamiento('asc');
     }
   };
-  
+
+  const totalSemana = calcularTotalSemana();
+  const totalMes = calcularTotalMes();
+  const totalAnio = calcularTotalAnio();
+
+
   const gastosOrdenados = gastos.sort(ordenarGastos);
-  
+
   return (
       <div>
     <section className='section-header'>
@@ -117,10 +127,16 @@ const Tickets = () => {
           <ul id="links" className="links-horizontal" >
           <h2 className='titulo2'> TICKETERA</h2>
           <Link className="l-inicial" to="/">INICIO</Link>
-          
           <Link  className='l-inicial' to="/precio">PRECIO</Link>
           <Link  className='l-inicial' to="/lista">LISTA</Link>
           </ul>
+          <div class="responsive-menu">
+          <ul>
+            <li><Link to="/">INICIO</Link></li>
+            <li><Link to="/precio">PRECIO</Link></li>
+            <li><Link to="/lista">LISTA</Link></li>
+            </ul>
+            </div>
         </nav>
       </header>
     </section>
@@ -143,40 +159,42 @@ const Tickets = () => {
       <button className='boton-tickets' type="submit">AGREGAR</button>
     </form>
     <div className='div-del-body2'>
-      <table className='table1'>
-        <thead>
-          <tr>
-            <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
-              Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-            </th>
-            <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
-              Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-            </th>
-            <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
-              Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-            </th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {gastosOrdenados.map((gasto) => (
-            <tr key={gasto.id}>
-              <td>{gasto.fecha}</td>
-              <td>{gasto.opcion}</td>
-              <td>{gasto.cantidad}</td>
-              <td>
-                <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className='totales'>
-        <p>Total Semana: {totalSemana}</p>
-        <p>Total Mes: {totalMes}</p>
-        <p>Total Anio: {totalAnio}</p>
-      </div>
-    </div>
+  <table className='table1'>
+    <thead>
+      <tr>
+        <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
+          Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+        </th>
+        <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
+          Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+        </th>
+        <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
+          Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
+        </th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {gastosOrdenados.map((gasto) => (
+        <tr key={gasto.id}>
+          <td>{gasto.fecha}</td>
+          <td>{gasto.opcion}</td>
+          <td>{gasto.cantidad}</td>
+          <td>
+            <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <div className="totales">
+    <p>Total Semana: {totalSemana}</p>
+    <p>Total Mes: {totalMes}</p>
+    <p>Total Año: {totalAnio}</p>
+  </div>
+</div>
+
+
   </div>
 </section>
 
