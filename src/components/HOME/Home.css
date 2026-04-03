@@ -1,4 +1,4 @@
-.home-page {
+﻿.home-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@
 
 .links-horizontal {
   display: flex;
-  gap: 12px;
+  gap: 25px;
   list-style: none;
   margin: 0;
   padding: 0;

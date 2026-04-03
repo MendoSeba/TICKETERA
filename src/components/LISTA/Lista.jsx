@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import listaImg from '../IMG/lista.jpeg';
@@ -79,7 +79,7 @@ const Lista = ({ guardarLista }) => {
         .then(() => console.log('Compartido correctamente.'))
         .catch((error) => console.log('Error al compartir:', error));
     } else {
-      console.log('La API Web Share no está disponible en este dispositivo.');
+      console.log('La API Web Share no est├í disponible en este dispositivo.');
     }
   };
 
@@ -131,7 +131,6 @@ const Lista = ({ guardarLista }) => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -139,7 +138,6 @@ const Lista = ({ guardarLista }) => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -207,7 +205,7 @@ const Lista = ({ guardarLista }) => {
                 <div className="producto-titulo">
                   <span>PRODUCTO</span>
                   <span>CANT.</span>
-                  <span>CATEGORÍA</span>
+                  <span>CATEGOR├ìA</span>
                 </div>
                 {lista.map((producto, index) => (
                   <div key={producto.id} className={`producto-fila ${index % 2 === 0 ? 'fila-par' : 'fila-impar'}`}>
@@ -218,7 +216,7 @@ const Lista = ({ guardarLista }) => {
                 ))}
                 <div className="producto-total">
                   <span>TOTAL:</span>
-                  <span>{lista.length} artículos</span>
+                  <span>{lista.length} art├¡culos</span>
                 </div>
               </div>
               <div className="imagen-footer">
@@ -251,8 +249,8 @@ const Lista = ({ guardarLista }) => {
                 <div className="ticket-header">
                   <img src={logo3} alt="Logo" className="ticket-logo" />
                   <div className="ticket-info">
-                    <span className="ticket-date">🗓️ {listaGuardada.fecha}</span>
-                    <span className="ticket-items">📦 {listaGuardada.lista.length} artículos</span>
+                    <span className="ticket-date">­ƒùô´©Å {listaGuardada.fecha}</span>
+                    <span className="ticket-items">­ƒôª {listaGuardada.lista.length} art├¡culos</span>
                   </div>
                 </div>
                 <div className="ticket-body">
@@ -270,7 +268,7 @@ const Lista = ({ guardarLista }) => {
                   <button className="eliminar1" onClick={() => {
                     const listaActual = [...lista, ...listaGuardada.lista.map((p, i) => ({...p, id: lista.length + i + 1}))];
                     setLista(listaActual);
-                  }}>AÑADIR A ACTUAL</button>
+                  }}>A├æADIR A ACTUAL</button>
                   <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
                 </div>
               </div>

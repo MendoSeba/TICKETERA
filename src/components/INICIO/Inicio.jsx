@@ -1,4 +1,4 @@
-import './style.css';
+﻿import './style.css';
 import React, { useState } from 'react';
 import logo from "../IMG/img23.jpg.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,22 +34,22 @@ const Inicio = () => {
       setLoading(false);
       switch (error.code) {
         case 'auth/user-not-found':
-          setError('No existe una cuenta con este correo electrónico');
+          setError('No existe una cuenta con este correo electr├│nico');
           break;
         case 'auth/wrong-password':
-          setError('Contraseña incorrecta');
+          setError('Contrase├▒a incorrecta');
           break;
         case 'auth/invalid-email':
-          setError('El correo electrónico no es válido');
+          setError('El correo electr├│nico no es v├ílido');
           break;
         case 'auth/too-many-requests':
-          setError('Demasiados intentos fallidos. Intenta más tarde');
+          setError('Demasiados intentos fallidos. Intenta m├ís tarde');
           break;
         case 'auth/invalid-credential':
-          setError('Credenciales inválidas. Verifica tu correo y contraseña');
+          setError('Credenciales inv├ílidas. Verifica tu correo y contrase├▒a');
           break;
         default:
-          setError('Error al iniciar sesión: ' + error.message);
+          setError('Error al iniciar sesi├│n: ' + error.message);
       }
     }
   };
@@ -72,7 +72,6 @@ const Inicio = () => {
               <Link className='l-inicial' to="/precio">PRECIO</Link>
               <Link className='l-inicial' to="/tickets">TICKETS</Link>
               <Link className='l-inicial' to="/lista">LISTA</Link>
-              <Link className='l-inicial' to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -80,7 +79,6 @@ const Inicio = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -96,7 +94,7 @@ const Inicio = () => {
           <form className='form1' onKeyPress={handleKeyPress}>
             <input className='input-form1'
               type="email"
-              placeholder="Correo electrónico"
+              placeholder="Correo electr├│nico"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -105,7 +103,7 @@ const Inicio = () => {
             />
             <input className='input-form1'
               type="password"
-              placeholder="Contraseña"
+              placeholder="Contrase├▒a"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -128,8 +126,8 @@ const Inicio = () => {
             <button className='boton-form1' type="button" onClick={loginWithEmail} disabled={loading}>
               {loading ? 'CARGANDO...' : 'INICIAR SESION'}
             </button>
-            <p className="crear-cuenta">¿No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
-            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link></p>
+            <p className="crear-cuenta">┬┐No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
+            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">┬┐Olvidaste tu contrase├▒a?</Link></p>
           </form>
           {user && (
             <p>Bienvenido, {user.displayName}</p>

@@ -33,7 +33,6 @@ const Home = () => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
           </nav>
           <div className="user-menu">
@@ -63,11 +62,6 @@ const Home = () => {
                 <div className="card-icon">💰</div>
                 <h3>PRECIO</h3>
                 <p>Compara precios en supermercados</p>
-              </Link>
-              <Link to="/perfil" className="home-card">
-                <div className="card-icon">👤</div>
-                <h3>PERFIL</h3>
-                <p>Gestiona tu perfil</p>
               </Link>
             </div>
           </div>
