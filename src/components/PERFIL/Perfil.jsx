@@ -56,17 +56,10 @@ const Perfil = () => {
       showError('Escribe algo en el campo de sugerencias');
       return;
     }
-    try {
-      const stored = localStorage.getItem('userProfile');
-      const profile = stored ? JSON.parse(stored) : {};
-      profile.sugerencia = sugerencia;
-      profile.sugerenciaFecha = new Date().toLocaleString('es-ES');
-      localStorage.setItem('userProfile', JSON.stringify(profile));
-      showSuccess('Sugerencia guardada, gracias por tu feedback!');
-    } catch (error) {
-      console.error('Error guardando sugerencia:', error);
-      showError('Error al enviar la sugerencia');
-    }
+    const subject = encodeURIComponent('Sugerencia/Queja TICKETERA');
+    const body = encodeURIComponent(sugerencia + '\n\nEnviado desde TICKETERA App');
+    window.location.href = `mailto:mendo@gmail.com?subject=${subject}&body=${body}`;
+    showSuccess('Abriendo tu cliente de correo...');
   };
 
   const handleLogout = async () => {

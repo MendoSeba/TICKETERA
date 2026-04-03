@@ -72,6 +72,7 @@ const Inicio = () => {
               <Link className='l-inicial' to="/precio">PRECIO</Link>
               <Link className='l-inicial' to="/tickets">TICKETS</Link>
               <Link className='l-inicial' to="/lista">LISTA</Link>
+              <Link className='l-inicial' to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -79,6 +80,7 @@ const Inicio = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
