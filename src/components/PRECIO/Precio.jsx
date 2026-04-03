@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../ToastProvider';
 import logo3 from "../IMG/img23.jpg.jpeg";
 import './Precio.css';
 import { 
   searchProductsOpenFoodFacts, 
   getProductsByCategory,
-  getProductWithStoredPrices,
   supermarkets, 
   categories,
 } from '../../service/supermarketService';
-import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
+import { addPrice, getPrices, updatePrice, deletePrice } from '../../service/firestoreService';
 import Footer from '../FOOTER/Footer';
 
 const Precio = () => {
+  const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -21,13 +24,25 @@ const Precio = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [manualPrices, setManualPrices] = useState({});
   const [showPriceForm, setShowPriceForm] = useState(false);
+  const [savedPrices, setSavedPrices] = useState([]);
+  const [editingPriceId, setEditingPriceId] = useState(null);
+  const [editPrices, setEditPrices] = useState({});
   const location = useLocation();
   const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   useEffect(() => {
-    const stored = loadPricesFromStorage();
-    setManualPrices(stored);
+    cargarPrecios();
   }, []);
+
+  const cargarPrecios = async () => {
+    if (!user) return;
+    try {
+      const data = await getPrices(user.uid);
+      setSavedPrices(data);
+    } catch (error) {
+      console.error('Error cargando precios:', error);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -72,15 +87,18 @@ const Precio = () => {
     setSelectedProduct(product);
     setShowPriceForm(true);
     
-    const stored = loadPricesFromStorage();
-    const storedForProduct = {};
-    supermarkets.forEach(s => {
-      const key = `${product.name}_${s.id}`;
-      if (stored[key] !== undefined) {
-        storedForProduct[s.id] = stored[key];
-      }
-    });
-    setManualPrices(storedForProduct);
+    const existingPrice = savedPrices.find(p => p.productName === product.name);
+    if (existingPrice) {
+      const pricesForProduct = {};
+      supermarkets.forEach(s => {
+        if (existingPrice.prices && existingPrice.prices[s.id] !== undefined) {
+          pricesForProduct[s.id] = existingPrice.prices[s.id];
+        }
+      });
+      setManualPrices(pricesForProduct);
+    } else {
+      setManualPrices({});
+    }
   };
 
   const handleAddManualPrice = (supermarketId, value) => {
@@ -90,17 +108,43 @@ const Precio = () => {
     }));
   };
 
-  const handleSaveManualPrices = () => {
-    if (!selectedProduct) return;
+  const handleSaveManualPrices = async () => {
+    if (!selectedProduct || !user) return;
 
-    const allPrices = loadPricesFromStorage();
-    Object.entries(manualPrices).forEach(([supermarketId, price]) => {
-      if (price !== null && price !== undefined && price !== '') {
-        allPrices[`${selectedProduct.name}_${supermarketId}`] = price;
+    try {
+      const existingPrice = savedPrices.find(p => p.productName === selectedProduct.name);
+      const priceData = {
+        userId: user.uid,
+        productName: selectedProduct.name,
+        productBrand: selectedProduct.brand,
+        productImage: selectedProduct.image,
+        prices: { ...manualPrices },
+      };
+
+      if (existingPrice) {
+        const mergedPrices = { ...(existingPrice.prices || {}), ...manualPrices };
+        await updatePrice(existingPrice.id, { prices: mergedPrices });
+        setSavedPrices(prev => prev.map(p => p.id === existingPrice.id ? { ...p, prices: mergedPrices } : p));
+      } else {
+        const added = await addPrice(priceData);
+        setSavedPrices(prev => [added, ...prev]);
       }
-    });
-    savePricesToStorage(allPrices);
-    alert('Precios guardados correctamente');
+      showSuccess('Precios guardados correctamente');
+    } catch (error) {
+      console.error('Error guardando precios:', error);
+      showError('Error al guardar los precios');
+    }
+  };
+
+  const handleDeletePrice = async (priceId) => {
+    try {
+      await deletePrice(priceId);
+      setSavedPrices(prev => prev.filter(p => p.id !== priceId));
+      showSuccess('Precio eliminado');
+    } catch (error) {
+      console.error('Error eliminando precio:', error);
+      showError('Error al eliminar el precio');
+    }
   };
 
   const handleClearSearch = () => {
@@ -114,12 +158,10 @@ const Precio = () => {
 
   const getPricesWithValues = () => {
     if (!selectedProduct) return [];
-    const stored = loadPricesFromStorage();
     const prices = supermarkets.map(s => {
-      const key = `${selectedProduct.name}_${s.id}`;
       return {
         id: s.id,
-        price: manualPrices[s.id] ?? stored[key] ?? null,
+        price: manualPrices[s.id] ?? null,
         color: s.color,
         supermarket: s.name,
       };
@@ -129,10 +171,8 @@ const Precio = () => {
 
   const getCurrentPrices = () => {
     if (!selectedProduct) return [];
-    const stored = loadPricesFromStorage();
     return supermarkets.map(s => {
-      const key = `${selectedProduct.name}_${s.id}`;
-      const price = manualPrices[s.id] ?? stored[key] ?? null;
+      const price = manualPrices[s.id] ?? null;
       return {
         id: s.id,
         supermarket: s.name,
@@ -176,6 +216,7 @@ const Precio = () => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -183,6 +224,7 @@ const Precio = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -441,6 +483,40 @@ const Precio = () => {
                 })}
               </div>
             </>
+          )}
+
+          {savedPrices.length > 0 && (
+            <div className='saved-prices-section'>
+              <h3>📋 Mis Precios Guardados ({savedPrices.length})</h3>
+              <div className='saved-prices-grid'>
+                {savedPrices.map((sp) => (
+                  <div key={sp.id} className='saved-price-card'>
+                    <div className='saved-price-header'>
+                      {sp.productImage && (
+                        <img src={sp.productImage} alt={sp.productName} className='saved-price-img' />
+                      )}
+                      <div className='saved-price-info'>
+                        <h4>{sp.productName}</h4>
+                        <p>{sp.productBrand}</p>
+                      </div>
+                    </div>
+                    <div className='saved-price-values'>
+                      {sp.prices && Object.entries(sp.prices).filter(([k, v]) => v).map(([superId, price]) => {
+                        const superm = supermarkets.find(s => s.id === superId);
+                        if (!superm) return null;
+                        return (
+                          <div key={superId} className='saved-price-chip' style={{ borderColor: superm.color }}>
+                            <span style={{ color: superm.color }}>{superm.name}</span>
+                            <span className='saved-price-value'>{parseFloat(price).toFixed(2)}€</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <button className='eliminar-precio-btn' onClick={() => handleDeletePrice(sp.id)}>🗑️ Eliminar</button>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {!hasSearched && !loading && (

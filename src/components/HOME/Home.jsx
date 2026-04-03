@@ -62,6 +62,11 @@ const Home = () => {
                 <h3>PRECIO</h3>
                 <p>Compara precios en supermercados</p>
               </Link>
+              <Link to="/perfil" className="home-card">
+                <div className="card-icon">👤</div>
+                <h3>PERFIL</h3>
+                <p>Gestiona tu perfil de usuario</p>
+              </Link>
             </div>
           </div>
         </div>

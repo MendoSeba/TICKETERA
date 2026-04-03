@@ -807,6 +807,101 @@
   transform: none;
 }
 
+.saved-prices-section {
+  margin-bottom: 30px;
+}
+
+.saved-prices-section h3 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.saved-prices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.saved-price-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  padding: 15px;
+}
+
+.saved-price-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.saved-price-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.saved-price-info h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #222;
+  font-weight: 600;
+}
+
+.saved-price-info p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.saved-price-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.saved-price-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f9f9f9;
+  border: 1px solid;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.saved-price-value {
+  color: #FF9800;
+  font-weight: 700;
+}
+
+.eliminar-precio-btn {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.eliminar-precio-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
 @media (max-width: 768px) {
   .precio-header h1 {
     font-size: 28px;

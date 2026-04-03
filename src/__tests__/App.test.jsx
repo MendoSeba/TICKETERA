@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import App from '../src/App';
+import Inicio from '../components/INICIO/Inicio';
 
-describe('App', () => {
-  it('renders without crashing', () => {
-    render(<App />);
-    expect(screen.getByText('Welcome')).toBeInTheDocument();
+describe('Inicio', () => {
+  it('renders login form', () => {
+    render(<Inicio />);
+    expect(screen.getByText(/TICKETERA/i)).toBeInTheDocument();
   });
 });
