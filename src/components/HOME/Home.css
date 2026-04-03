@@ -1,0 +1,210 @@
+.home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+.home-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.header_home {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo3 {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.links-horizontal {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.l-inicial {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.l-inicial:hover {
+  color: #FF9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.l-inicial.active {
+  color: white;
+  background: linear-gradient(135deg, orange, orangered);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #333;
+}
+
+.user-name strong {
+  color: #FF9800;
+}
+
+.boton-gradiente {
+  background: linear-gradient(135deg, orange, orangered);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+.boton-gradiente:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+.logout-button {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.home-welcome {
+  text-align: center;
+  padding: 20px;
+}
+
+.home-welcome h1 {
+  color: #333;
+  font-size: 42px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.home-subtitle {
+  color: #666;
+  font-size: 20px;
+  margin-bottom: 50px;
+  font-weight: 400;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.home-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, orange, orangered);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.home-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.home-card:hover::before {
+  transform: scaleX(1);
+}
+
+.card-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.home-card h3 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.home-card p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .header_home {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .links-horizontal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .user-menu {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .home-welcome h1 {
+    font-size: 28px;
+  }
+
+  .home-subtitle {
+    font-size: 16px;
+  }
+
+  .home-cards {
+    grid-template-columns: 1fr;
+  }
+}
