@@ -13,9 +13,12 @@ import ForgotPassword from '../components/RECUPERAR/ForgotPassword';
 
 export function Ruta() {
   return (
-    <Router>
+    <Router future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }}>
       <Routes>
-        <Route exact path="/" element={<Inicio />} />
+        <Route path="/" element={<Inicio />} />
         <Route path="/registro" element={<Login />} />
         <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
         <Route path="/home" element={

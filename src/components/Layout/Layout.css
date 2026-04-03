@@ -1,0 +1,49 @@
+.layout-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-section {
+  flex: 1;
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-right: 20px;
+  min-width: 200px;
+  justify-content: flex-end;
+}
+
+.user-name {
+  color: white;
+  font-size: 14px;
+}
+
+.logout-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.3s;
+}
+
+.logout-button:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .user-menu {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .user-name {
+    font-size: 12px;
+  }
+}

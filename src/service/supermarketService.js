@@ -1,4 +1,4 @@
-import { loadPricesFromStorage, savePricesToStorage } from './storageService';
+import { loadPricesFromStorage } from './storageService';
 
 export const supermarkets = [
   { id: 'mercadona', name: 'Mercadona', logo: '🛒', color: '#DA291C' },
@@ -98,12 +98,13 @@ export const getProductsByCategory = async (categoryId) => {
   const category = categories.find(c => c.id === categoryId);
   if (!category) return [];
   
-  const results = [];
+  const searchTerms = category.searchTerms.slice(0, 2);
   
-  for (const term of category.searchTerms.slice(0, 2)) {
-    const products = await searchProductsOpenFoodFacts(term);
-    results.push(...products);
-  }
+  const allResults = await Promise.all(
+    searchTerms.map(term => searchProductsOpenFoodFacts(term))
+  );
+  
+  const results = allResults.flat();
   
   const unique = results.reduce((acc, product) => {
     if (!acc.find(p => p.name === product.name)) {

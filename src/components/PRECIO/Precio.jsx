@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import logo3 from "../IMG/img23.jpg.jpeg";
+﻿import React, { useState, useEffect } from 'react';
 import './Precio.css';
 import { 
   searchProductsOpenFoodFacts, 
   getProductsByCategory,
-  getProductWithStoredPrices,
   supermarkets, 
   categories,
 } from '../../service/supermarketService';
 import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
-import Footer from '../FOOTER/Footer';
+import Layout from '../Layout/Layout';
+import { useToast } from '../ToastProvider';
 
 const Precio = () => {
+  const { showSuccess } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -21,8 +20,6 @@ const Precio = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [manualPrices, setManualPrices] = useState({});
   const [showPriceForm, setShowPriceForm] = useState(false);
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   useEffect(() => {
     const stored = loadPricesFromStorage();
@@ -77,16 +74,17 @@ const Precio = () => {
     supermarkets.forEach(s => {
       const key = `${product.name}_${s.id}`;
       if (stored[key] !== undefined) {
-        storedForProduct[s.id] = stored[key];
+        storedForProduct[key] = stored[key];
       }
     });
     setManualPrices(storedForProduct);
   };
 
   const handleAddManualPrice = (supermarketId, value) => {
+    if (!selectedProduct) return;
     setManualPrices(prev => ({
       ...prev,
-      [supermarketId]: value ? parseFloat(value) : null
+      [`${selectedProduct.name}_${supermarketId}`]: value ? parseFloat(value) : null
     }));
   };
 
@@ -94,13 +92,15 @@ const Precio = () => {
     if (!selectedProduct) return;
 
     const allPrices = loadPricesFromStorage();
-    Object.entries(manualPrices).forEach(([supermarketId, price]) => {
-      if (price !== null && price !== undefined && price !== '') {
-        allPrices[`${selectedProduct.name}_${supermarketId}`] = price;
-      }
-    });
+    Object.entries(manualPrices)
+      .filter(([key]) => key.startsWith(selectedProduct.name + '_'))
+      .forEach(([key, price]) => {
+        if (price !== null && price !== undefined && price !== '') {
+          allPrices[key] = price;
+        }
+      });
     savePricesToStorage(allPrices);
-    alert('Precios guardados correctamente');
+    showSuccess('Precios guardados correctamente');
   };
 
   const handleClearSearch = () => {
@@ -119,7 +119,7 @@ const Precio = () => {
       const key = `${selectedProduct.name}_${s.id}`;
       return {
         id: s.id,
-        price: manualPrices[s.id] ?? stored[key] ?? null,
+        price: manualPrices[key] ?? stored[key] ?? null,
         color: s.color,
         supermarket: s.name,
       };
@@ -132,7 +132,7 @@ const Precio = () => {
     const stored = loadPricesFromStorage();
     return supermarkets.map(s => {
       const key = `${selectedProduct.name}_${s.id}`;
-      const price = manualPrices[s.id] ?? stored[key] ?? null;
+      const price = manualPrices[key] ?? stored[key] ?? null;
       return {
         id: s.id,
         supermarket: s.name,
@@ -165,73 +165,73 @@ const Precio = () => {
   const hasAnyPrice = () => getPricesWithValues().length > 0;
 
   return (
-    <div>
-      <section className='section-header'>
-        <header className='header_home'>
-          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-              <h2 className='titulo2'> TICKETERA</h2>
-              <Link className={isActive('/home')} to="/home">HOME</Link>
-              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
-              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
-            </ul>
-            <div className="responsive-menu">
-              <ul>
-                <li><Link to="/home">HOME</Link></li>
-                <li><Link to="/precio">PRECIO</Link></li>
-                <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
-              </ul>
-            </div>
-          </nav>
-        </header>
-      </section>
+    <Layout>
+        <div className='precio-container'>
+        <div className='precio-header'>
+          <h1>COMPARADOR DE PRECIOS</h1>
+          <p>Encuentra los mejores precios en supermercados de Valencia</p>
+        </div>
 
-      <section className='body2'>
-        <div className='precio-layout'>
-          <aside className='categories-sidebar'>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                className={`category-sidebar-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                onClick={() => handleCategoryClick(cat.id)}
-              >
-                <span className='cat-icon'>{cat.icon}</span>
-                <span className='cat-name'>{cat.name}</span>
-              </button>
-            ))}
-          </aside>
-          <div className='precio-container'>
-            <div className='precio-header'>
-              <h1>COMPARADOR DE PRECIOS</h1>
-              <p>Encuentra los mejores precios en supermercados de Valencia</p>
-            </div>
-
-            <div className='search-section'>
-              <form className='precio-search' onSubmit={handleSearch}>
-                <div className='search-input-container'>
-                  <input
-                    type="text"
-                    placeholder="Buscar producto (ej: leche, aceite, arroz...)"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className='search-input'
-                  />
-                  <button type="submit" className='search-button' disabled={loading}>
-                    {loading ? '...' : '🔍 BUSCAR'}
-                  </button>
-                  {(hasSearched || searchTerm) && (
-                    <button type="button" className='clear-button' onClick={handleClearSearch}>
-                      ✕
-                    </button>
-                  )}
+          {!hasSearched && !loading && (
+            <div className='precio-info'>
+              <h2>¿Cómo funciona?</h2>
+              <div className='info-steps'>
+                <div className='step'>
+                  <div className='step-icon'>1</div>
+                  <p>Busca un producto o selecciona una categoría</p>
                 </div>
-              </form>
+                <div className='step'>
+                  <div className='step-icon'>2</div>
+                  <p>Selecciona el producto y añade los precios que conoces</p>
+                </div>
+                <div className='step'>
+                  <div className='step-icon'>3</div>
+                  <p>Compara y ahorra en tu próxima compra</p>
+                </div>
+              </div>
+              <p className='info-note'>
+                * Las imágenes provienen de Open Food Facts (España). Añade los precios que ves en los supermercados.
+              </p>
             </div>
+          )}
+
+          <div className='search-section'>
+            <div className='search-layout'>
+              <div className='categories-nav'>
+                {categories.map(cat => (
+                  <button
+                    key={cat.id}
+                    className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                    onClick={() => handleCategoryClick(cat.id)}
+                  >
+                    <span className='cat-icon'>{cat.icon}</span>
+                    <span className='cat-name'>{cat.name}</span>
+                  </button>
+                ))}
+              </div>
+              <div className='search-form-container'>
+                <form className='precio-search' onSubmit={handleSearch}>
+                  <div className='search-input-container'>
+                    <input
+                      type="text"
+                      placeholder="Buscar producto (ej: leche, aceite, arroz...)"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className='search-input'
+                    />
+                    <button type="submit" className='search-button' disabled={loading}>
+                      {loading ? '...' : 'BUSCAR'}
+                    </button>
+                    {(hasSearched || searchTerm) && (
+                      <button type="button" className='clear-button' onClick={handleClearSearch}>
+                        X
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
 
           {loading && (
             <div className='precio-loading'>
@@ -313,7 +313,7 @@ const Precio = () => {
 
               {showPriceForm && (
                 <div className='manual-prices-form'>
-                  <h4>💰 Añade los precios que has visto:</h4>
+                  <h4>Añade los precios que has visto:</h4>
                   <p className='form-hint'>Selecciona el supermercado e introduce el precio</p>
                   
                   <div className='price-input-row'>
@@ -331,6 +331,7 @@ const Precio = () => {
                       <input
                         type="number"
                         step="0.01"
+                        min="0"
                         placeholder="0.00"
                         className='price-input'
                       />
@@ -349,25 +350,29 @@ const Precio = () => {
                         }
                       }}
                     >
-                      ➕ Añadir
+                      + Añadir
                     </button>
                   </div>
 
                   <div className='added-prices'>
-                    {Object.entries(manualPrices).filter(([key, val]) => val && val !== '').map(([supermarketId, price]) => {
-                      const superm = supermarkets.find(s => s.id === supermarketId);
-                      if (!superm) return null;
-                      return (
-                        <div key={supermarketId} className='added-price-chip' style={{ borderColor: superm.color }}>
-                          <span style={{ color: superm.color }}>{superm.name}</span>
-                          <span>{parseFloat(price).toFixed(2)}€</span>
-                          <button 
-                            onClick={() => handleAddManualPrice(supermarketId, null)}
-                            className='remove-price-btn'
-                          >✕</button>
-                        </div>
-                      );
-                    })}
+                    {Object.entries(manualPrices)
+                      .filter(([key]) => selectedProduct && key.startsWith(selectedProduct.name + '_'))
+                      .filter(([, val]) => val && val !== '')
+                      .map(([key, price]) => {
+                        const supermarketId = key.split('_').slice(1).join('_');
+                        const superm = supermarkets.find(s => s.id === supermarketId);
+                        if (!superm) return null;
+                        return (
+                          <div key={key} className='added-price-chip' style={{ borderColor: superm.color }}>
+                            <span style={{ color: superm.color }}>{superm.name}</span>
+                            <span>{parseFloat(price).toFixed(2)}€</span>
+                            <button 
+                              onClick={() => handleAddManualPrice(supermarketId, null)}
+                              className='remove-price-btn'
+                            >X</button>
+                          </div>
+                        );
+                      })}
                   </div>
 
                   <button 
@@ -476,13 +481,9 @@ const Precio = () => {
               ))}
             </div>
           </div>
-          </div>
         </div>
-      </section>
-
-      <Footer />
-    </div>
-  );
-};
+      </Layout>
+    );
+  };
 
 export default Precio;
