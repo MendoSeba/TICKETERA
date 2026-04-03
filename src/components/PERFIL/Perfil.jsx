@@ -16,7 +16,7 @@ const Perfil = () => {
 
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
-  const [bio, setBio] = useState('');
+  const [sugerencia, setSugerencia] = useState('');
   const [profileId, setProfileId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,7 +36,7 @@ const Perfil = () => {
         setProfileId(profile.id);
         setDisplayName(profile.displayName || user.displayName || '');
         setPhone(profile.phone || '');
-        setBio(profile.bio || '');
+        setSugerencia(profile.sugerencia || '');
       }
     } catch (error) {
       console.error('Error cargando perfil:', error);
@@ -53,7 +53,7 @@ const Perfil = () => {
         userId: user.uid,
         displayName,
         phone,
-        bio,
+        sugerencia,
         email: user.email,
       };
 
@@ -186,19 +186,14 @@ const Perfil = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="bio">Biografía:</label>
+              <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
               <textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Cuéntanos algo sobre ti..."
+                id="sugerencia"
+                value={sugerencia}
+                onChange={(e) => setSugerencia(e.target.value)}
+                placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
                 rows={4}
               />
-            </div>
-
-            <div className="form-group">
-              <label>UID de usuario:</label>
-              <code className="uid-display">{user?.uid}</code>
             </div>
 
             <button
@@ -206,7 +201,7 @@ const Perfil = () => {
               onClick={handleSave}
               disabled={saving}
             >
-              {saving ? 'Guardando...' : '💾 Guardar Perfil'}
+              {saving ? 'Guardando...' : '💾 Guardar'}
             </button>
           </div>
         </div>

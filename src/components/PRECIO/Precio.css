@@ -36,24 +36,28 @@
 
 .category-sidebar-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: transparent;
-  border: none;
-  border-radius: 10px;
+  gap: 5px;
+  padding: 12px 10px;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s;
-  text-align: left;
+  text-align: center;
   width: 100%;
+  margin: 0 5px;
 }
 
 .category-sidebar-btn:hover {
-  background: rgba(255, 152, 0, 0.1);
+  border-color: #FF9800;
+  transform: translateY(-2px);
 }
 
 .category-sidebar-btn.active {
   background: linear-gradient(135deg, orange, orangered);
+  border-color: #FF9800;
 }
 
 .category-sidebar-btn.active .cat-name {
@@ -61,11 +65,11 @@
 }
 
 .category-sidebar-btn .cat-icon {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .category-sidebar-btn .cat-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #333;
 }
