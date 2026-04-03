@@ -1,4 +1,4 @@
-﻿import './style.css';
+import './style.css';
 import React, { useState } from 'react';
 import logo from "../IMG/img23.jpg.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,22 +34,22 @@ const Inicio = () => {
       setLoading(false);
       switch (error.code) {
         case 'auth/user-not-found':
-          setError('No existe una cuenta con este correo electr├│nico');
+          setError('No existe una cuenta con este correo electrónico');
           break;
         case 'auth/wrong-password':
-          setError('Contrase├▒a incorrecta');
+          setError('Contraseña incorrecta');
           break;
         case 'auth/invalid-email':
-          setError('El correo electr├│nico no es v├ílido');
+          setError('El correo electrónico no es válido');
           break;
         case 'auth/too-many-requests':
-          setError('Demasiados intentos fallidos. Intenta m├ís tarde');
+          setError('Demasiados intentos fallidos. Intenta más tarde');
           break;
         case 'auth/invalid-credential':
-          setError('Credenciales inv├ílidas. Verifica tu correo y contrase├▒a');
+          setError('Credenciales inválidas. Verifica tu correo y contraseña');
           break;
         default:
-          setError('Error al iniciar sesi├│n: ' + error.message);
+          setError('Error al iniciar sesión: ' + error.message);
       }
     }
   };
@@ -94,7 +94,7 @@ const Inicio = () => {
           <form className='form1' onKeyPress={handleKeyPress}>
             <input className='input-form1'
               type="email"
-              placeholder="Correo electr├│nico"
+              placeholder="Correo electrónico"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -103,7 +103,7 @@ const Inicio = () => {
             />
             <input className='input-form1'
               type="password"
-              placeholder="Contrase├▒a"
+              placeholder="Contraseña"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -126,8 +126,8 @@ const Inicio = () => {
             <button className='boton-form1' type="button" onClick={loginWithEmail} disabled={loading}>
               {loading ? 'CARGANDO...' : 'INICIAR SESION'}
             </button>
-            <p className="crear-cuenta">┬┐No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
-            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">┬┐Olvidaste tu contrase├▒a?</Link></p>
+            <p className="crear-cuenta">¿No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
+            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link></p>
           </form>
           {user && (
             <p>Bienvenido, {user.displayName}</p>

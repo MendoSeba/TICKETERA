@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import logo3 from '../IMG/img23.jpg.jpeg';
@@ -73,7 +73,7 @@ const Tickets = () => {
   };
 
   const borrarMes = (mesAno) => {
-    if (!window.confirm(`┬┐Est├ís seguro de eliminar todos los gastos de ${formatearMesAno(mesAno)}?`)) {
+    if (!window.confirm(`¿Estás seguro de eliminar todos los gastos de ${formatearMesAno(mesAno)}?`)) {
       return;
     }
     const nuevosGastos = gastos.filter(gasto => {
@@ -177,14 +177,16 @@ const Tickets = () => {
               <Link className={isActive('/home')} to="/home">HOME</Link>
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>`n              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
+              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
                 <li><Link to="/home">HOME</Link></li>
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>`n                <li><Link to="/perfil">PERFIL</Link></li>
+                <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -222,13 +224,13 @@ const Tickets = () => {
                 <thead>
                   <tr>
                     <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
-                      Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
-                      Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
-                      Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th>Acciones</th>
                   </tr>
@@ -249,7 +251,7 @@ const Tickets = () => {
               <div className="totales">
                 <p>Total Semana: {totalSemana}</p>
                 <p>Total Mes: {totalMes}</p>
-                <p>Total A├▒o: {totalAnio}</p>
+                <p>Total Año: {totalAnio}</p>
               </div>
             </div>
           )}

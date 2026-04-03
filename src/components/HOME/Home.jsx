@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo3 from "../IMG/img23.jpg.jpeg";
 import Footer from '../FOOTER/Footer';
@@ -15,7 +15,7 @@ const Home = () => {
       await logout();
       navigate('/');
     } catch (error) {
-      console.error('Error al cerrar sesi├│n:', error);
+      console.error('Error al cerrar sesión:', error);
     }
   };
 
@@ -32,35 +32,41 @@ const Home = () => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
           </nav>
           <div className="user-menu">
             <span className="user-name">Bienvenido, <strong>{user?.displayName || user?.email?.split('@')[0]}</strong></span>
-            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesi├│n</button>
+            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </header>
       </section>
       <section className='home-section'>
         <div className="home-container">
           <div className="home-welcome">
-            <h1>┬íBienvenido a TICKETERA!</h1>
-            <p className="home-subtitle">Tu aplicaci├│n para gestionar gastos, tickets y listas de compras.</p>
+            <h1>¡Bienvenido a TICKETERA!</h1>
+            <p className="home-subtitle">Tu aplicación para gestionar gastos, tickets y listas de compras.</p>
             
             <div className="home-cards">
               <Link to="/tickets" className="home-card">
-                <div className="card-icon">­ƒÄ½</div>
+                <div className="card-icon">🎫</div>
                 <h3>TICKETS</h3>
                 <p>Gestiona tus gastos y tickets</p>
               </Link>
               <Link to="/lista" className="home-card">
-                <div className="card-icon">­ƒøÆ</div>
+                <div className="card-icon">🛒</div>
                 <h3>LISTA</h3>
                 <p>Crea y descarga listas de compras</p>
               </Link>
               <Link to="/precio" className="home-card">
-                <div className="card-icon">­ƒÆ░</div>
+                <div className="card-icon">💰</div>
                 <h3>PRECIO</h3>
                 <p>Compara precios en supermercados</p>
+              </Link>
+              <Link to="/perfil" className="home-card">
+                <div className="card-icon">👤</div>
+                <h3>PERFIL</h3>
+                <p>Gestiona tu perfil</p>
               </Link>
             </div>
           </div>
