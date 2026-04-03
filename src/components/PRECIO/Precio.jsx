@@ -194,7 +194,6 @@ const Precio = () => {
       <section className='body2'>
         <div className='precio-layout'>
           <aside className='categories-sidebar'>
-            <h3>Categorías</h3>
             {categories.map(cat => (
               <button
                 key={cat.id}

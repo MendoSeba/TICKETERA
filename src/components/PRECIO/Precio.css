@@ -7,21 +7,14 @@
 }
 
 .categories-sidebar {
-  width: 180px;
+  width: 160px;
   background: white;
   border-right: 2px solid #eee;
   padding: 20px 10px;
   flex-shrink: 0;
-}
-
-.categories-sidebar h3 {
-  color: #333;
-  font-size: 16px;
-  padding: 0 10px 12px;
-  margin: 0;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 12px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .category-sidebar-btn {
@@ -29,24 +22,22 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 12px 10px;
-  background: transparent;
-  border: 2px solid transparent;
-  border-radius: 12px;
+  padding: 12px 14px;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
-  width: 100%;
-  margin-bottom: 4px;
 }
 
 .category-sidebar-btn:hover {
-  background: rgba(255, 152, 0, 0.08);
   border-color: #FF9800;
+  transform: translateY(-2px);
 }
 
 .category-sidebar-btn.active {
-  background: linear-gradient(135deg, orange, orangered);
+  background: #FF9800;
   border-color: #FF9800;
 }
 
@@ -55,7 +46,7 @@
 }
 
 .category-sidebar-btn .cat-icon {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .category-sidebar-btn .cat-name {

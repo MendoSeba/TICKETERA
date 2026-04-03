@@ -28,6 +28,7 @@ const Home = () => {
           <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
+              <h2 className='titulo2'> TICKETERA</h2>
               <Link className={isActive('/home')} to="/home">HOME</Link>
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
