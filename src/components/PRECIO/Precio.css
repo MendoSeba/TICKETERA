@@ -1,3 +1,80 @@
+.precio-layout {
+  display: flex;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 90px);
+}
+
+.precio-sidebar {
+  width: 200px;
+  background: white;
+  border-right: 2px solid #eee;
+  padding: 20px 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.precio-sidebar h3 {
+  color: #333;
+  font-size: 16px;
+  padding: 0 20px 15px;
+  margin: 0;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 10px;
+}
+
+.categories-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.category-sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.category-sidebar-btn:hover {
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.category-sidebar-btn.active {
+  background: linear-gradient(135deg, orange, orangered);
+}
+
+.category-sidebar-btn.active .cat-name {
+  color: white;
+}
+
+.category-sidebar-btn .cat-icon {
+  font-size: 20px;
+}
+
+.category-sidebar-btn .cat-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.precio-main {
+  flex: 1;
+  min-width: 0;
+}
+
 .precio-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -24,24 +101,6 @@
 
 .search-section {
   margin-bottom: 30px;
-}
-
-.search-layout {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-}
-
-.categories-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 140px;
-}
-
-.search-form-container {
-  flex: 1;
-  max-width: 600px;
 }
 
 .precio-search {
@@ -108,15 +167,6 @@
 
 .clear-button:hover {
   background: #e0e0e0;
-}
-
-.categories-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  max-width: 800px;
-  margin: 0 auto;
 }
 
 .category-btn {
@@ -903,6 +953,32 @@
 }
 
 @media (max-width: 768px) {
+  .precio-layout {
+    flex-direction: column;
+  }
+
+  .precio-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 2px solid #eee;
+    padding: 15px 0;
+  }
+
+  .categories-sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 15px;
+    gap: 8px;
+  }
+
+  .category-sidebar-btn {
+    flex-direction: column;
+    padding: 8px 12px;
+    min-width: 80px;
+  }
+
   .precio-header h1 {
     font-size: 28px;
   }
@@ -915,23 +991,6 @@
 
   .search-button {
     width: 100%;
-  }
-
-  .categories-nav {
-    gap: 8px;
-  }
-
-  .category-btn {
-    padding: 10px 14px;
-    min-width: 70px;
-  }
-
-  .cat-icon {
-    font-size: 20px;
-  }
-
-  .cat-name {
-    font-size: 10px;
   }
 
   .precio-summary {

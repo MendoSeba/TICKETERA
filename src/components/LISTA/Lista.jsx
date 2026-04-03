@@ -146,31 +146,63 @@ const Lista = () => {
     }
   };
 
-  const descargarListaImagen = async () => {
-    if (lista.length === 0) {
-      showError("No hay productos en la lista para descargar");
-      return;
-    }
-
-    const element = listaImageRef.current;
-    if (!element) return;
+  const descargarListaImagen = async (listaToDownload, fecha) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.width = '600px';
+    tempDiv.style.background = 'white';
+    tempDiv.style.padding = '30px';
+    tempDiv.style.fontFamily = 'Arial, sans-serif';
+    tempDiv.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:25px;padding-bottom:15px;border-bottom:3px solid #FF9800;">
+        <div style="font-size:24px;font-weight:bold;color:#FF9800;">TICKETERA</div>
+        <div style="margin-left:20px;">
+          <h1 style="color:#FF9800;margin:0;font-size:24px;">MI LISTA DE COMPRAS</h1>
+          <p style="color:#666;margin:5px 0 0 0;font-size:12px;">Fecha: ${fecha}</p>
+        </div>
+      </div>
+      <div style="border:2px solid #FF9800;border-radius:8px;overflow:hidden;">
+        <div style="display:flex;background:linear-gradient(135deg,orange,orangered);color:white;font-weight:bold;padding:12px;font-size:14px;">
+          <span style="flex:2;">PRODUCTO</span>
+          <span style="flex:0.5;text-align:center;">CANT.</span>
+          <span style="flex:1;text-align:center;">CATEGORÍA</span>
+        </div>
+        ${listaToDownload.map((p, i) => `
+          <div style="display:flex;padding:10px 12px;font-size:13px;background:${i % 2 === 0 ? '#fff' : '#f9f9f9'};">
+            <span style="flex:2;font-weight:500;">${p.producto.toUpperCase()}</span>
+            <span style="flex:0.5;text-align:center;font-weight:bold;color:#FF9800;">${p.cantidad}</span>
+            <span style="flex:1;text-align:center;font-size:11px;color:#666;">${p.opciones}</span>
+          </div>
+        `).join('')}
+        <div style="display:flex;justify-content:space-between;background:#333;color:white;padding:12px;font-weight:bold;">
+          <span>TOTAL:</span>
+          <span>${listaToDownload.length} artículos</span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:20px;padding-top:15px;border-top:1px solid #ddd;">
+        <p style="color:#999;font-size:11px;margin:0;">Generado por TICKETERA App</p>
+      </div>
+    `;
+    document.body.appendChild(tempDiv);
 
     try {
-      const canvas = await html2canvas(element, {
+      const canvas = await html2canvas(tempDiv, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
         logging: false
       });
-
       const link = document.createElement('a');
-      link.download = `lista-compras-${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `lista-compras-${fecha.replace(/\//g, '-')}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       showSuccess('Lista descargada como imagen');
     } catch (error) {
       console.error('Error al descargar la imagen:', error);
       showError('Error al descargar la imagen');
+    } finally {
+      document.body.removeChild(tempDiv);
     }
   };
 
@@ -237,12 +269,7 @@ const Lista = () => {
               <h2 className="titulo-mi-lista">MI LISTA DE COMPRAS:</h2>
               <div className="lista-header-buttons">
                 {lista.length > 0 && (
-                  <>
-                    <button className="boton-descargar" onClick={descargarListaImagen}>
-                      DESCARGAR LISTA
-                    </button>
-                    <button className="eliminar" onClick={guardarListaEnFirestore}>GUARDAR</button>
-                  </>
+                  <button className="eliminar" onClick={guardarListaEnFirestore}>GUARDAR</button>
                 )}
               </div>
             </div>
@@ -353,6 +380,7 @@ const Lista = () => {
                       setLista(listaActual);
                     }}>AÑADIR A ACTUAL</button>
                     <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
+                    <button className='boton-descargar-sm' onClick={() => descargarListaImagen(listaGuardada.lista, listaGuardada.fecha)}>📥 DESCARGAR</button>
                     <button className='eliminar4' onClick={() => eliminarListaGuardada(index, listaGuardada.id)}>ELIMINAR LISTA</button>
                   </div>
                 </div>
