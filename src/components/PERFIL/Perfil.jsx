@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ToastProvider';
-import { getUserProfile, createUserProfile, updateUserProfile } from '../../service/firestoreService';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import './Perfil.css';
 import Footer from '../FOOTER/Footer';
@@ -17,58 +16,56 @@ const Perfil = () => {
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
   const [sugerencia, setSugerencia] = useState('');
-  const [profileId, setProfileId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || '');
-      loadProfile();
+      const stored = localStorage.getItem('userProfile');
+      if (stored) {
+        try {
+          const profile = JSON.parse(stored);
+          setPhone(profile.phone || '');
+          setSugerencia(profile.sugerencia || '');
+        } catch (e) {
+          console.error('Error loading profile:', e);
+        }
+      }
+      setLoading(false);
     }
   }, [user]);
 
-  const loadProfile = async () => {
+  const handleSave = () => {
     if (!user) return;
-    try {
-      const profile = await getUserProfile(user.uid);
-      if (profile) {
-        setProfileId(profile.id);
-        setDisplayName(profile.displayName || user.displayName || '');
-        setPhone(profile.phone || '');
-        setSugerencia(profile.sugerencia || '');
-      }
-    } catch (error) {
-      console.error('Error cargando perfil:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!user) return;
-    setSaving(true);
     try {
       const profileData = {
-        userId: user.uid,
         displayName,
         phone,
-        sugerencia,
         email: user.email,
       };
-
-      if (profileId) {
-        await updateUserProfile(profileId, profileData);
-      } else {
-        const newProfile = await createUserProfile(profileData);
-        setProfileId(newProfile.id);
-      }
-      showSuccess('Perfil actualizado correctamente');
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      showSuccess('Perfil guardado correctamente');
     } catch (error) {
       console.error('Error guardando perfil:', error);
       showError('Error al guardar el perfil');
-    } finally {
-      setSaving(false);
+    }
+  };
+
+  const handleEnviarSugerencia = () => {
+    if (!sugerencia.trim()) {
+      showError('Escribe algo en el campo de sugerencias');
+      return;
+    }
+    try {
+      const stored = localStorage.getItem('userProfile');
+      const profile = stored ? JSON.parse(stored) : {};
+      profile.sugerencia = sugerencia;
+      profile.sugerenciaFecha = new Date().toLocaleString('es-ES');
+      localStorage.setItem('userProfile', JSON.stringify(profile));
+      showSuccess('Sugerencia guardada, gracias por tu feedback!');
+    } catch (error) {
+      console.error('Error guardando sugerencia:', error);
+      showError('Error al enviar la sugerencia');
     }
   };
 
@@ -98,11 +95,6 @@ const Perfil = () => {
               </ul>
             </nav>
           </header>
-        </section>
-        <section className="perfil-section">
-          <div className="perfil-container loading-container">
-            <p>Cargando perfil...</p>
-          </div>
         </section>
         <Footer />
       </div>
@@ -185,23 +177,29 @@ const Perfil = () => {
               />
             </div>
 
-            <div className="form-group">
+            <button
+              className="boton-tickets save-profile-btn"
+              onClick={handleSave}
+            >
+              💾 Guardar
+            </button>
+
+            <div className="form-group sugerencia-group">
               <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
               <textarea
                 id="sugerencia"
                 value={sugerencia}
                 onChange={(e) => setSugerencia(e.target.value)}
                 placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
-                rows={4}
+                rows={3}
               />
             </div>
 
             <button
-              className="boton-tickets save-profile-btn"
-              onClick={handleSave}
-              disabled={saving}
+              className="boton-tickets enviar-sugerencia-btn"
+              onClick={handleEnviarSugerencia}
             >
-              {saving ? 'Guardando...' : '💾 Guardar'}
+              📤 Enviar Sugerencia
             </button>
           </div>
         </div>

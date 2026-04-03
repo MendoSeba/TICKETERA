@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../ToastProvider';
-import { addShoppingList, getShoppingLists, deleteShoppingList } from '../../service/firestoreService';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import listaImg from '../IMG/lista.jpeg';
 import './Lista.css';
@@ -10,16 +7,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import html2canvas from 'html2canvas';
 import Footer from '../FOOTER/Footer';
 
-const Lista = () => {
-  const { user } = useAuth();
-  const { showSuccess, showError } = useToast();
+const Lista = ({ guardarLista }) => {
   const [lista, setLista] = useState([]);
   const [listasGuardadas, setListasGuardadas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [editandoId, setEditandoId] = useState(null);
-  const [editProducto, setEditProducto] = useState('');
-  const [editCantidad, setEditCantidad] = useState('');
-  const [editOpciones, setEditOpciones] = useState('');
   const productoRef = useRef(null);
   const cantidadRef = useRef(null);
   const opcionesRef = useRef(null);
@@ -33,60 +23,28 @@ const Lista = () => {
     if (opcionesRef.current) opcionesRef.current.selectedIndex = 0;
   };
 
-  useEffect(() => {
-    cargarListas();
-  }, []);
-
-  const cargarListas = async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
-      const data = await getShoppingLists(user.uid);
-      setListasGuardadas(data);
-    } catch (error) {
-      console.error('Error cargando listas:', error);
-      showError('Error al cargar las listas guardadas');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const guardarListaEnFirestore = async () => {
+  const guardarListaEnLocalStorage = () => {
     if (lista.length === 0) {
-      showError("No hay productos en la lista para guardar");
+      alert("No hay productos en la lista para guardar");
       return;
     }
-    if (!user) return;
-    try {
-      const listaGuardada = {
-        userId: user.uid,
-        lista: lista,
-        fecha: new Date().toLocaleDateString()
-      };
-      const added = await addShoppingList(listaGuardada);
-      setListasGuardadas(prev => [added, ...prev]);
-      setLista([]);
-      limpiarCampos();
-      showSuccess('Lista guardada correctamente');
-    } catch (error) {
-      console.error('Error guardando lista:', error);
-      showError('Error al guardar la lista');
-    }
+    const listaGuardada = {
+      lista: lista,
+      fecha: new Date().toLocaleDateString()
+    };
+    const nuevasListasGuardadas = [...listasGuardadas, listaGuardada];
+    localStorage.setItem("listasGuardadas", JSON.stringify(nuevasListasGuardadas));
+    setListasGuardadas(nuevasListasGuardadas);
+    setLista([]);
+    limpiarCampos();
+    if (guardarLista) guardarLista();
   };
 
-  const eliminarListaGuardada = async (index, listId) => {
-    try {
-      if (listId) {
-        await deleteShoppingList(listId);
-      }
-      const nuevasListasGuardadas = [...listasGuardadas];
-      nuevasListasGuardadas.splice(index, 1);
-      setListasGuardadas(nuevasListasGuardadas);
-      showSuccess('Lista eliminada');
-    } catch (error) {
-      console.error('Error eliminando lista:', error);
-      showError('Error al eliminar la lista');
-    }
+  const eliminarListaGuardada = (index) => {
+    const nuevasListasGuardadas = [...listasGuardadas];
+    nuevasListasGuardadas.splice(index, 1);
+    localStorage.setItem("listasGuardadas", JSON.stringify(nuevasListasGuardadas));
+    setListasGuardadas(nuevasListasGuardadas);
   };
 
   const eliminarChecks = (index) => {
@@ -103,33 +61,12 @@ const Lista = () => {
     const opciones = opcionesRef.current?.value || '';
 
     if (producto.trim() === "" || cantidad.trim() === "" || opciones === "") {
-      showError("Por favor, rellene todos los campos");
+      alert("Por favor, rellene todos los campos");
     } else {
-      const nuevoProducto = { id: Date.now(), producto, cantidad, opciones };
+      const nuevoProducto = { id: lista.length + 1, producto, cantidad, opciones };
       setLista([...lista, nuevoProducto]);
       limpiarCampos();
     }
-  };
-
-  const eliminarProducto = (id) => {
-    const nuevaLista = lista.filter((p) => p.id !== id);
-    setLista(nuevaLista);
-  };
-
-  const handleEditProducto = (index) => {
-    const prod = lista[index];
-    setEditandoId(index);
-    setEditProducto(prod.producto);
-    setEditCantidad(prod.cantidad);
-    setEditOpciones(prod.opciones);
-  };
-
-  const handleEditProductoSubmit = (index) => {
-    const nuevaLista = [...lista];
-    nuevaLista[index] = { ...nuevaLista[index], producto: editProducto, cantidad: editCantidad, opciones: editOpciones };
-    setLista(nuevaLista);
-    setEditandoId(null);
-    showSuccess('Producto actualizado');
   };
 
   const compartirLista = (listaACompartir) => {
@@ -142,69 +79,43 @@ const Lista = () => {
         .then(() => console.log('Compartido correctamente.'))
         .catch((error) => console.log('Error al compartir:', error));
     } else {
-      showError('La API Web Share no está disponible en este dispositivo.');
+      console.log('La API Web Share no est├í disponible en este dispositivo.');
     }
   };
 
-  const descargarListaImagen = async (listaToDownload, fecha) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.width = '600px';
-    tempDiv.style.background = 'white';
-    tempDiv.style.padding = '30px';
-    tempDiv.style.fontFamily = 'Arial, sans-serif';
-    tempDiv.innerHTML = `
-      <div style="display:flex;align-items:center;margin-bottom:25px;padding-bottom:15px;border-bottom:3px solid #FF9800;">
-        <div style="font-size:24px;font-weight:bold;color:#FF9800;">TICKETERA</div>
-        <div style="margin-left:20px;">
-          <h1 style="color:#FF9800;margin:0;font-size:24px;">MI LISTA DE COMPRAS</h1>
-          <p style="color:#666;margin:5px 0 0 0;font-size:12px;">Fecha: ${fecha}</p>
-        </div>
-      </div>
-      <div style="border:2px solid #FF9800;border-radius:8px;overflow:hidden;">
-        <div style="display:flex;background:linear-gradient(135deg,orange,orangered);color:white;font-weight:bold;padding:12px;font-size:14px;">
-          <span style="flex:2;">PRODUCTO</span>
-          <span style="flex:0.5;text-align:center;">CANT.</span>
-          <span style="flex:1;text-align:center;">CATEGORÍA</span>
-        </div>
-        ${listaToDownload.map((p, i) => `
-          <div style="display:flex;padding:10px 12px;font-size:13px;background:${i % 2 === 0 ? '#fff' : '#f9f9f9'};">
-            <span style="flex:2;font-weight:500;">${p.producto.toUpperCase()}</span>
-            <span style="flex:0.5;text-align:center;font-weight:bold;color:#FF9800;">${p.cantidad}</span>
-            <span style="flex:1;text-align:center;font-size:11px;color:#666;">${p.opciones}</span>
-          </div>
-        `).join('')}
-        <div style="display:flex;justify-content:space-between;background:#333;color:white;padding:12px;font-weight:bold;">
-          <span>TOTAL:</span>
-          <span>${listaToDownload.length} artículos</span>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:20px;padding-top:15px;border-top:1px solid #ddd;">
-        <p style="color:#999;font-size:11px;margin:0;">Generado por TICKETERA App</p>
-      </div>
-    `;
-    document.body.appendChild(tempDiv);
+  const descargarListaImagen = async () => {
+    if (lista.length === 0) {
+      alert("No hay productos en la lista para descargar");
+      return;
+    }
+
+    const element = listaImageRef.current;
+    if (!element) return;
 
     try {
-      const canvas = await html2canvas(tempDiv, {
+      const canvas = await html2canvas(element, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
         logging: false
       });
+
       const link = document.createElement('a');
-      link.download = `lista-compras-${fecha.replace(/\//g, '-')}.png`;
+      link.download = `lista-compras-${new Date().toISOString().split('T')[0]}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      showSuccess('Lista descargada como imagen');
     } catch (error) {
       console.error('Error al descargar la imagen:', error);
-      showError('Error al descargar la imagen');
-    } finally {
-      document.body.removeChild(tempDiv);
+      alert('Error al descargar la imagen');
     }
   };
+
+  useEffect(() => {
+    const listasGuardadasJson = localStorage.getItem("listasGuardadas");
+    if (listasGuardadasJson) {
+      setListasGuardadas(JSON.parse(listasGuardadasJson));
+    }
+  }, []);
 
   return (
     <div className="lista-page">
@@ -219,16 +130,14 @@ const Lista = () => {
               <Link className={isActive('/home')} to="/home">HOME</Link>
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
+              <Link className={isActive('/lista')} to="/lista">LISTA</Link>`n              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
                 <li><Link to="/home">HOME</Link></li>
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
+                <li><Link to="/lista">LISTA</Link></li>`n                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -269,7 +178,12 @@ const Lista = () => {
               <h2 className="titulo-mi-lista">MI LISTA DE COMPRAS:</h2>
               <div className="lista-header-buttons">
                 {lista.length > 0 && (
-                  <button className="eliminar" onClick={guardarListaEnFirestore}>GUARDAR</button>
+                  <>
+                    <button className="boton-descargar" onClick={descargarListaImagen}>
+                      DESCARGAR LISTA
+                    </button>
+                    <button className="eliminar" onClick={guardarListaEnLocalStorage}>GUARDAR</button>
+                  </>
                 )}
               </div>
             </div>
@@ -291,7 +205,7 @@ const Lista = () => {
                 <div className="producto-titulo">
                   <span>PRODUCTO</span>
                   <span>CANT.</span>
-                  <span>CATEGORÍA</span>
+                  <span>CATEGOR├ìA</span>
                 </div>
                 {lista.map((producto, index) => (
                   <div key={producto.id} className={`producto-fila ${index % 2 === 0 ? 'fila-par' : 'fila-impar'}`}>
@@ -302,7 +216,7 @@ const Lista = () => {
                 ))}
                 <div className="producto-total">
                   <span>TOTAL:</span>
-                  <span>{lista.length} artículos</span>
+                  <span>{lista.length} art├¡culos</span>
                 </div>
               </div>
               <div className="imagen-footer">
@@ -310,82 +224,55 @@ const Lista = () => {
               </div>
             </div>
 
-            {lista.map((producto, index) => {
-              const isEditing = editandoId === index;
-              return (
-                <div className="tabla" key={producto.id}>
-                  {isEditing ? (
-                    <>
-                      <input type="text" value={editProducto} onChange={(e) => setEditProducto(e.target.value)} className="edit-input" style={{textTransform: 'uppercase'}} />
-                      <input type="number" value={editCantidad} onChange={(e) => setEditCantidad(e.target.value)} className="edit-input" />
-                      <select value={editOpciones} onChange={(e) => setEditOpciones(e.target.value)} className="edit-input">
-                        <option value="Mercadona">Mercadona</option>
-                        <option value="Carrefour">Carrefour</option>
-                        <option value="Lidl">Lidl</option>
-                        <option value="Aldi">Aldi</option>
-                        <option value="Dia">Dia</option>
-                        <option value="Consum">Consum</option>
-                        <option value="Eroski">Eroski</option>
-                        <option value="Otro">Otro</option>
-                      </select>
-                      <div className="edit-actions">
-                        <button className="eliminar1" onClick={() => handleEditProductoSubmit(index)}>💾</button>
-                        <button className="eliminar2" onClick={() => setEditandoId(null)}>✕</button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="producto">{producto.producto.toUpperCase()}</div>
-                      <div className="cantidad">{producto.cantidad}</div>
-                      <div className="precio">{producto.opciones}</div>
-                      <button className="eliminar" onClick={() => eliminarProducto(producto.id)}>ELIMINAR</button>
-                      <button className="editar-btn" onClick={() => handleEditProducto(index)}>✏️</button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+            {lista.map((producto) => (
+              <div className="tabla" key={producto.id}>
+                <div className="producto">{producto.producto.toUpperCase()}</div>
+                <div className="cantidad">{producto.cantidad}</div>
+                <div className="precio">{producto.opciones}</div>
+                <button
+                  className="eliminar"
+                  onClick={() => {
+                    const nuevaLista = lista.filter((p) => p.id !== producto.id);
+                    setLista(nuevaLista);
+                  }}
+                >
+                  ELIMINAR
+                </button>
+              </div>
+            ))}
           </div>
 
           <div className='mis-listas'>
             <h2 className='titulo-mi-lista'>MIS LISTAS GUARDADAS:</h2>
-            {loading ? (
-              <p className="loading-text">Cargando listas...</p>
-            ) : listasGuardadas.length === 0 ? (
-              <p className="empty-text">No hay listas guardadas aún</p>
-            ) : (
-              listasGuardadas.map((listaGuardada, index) => (
-                <div className='ticket-card' key={listaGuardada.id || index} data-index={index}>
-                  <div className="ticket-header">
-                    <img src={logo3} alt="Logo" className="ticket-logo" />
-                    <div className="ticket-info">
-                      <span className="ticket-date">🗓️ {listaGuardada.fecha}</span>
-                      <span className="ticket-items">📦 {listaGuardada.lista.length} artículos</span>
-                    </div>
-                  </div>
-                  <div className="ticket-body">
-                    {listaGuardada.lista.map((producto) => (
-                      <div className="ticket-row" key={producto.id}>
-                        <input type="checkbox" className="check" id={`check-${index}-${producto.id}`} />
-                        <span className="ticket-product">{producto.producto.toUpperCase()}</span>
-                        <span className="ticket-qty">x{producto.cantidad}</span>
-                        <span className="ticket-store">{producto.opciones}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="ticket-actions">
-                    <button className="eliminar3" onClick={() => eliminarChecks(index)}>ELIMINAR CHECKS</button>
-                    <button className="eliminar1" onClick={() => {
-                      const listaActual = [...lista, ...listaGuardada.lista.map((p, i) => ({...p, id: Date.now() + i}))];
-                      setLista(listaActual);
-                    }}>AÑADIR A ACTUAL</button>
-                    <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
-                    <button className='boton-descargar-sm' onClick={() => descargarListaImagen(listaGuardada.lista, listaGuardada.fecha)}>📥 DESCARGAR</button>
-                    <button className='eliminar4' onClick={() => eliminarListaGuardada(index, listaGuardada.id)}>ELIMINAR LISTA</button>
+            {listasGuardadas.map((listaGuardada, index) => (
+              <div className='ticket-card' key={index} data-index={index}>
+                <div className="ticket-header">
+                  <img src={logo3} alt="Logo" className="ticket-logo" />
+                  <div className="ticket-info">
+                    <span className="ticket-date">­ƒùô´©Å {listaGuardada.fecha}</span>
+                    <span className="ticket-items">­ƒôª {listaGuardada.lista.length} art├¡culos</span>
                   </div>
                 </div>
-              ))
-            )}
+                <div className="ticket-body">
+                  {listaGuardada.lista.map((producto) => (
+                    <div className="ticket-row" key={producto.id}>
+                      <input type="checkbox" className="check" id={`check-${index}-${producto.id}`} />
+                      <span className="ticket-product">{producto.producto.toUpperCase()}</span>
+                      <span className="ticket-qty">x{producto.cantidad}</span>
+                      <span className="ticket-store">{producto.opciones}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="ticket-actions">
+                  <button className="eliminar3" onClick={() => eliminarChecks(index)}>ELIMINAR CHECKS</button>
+                  <button className="eliminar1" onClick={() => {
+                    const listaActual = [...lista, ...listaGuardada.lista.map((p, i) => ({...p, id: lista.length + i + 1}))];
+                    setLista(listaActual);
+                  }}>A├æADIR A ACTUAL</button>
+                  <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
