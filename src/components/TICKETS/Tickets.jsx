@@ -1,64 +1,40 @@
-<<<<<<< HEAD
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-=======
-﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 import { v4 as uuid } from 'uuid';
-import Tesseract from 'tesseract.js';
+import logo3 from '../IMG/img23.jpg.jpeg';
 import './Tickets.css';
-import Layout from '../Layout/Layout';
-import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../ToastProvider';
-import { getTickets, addTicket, deleteTicket } from '../../service/firestoreService';
+import Footer from '../FOOTER/Footer';
 
 const Tickets = () => {
-  const { showSuccess, showError } = useToast();
   const [gastos, setGastos] = useState([]);
+  const [descripcion, setDescripcion] = useState('');
   const [cantidad, setCantidad] = useState('');
   const [opcion, setOpcion] = useState('');
   const [ordenamiento, setOrdenamiento] = useState('asc');
   const [ordenActual, setOrdenActual] = useState('fecha');
   const [vista, setVista] = useState('todos');
   const [mesSeleccionado, setMesSeleccionado] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [scanning, setScanning] = useState(false);
-  const [scanProgress, setScanProgress] = useState(0);
-  const [showCamera, setShowCamera] = useState(false);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const { user } = useAuth();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
+
+  Date.prototype.getWeek = function() {
+    const onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil(((this - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+  };
 
   useEffect(() => {
-    const loadGastos = async () => {
-      if (!user) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const tickets = await getTickets(user.uid);
-        setGastos(tickets);
-      } catch (err) {
-        console.error('Error al cargar los gastos:', err);
-        setError('Error al cargar los gastos. Intenta de nuevo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadGastos();
-  }, [user]);
-
-  const getWeekNumber = (date) => {
-    const onejan = new Date(date.getFullYear(), 0, 1);
-    return Math.ceil(((date - onejan) / 86400000 + onejan.getDay() + 1) / 7);
-  };
+    const storedGastos = localStorage.getItem('gastos');
+    if (storedGastos) {
+      setGastos(JSON.parse(storedGastos));
+    }
+  }, []);
 
   const ordenarGastos = useCallback((a, b) => {
     switch (ordenActual) {
       case 'cantidad':
         return ordenamiento === 'asc' ? a.cantidad - b.cantidad : b.cantidad - a.cantidad;
       case 'opcion':
-        return ordenamiento === 'asc' ? (a.opcion || '').localeCompare(b.opcion || '') : (b.opcion || '').localeCompare(a.opcion || '');
+        return ordenamiento === 'asc' ? a.opcion.localeCompare(b.opcion) : b.opcion.localeCompare(a.opcion);
       default:
         return ordenamiento === 'asc' ? new Date(a.fecha) - new Date(b.fecha) : new Date(b.fecha) - new Date(a.fecha);
     }
@@ -96,22 +72,10 @@ const Tickets = () => {
     return 0;
   };
 
-<<<<<<< HEAD
-  const borrarMes = async (mesAno) => {
-    const grupos = agruparPorMes();
-    const gastosDelMes = grupos[mesAno] || [];
-    
-    for (const gasto of gastosDelMes) {
-      if (gasto.id) {
-        await deleteTicket(gasto.id, user.uid);
-      }
-=======
   const borrarMes = (mesAno) => {
-    if (!window.confirm(`┬┐Est├ís seguro de eliminar todos los gastos de ${formatearMesAno(mesAno)}?`)) {
+    if (!window.confirm(`¿Estás seguro de eliminar todos los gastos de ${formatearMesAno(mesAno)}?`)) {
       return;
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
     }
-    
     const nuevosGastos = gastos.filter(gasto => {
       const fecha = new Date(gasto.fecha);
       const gastoMesAno = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
@@ -120,7 +84,7 @@ const Tickets = () => {
     setGastos(nuevosGastos);
     setVista('todos');
     setMesSeleccionado(null);
-    showSuccess('Gastos del mes eliminados');
+    localStorage.setItem('gastos', JSON.stringify(nuevosGastos));
   };
 
   const verMes = (mesAno) => {
@@ -133,46 +97,31 @@ const Tickets = () => {
     setMesSeleccionado(null);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!user) {
-      showError("Debes iniciar sesión para guardar tickets");
-      return;
-    }
-
-    if (!cantidad || !opcion) {
-      showError("Por favor, completa todos los campos");
-      return;
-    }
-
     const id = uuid();
     const date = new Date().toISOString().split('T')[0];
     const nuevoGasto = {
       id,
+      descripcion,
       cantidad: parseInt(cantidad),
       opcion,
-      fecha: date,
-      userId: user.uid
+      fecha: date
     };
-
-    try {
-      const ticketGuardado = await addTicket(nuevoGasto, user.uid);
-      setGastos(prev => [ticketGuardado, ...prev]);
-      setCantidad('');
-      setOpcion('');
-      showSuccess("Ticket guardado correctamente");
-    } catch (error) {
-      console.error('Error al guardar el gasto:', error);
-      showError("Error al guardar el ticket: " + error.message);
-    }
+    const nuevosGastos = [...gastos, nuevoGasto];
+    const gastosOrdenadosNuevos = nuevosGastos.sort(ordenarGastos);
+    setGastos(gastosOrdenadosNuevos);
+    setDescripcion('');
+    setCantidad('');
+    localStorage.setItem('gastos', JSON.stringify(gastosOrdenadosNuevos));
   };
 
   const calcularTotalSemana = () => {
     const fechaActual = new Date();
-    const semanaActual = getWeekNumber(fechaActual);
+    const semanaActual = fechaActual.getWeek();
     const gastosSemanaActual = gastos.filter((gasto) => {
       const fechaGasto = new Date(gasto.fecha);
-      return getWeekNumber(fechaGasto) === semanaActual;
+      return fechaGasto.getWeek() === semanaActual;
     });
     return gastosSemanaActual.reduce((acum, gasto) => acum + gasto.cantidad, 0);
   };
@@ -198,15 +147,10 @@ const Tickets = () => {
     return gastosAnioActual.reduce((acum, gasto) => acum + gasto.cantidad, 0);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteTicket(id, user.uid);
-      setGastos(prev => prev.filter(gasto => gasto.id !== id));
-      showSuccess('Gasto eliminado');
-    } catch (error) {
-      console.error('Error al eliminar el gasto:', error);
-      showError('Error al eliminar el gasto');
-    }
+  const handleDelete = (id) => {
+    const nuevosGastos = gastos.filter((gasto) => gasto.id !== id);
+    setGastos(nuevosGastos);
+    localStorage.setItem('gastos', JSON.stringify(nuevosGastos));
   };
 
   const handleOrden = (campo) => {
@@ -222,168 +166,7 @@ const Tickets = () => {
   const totalMes = calcularTotalMes();
   const totalAnio = calcularTotalAnio();
 
-  const detectSupermarket = (text) => {
-    const textLower = text.toLowerCase();
-    const supermarkets = {
-      'mercadona': ['mercadona'],
-      'carrefour': ['carrefour'],
-      'lidl': ['lidl'],
-      'dia': ['dia', 'dIA'],
-      'eroski': ['eroski'],
-      'consum': ['consum'],
-      'aldi': ['aldi']
-    };
-    
-    for (const [key, keywords] of Object.entries(supermarkets)) {
-      for (const kw of keywords) {
-        if (textLower.includes(kw)) {
-          return key.charAt(0).toUpperCase() + key.slice(1);
-        }
-      }
-    }
-    return '';
-  };
-
-  const extractTotal = (text) => {
-    const patterns = [
-      /total[:\s]*(\d+[.,]\d{2})/i,
-      /importe[:\s]*(\d+[.,]\d{2})/i,
-      /a\s*pagar[:\s]*(\d+[.,]\d{2})/i,
-      /subtotal[:\s]*(\d+[.,]\d{2})/i,
-      /(\d+[.,]\d{2})\s*€/i,
-      /€\s*(\d+[.,]\d{2})/i,
-    ];
-    
-    for (const pattern of patterns) {
-      const match = text.match(pattern);
-      if (match) {
-        const num = match[1].replace(',', '.');
-        return parseFloat(num);
-      }
-    }
-    return null;
-  };
-
-  const handleScanTicket = async (imageSource) => {
-    setScanning(true);
-    setScanProgress(0);
-    
-    try {
-      const result = await Tesseract.recognize(
-        imageSource,
-        'spa+eng',
-        {
-          logger: (m) => {
-            if (m.status === 'recognizing text') {
-              setScanProgress(Math.round(m.progress * 100));
-            }
-          }
-        }
-      );
-      
-      const text = result.data.text;
-      console.log('Texto extraído:', text);
-      
-      const total = extractTotal(text);
-      const supermercado = detectSupermarket(text);
-      
-      if (total) {
-        setCantidad(total.toString());
-        if (supermercado) {
-          setOpcion(supermercado);
-        }
-        showSuccess(`Ticket escaneado: ${total.toFixed(2)}€${supermercado ? ` - ${supermercado}` : ''}`);
-      } else {
-        showError('No se pudo detectar el total del ticket. Intenta una foto más clara.');
-      }
-    } catch (error) {
-      console.error('Error escaneando:', error);
-      showError('Error al escanear el ticket');
-    } finally {
-      setScanning(false);
-      setScanProgress(0);
-      setShowCamera(false);
-    }
-  };
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        handleScanTicket(event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setShowCamera(true);
-      }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      showError('No se pudo acceder a la cámara');
-    }
-  };
-
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const video = videoRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0);
-      const imageData = canvas.toDataURL('image/jpeg');
-      
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-      }
-      setShowCamera(false);
-      handleScanTicket(imageData);
-    }
-  };
-
-  const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-    }
-    setShowCamera(false);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
-
   return (
-<<<<<<< HEAD
-    <Layout>
-      <div className="tickets-container">
-        <div className="botones-vista">
-          <button className='boton-tickets' onClick={() => setVista('todos')}>Ver Todos los Gastos</button>
-          <button className='boton-tickets' onClick={() => setVista('meses')}>Ver por Meses</button>
-          <label className='boton-tickets scan-btn'>
-            📷 Escanear Ticket
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment"
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-            />
-          </label>
-          {vista === 'mes' && <button className='boton-tickets' onClick={volverATodos}>Volver</button>}
-=======
     <div className="tickets-page">
       <section className='section-header'>
         <header className='header_home'>
@@ -395,6 +178,7 @@ const Tickets = () => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -402,6 +186,7 @@ const Tickets = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -439,13 +224,13 @@ const Tickets = () => {
                 <thead>
                   <tr>
                     <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
-                      Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
-                      Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
-                      Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                      Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
                     </th>
                     <th>Acciones</th>
                   </tr>
@@ -466,7 +251,7 @@ const Tickets = () => {
               <div className="totales">
                 <p>Total Semana: {totalSemana}</p>
                 <p>Total Mes: {totalMes}</p>
-                <p>Total A├▒o: {totalAnio}</p>
+                <p>Total Año: {totalAnio}</p>
               </div>
             </div>
           )}
@@ -514,137 +299,10 @@ const Tickets = () => {
               </div>
             </div>
           )}
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
         </div>
-        {scanning && (
-          <div className="scan-progress">
-            <p>Escaneando ticket... {scanProgress}%</p>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${scanProgress}%` }}></div>
-            </div>
-          </div>
-        )}
-        <form className='form3' onSubmit={handleSubmit}>
-          <h3>AGREGAR GASTO:</h3>
-          <label className='label-form3' htmlFor="gasto">Gasto:</label>
-          <input className='input-form3' type="number" id="gasto" value={cantidad} onChange={(e) => setCantidad(e.target.value)} min="0" step="0.01" required />
-          
-          <label className='label-form3' htmlFor="opcion">Opcion:</label>
-            <select id="opcion-t" value={opcion} onChange={(e) => setOpcion(e.target.value)} required>
-            <option value="">Seleccione supermercado</option>
-            <option value="Mercadona">Mercadona</option>
-            <option value="Carrefour">Carrefour</option>
-            <option value="Lidl">Lidl</option>
-            <option value="Aldi">Aldi</option>
-            <option value="Dia">Dia</option>
-            <option value="Consum">Consum</option>
-            <option value="Eroski">Eroski</option>
-            <option value="Otro">Otro</option>
-          </select>
-          <button className='boton-tickets' type="submit" disabled={scanning}>AGREGAR</button>
-        </form>
-        {loading ? (
-          <div className="loading">Cargando...</div>
-        ) : error ? (
-          <div className="error-message" style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
-            {error}
-          </div>
-        ) : vista === 'todos' && (
-          <div className='div-del-body2'>
-            <table className='table1'>
-              <thead>
-                <tr>
-                  <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
-                    Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-                  </th>
-                  <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
-                    Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-                  </th>
-                  <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
-                    Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? '↑' : '↓') : ''}
-                  </th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {gastosOrdenados.map((gasto) => (
-                  <tr key={gasto.id}>
-                    <td>{gasto.fecha}</td>
-                    <td>{gasto.opcion}</td>
-                    <td>{gasto.cantidad}</td>
-                    <td>
-                      <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="totales">
-              <p>Total Semana: {totalSemana}</p>
-              <p>Total Mes: {totalMes}</p>
-              <p>Total Año: {totalAnio}</p>
-            </div>
-          </div>
-        )}
-        {vista === 'meses' && (
-          <div className='div-del-body2'>
-            <h3>Meses con Gastos:</h3>
-            <ul className="lista-meses">
-              {Object.keys(agruparPorMes()).sort().reverse().map(mesAno => (
-                <li key={mesAno} className="mes-item">
-                  <span>{formatearMesAno(mesAno)} - Total: {calcularTotalMesEspecifico(mesAno)}</span>
-                  <button className='boton-tickets' onClick={() => verMes(mesAno)}>Ver Gastos</button>
-                  <button className='boton-tickets eliminar' onClick={() => borrarMes(mesAno)}>Borrar Mes</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {vista === 'mes' && mesSeleccionado && agruparPorMes()[mesSeleccionado] && (
-          <div className='div-del-body2'>
-            <h3>Gastos del Mes: {formatearMesAno(mesSeleccionado)}</h3>
-            <table className='table1'>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Opcion</th>
-                  <th>Cantidad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agruparPorMes()[mesSeleccionado].sort(ordenarGastos).map((gasto) => (
-                  <tr key={gasto.id}>
-                    <td>{gasto.fecha}</td>
-                    <td>{gasto.opcion}</td>
-                    <td>{gasto.cantidad}</td>
-                    <td>
-                      <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="totales">
-              <p>Total del Mes: {calcularTotalMesEspecifico(mesSeleccionado)}</p>
-            </div>
-          </div>
-        )}
-      </div>
-      {showCamera && (
-        <div className="camera-modal">
-          <div className="camera-content">
-            <h3>Captura el ticket</h3>
-            <video ref={videoRef} autoPlay playsInline className="camera-video"></video>
-            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-            <div className="camera-buttons">
-              <button className='boton-tickets' onClick={capturePhoto}>📸 Capturar</button>
-              <button className='eliminar' onClick={stopCamera}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </Layout>
+      </section>
+      <Footer />
+    </div>
   );
 };
 

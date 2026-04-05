@@ -1,22 +1,18 @@
-﻿import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-=======
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo3 from "../IMG/img23.jpg.jpeg";
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 import './Precio.css';
 import { 
   searchProductsOpenFoodFacts, 
   getProductsByCategory,
+  getProductWithStoredPrices,
   supermarkets, 
   categories,
 } from '../../service/supermarketService';
 import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
-import Layout from '../Layout/Layout';
-import { useToast } from '../ToastProvider';
+import Footer from '../FOOTER/Footer';
 
 const Precio = () => {
-  const { showSuccess } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -25,6 +21,8 @@ const Precio = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [manualPrices, setManualPrices] = useState({});
   const [showPriceForm, setShowPriceForm] = useState(false);
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   useEffect(() => {
     const stored = loadPricesFromStorage();
@@ -79,17 +77,16 @@ const Precio = () => {
     supermarkets.forEach(s => {
       const key = `${product.name}_${s.id}`;
       if (stored[key] !== undefined) {
-        storedForProduct[key] = stored[key];
+        storedForProduct[s.id] = stored[key];
       }
     });
     setManualPrices(storedForProduct);
   };
 
   const handleAddManualPrice = (supermarketId, value) => {
-    if (!selectedProduct) return;
     setManualPrices(prev => ({
       ...prev,
-      [`${selectedProduct.name}_${supermarketId}`]: value ? parseFloat(value) : null
+      [supermarketId]: value ? parseFloat(value) : null
     }));
   };
 
@@ -97,15 +94,13 @@ const Precio = () => {
     if (!selectedProduct) return;
 
     const allPrices = loadPricesFromStorage();
-    Object.entries(manualPrices)
-      .filter(([key]) => key.startsWith(selectedProduct.name + '_'))
-      .forEach(([key, price]) => {
-        if (price !== null && price !== undefined && price !== '') {
-          allPrices[key] = price;
-        }
-      });
+    Object.entries(manualPrices).forEach(([supermarketId, price]) => {
+      if (price !== null && price !== undefined && price !== '') {
+        allPrices[`${selectedProduct.name}_${supermarketId}`] = price;
+      }
+    });
     savePricesToStorage(allPrices);
-    showSuccess('Precios guardados correctamente');
+    alert('Precios guardados correctamente');
   };
 
   const handleClearSearch = () => {
@@ -124,7 +119,7 @@ const Precio = () => {
       const key = `${selectedProduct.name}_${s.id}`;
       return {
         id: s.id,
-        price: manualPrices[key] ?? stored[key] ?? null,
+        price: manualPrices[s.id] ?? stored[key] ?? null,
         color: s.color,
         supermarket: s.name,
       };
@@ -137,7 +132,7 @@ const Precio = () => {
     const stored = loadPricesFromStorage();
     return supermarkets.map(s => {
       const key = `${selectedProduct.name}_${s.id}`;
-      const price = manualPrices[key] ?? stored[key] ?? null;
+      const price = manualPrices[s.id] ?? stored[key] ?? null;
       return {
         id: s.id,
         supermarket: s.name,
@@ -170,74 +165,6 @@ const Precio = () => {
   const hasAnyPrice = () => getPricesWithValues().length > 0;
 
   return (
-<<<<<<< HEAD
-    <Layout>
-        <div className='precio-container'>
-        <div className='precio-header'>
-          <h1>COMPARADOR DE PRECIOS</h1>
-          <p>Encuentra los mejores precios en supermercados de Valencia</p>
-        </div>
-
-          {!hasSearched && !loading && (
-            <div className='precio-info'>
-              <h2>¿Cómo funciona?</h2>
-              <div className='info-steps'>
-                <div className='step'>
-                  <div className='step-icon'>1</div>
-                  <p>Busca un producto o selecciona una categoría</p>
-                </div>
-                <div className='step'>
-                  <div className='step-icon'>2</div>
-                  <p>Selecciona el producto y añade los precios que conoces</p>
-                </div>
-                <div className='step'>
-                  <div className='step-icon'>3</div>
-                  <p>Compara y ahorra en tu próxima compra</p>
-                </div>
-              </div>
-              <p className='info-note'>
-                * Las imágenes provienen de Open Food Facts (España). Añade los precios que ves en los supermercados.
-              </p>
-            </div>
-          )}
-
-          <div className='search-section'>
-            <div className='search-layout'>
-              <div className='categories-nav'>
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                    onClick={() => handleCategoryClick(cat.id)}
-                  >
-                    <span className='cat-icon'>{cat.icon}</span>
-                    <span className='cat-name'>{cat.name}</span>
-                  </button>
-                ))}
-              </div>
-              <div className='search-form-container'>
-                <form className='precio-search' onSubmit={handleSearch}>
-                  <div className='search-input-container'>
-                    <input
-                      type="text"
-                      placeholder="Buscar producto (ej: leche, aceite, arroz...)"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className='search-input'
-                    />
-                    <button type="submit" className='search-button' disabled={loading}>
-                      {loading ? '...' : 'BUSCAR'}
-                    </button>
-                    {(hasSearched || searchTerm) && (
-                      <button type="button" className='clear-button' onClick={handleClearSearch}>
-                        X
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </div>
-            </div>
-=======
     <div>
       <section className='section-header'>
         <header className='header_home'>
@@ -249,6 +176,7 @@ const Precio = () => {
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -256,6 +184,7 @@ const Precio = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -263,50 +192,46 @@ const Precio = () => {
       </section>
 
       <section className='body2'>
-        <div className='precio-container'>
-          <div className='precio-header'>
-            <h1>COMPARADOR DE PRECIOS</h1>
-            <p>Encuentra los mejores precios en supermercados de Valencia</p>
-          </div>
-
-          <div className='search-section'>
-            <div className='search-layout'>
-              <div className='categories-nav'>
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                    onClick={() => handleCategoryClick(cat.id)}
-                  >
-                    <span className='cat-icon'>{cat.icon}</span>
-                    <span className='cat-name'>{cat.name}</span>
-                  </button>
-                ))}
-              </div>
-              <div className='search-form-container'>
-                <form className='precio-search' onSubmit={handleSearch}>
-                  <div className='search-input-container'>
-                    <input
-                      type="text"
-                      placeholder="Buscar producto (ej: leche, aceite, arroz...)"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className='search-input'
-                    />
-                    <button type="submit" className='search-button' disabled={loading}>
-                      {loading ? '...' : '­ƒöì BUSCAR'}
-                    </button>
-                    {(hasSearched || searchTerm) && (
-                      <button type="button" className='clear-button' onClick={handleClearSearch}>
-                        Ô£ò
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </div>
+        <div className='precio-layout'>
+          <aside className='categories-sidebar'>
+            {categories.map(cat => (
+              <button
+                key={cat.id}
+                className={`category-sidebar-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(cat.id)}
+              >
+                <span className='cat-icon'>{cat.icon}</span>
+                <span className='cat-name'>{cat.name}</span>
+              </button>
+            ))}
+          </aside>
+          <div className='precio-container'>
+            <div className='precio-header'>
+              <h1>COMPARADOR DE PRECIOS</h1>
+              <p>Encuentra los mejores precios en supermercados de Valencia</p>
             </div>
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
-          </div>
+
+            <div className='search-section'>
+              <form className='precio-search' onSubmit={handleSearch}>
+                <div className='search-input-container'>
+                  <input
+                    type="text"
+                    placeholder="Buscar producto (ej: leche, aceite, arroz...)"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className='search-input'
+                  />
+                  <button type="submit" className='search-button' disabled={loading}>
+                    {loading ? '...' : '🔍 BUSCAR'}
+                  </button>
+                  {(hasSearched || searchTerm) && (
+                    <button type="button" className='clear-button' onClick={handleClearSearch}>
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
 
           {loading && (
             <div className='precio-loading'>
@@ -317,7 +242,7 @@ const Precio = () => {
 
           {!loading && hasSearched && products.length > 0 && !selectedProduct && (
             <div className='products-results'>
-              <h3>Resultados de b├║squeda ({products.length})</h3>
+              <h3>Resultados de búsqueda ({products.length})</h3>
               <div className='products-grid'>
                 {products.map((product, index) => (
                   <div 
@@ -335,7 +260,7 @@ const Precio = () => {
                       }}
                     />
                     <div className='product-image-placeholder' style={{display: 'none'}}>
-                      <span>­ƒôª</span>
+                      <span>📦</span>
                     </div>
                     <div className='product-info'>
                       <h4>{product.name}</h4>
@@ -349,8 +274,8 @@ const Precio = () => {
 
           {!loading && hasSearched && products.length === 0 && (
             <div className='precio-empty'>
-              <p>No se encontraron productos para tu b├║squeda.</p>
-              <p>Intenta con otro producto o selecciona una categor├¡a.</p>
+              <p>No se encontraron productos para tu búsqueda.</p>
+              <p>Intenta con otro producto o selecciona una categoría.</p>
             </div>
           )}
 
@@ -363,7 +288,7 @@ const Precio = () => {
                   setShowPriceForm(false);
                 }}
               >
-                ÔåÉ Volver a resultados
+                ← Volver a resultados
               </button>
 
               <div className='selected-product'>
@@ -377,7 +302,7 @@ const Precio = () => {
                   }}
                 />
                 <div className='selected-image-placeholder' style={{display: 'none'}}>
-                  <span>­ƒôª</span>
+                  <span>📦</span>
                 </div>
                 <div className='selected-info'>
                   <h2>{selectedProduct.name}</h2>
@@ -388,11 +313,7 @@ const Precio = () => {
 
               {showPriceForm && (
                 <div className='manual-prices-form'>
-<<<<<<< HEAD
-                  <h4>Añade los precios que has visto:</h4>
-=======
-                  <h4>­ƒÆ░ A├▒ade los precios que has visto:</h4>
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
+                  <h4>💰 Añade los precios que has visto:</h4>
                   <p className='form-hint'>Selecciona el supermercado e introduce el precio</p>
                   
                   <div className='price-input-row'>
@@ -410,11 +331,10 @@ const Precio = () => {
                       <input
                         type="number"
                         step="0.01"
-                        min="0"
                         placeholder="0.00"
                         className='price-input'
                       />
-                      <span>Ôé¼</span>
+                      <span>€</span>
                     </div>
                     
                     <button 
@@ -429,50 +349,25 @@ const Precio = () => {
                         }
                       }}
                     >
-<<<<<<< HEAD
-                      + Añadir
-=======
-                      Ô×ò A├▒adir
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
+                      ➕ Añadir
                     </button>
                   </div>
 
                   <div className='added-prices'>
-<<<<<<< HEAD
-                    {Object.entries(manualPrices)
-                      .filter(([key]) => selectedProduct && key.startsWith(selectedProduct.name + '_'))
-                      .filter(([, val]) => val && val !== '')
-                      .map(([key, price]) => {
-                        const supermarketId = key.split('_').slice(1).join('_');
-                        const superm = supermarkets.find(s => s.id === supermarketId);
-                        if (!superm) return null;
-                        return (
-                          <div key={key} className='added-price-chip' style={{ borderColor: superm.color }}>
-                            <span style={{ color: superm.color }}>{superm.name}</span>
-                            <span>{parseFloat(price).toFixed(2)}€</span>
-                            <button 
-                              onClick={() => handleAddManualPrice(supermarketId, null)}
-                              className='remove-price-btn'
-                            >X</button>
-                          </div>
-                        );
-                      })}
-=======
                     {Object.entries(manualPrices).filter(([key, val]) => val && val !== '').map(([supermarketId, price]) => {
                       const superm = supermarkets.find(s => s.id === supermarketId);
                       if (!superm) return null;
                       return (
                         <div key={supermarketId} className='added-price-chip' style={{ borderColor: superm.color }}>
                           <span style={{ color: superm.color }}>{superm.name}</span>
-                          <span>{parseFloat(price).toFixed(2)}Ôé¼</span>
+                          <span>{parseFloat(price).toFixed(2)}€</span>
                           <button 
                             onClick={() => handleAddManualPrice(supermarketId, null)}
                             className='remove-price-btn'
-                          >Ô£ò</button>
+                          >✕</button>
                         </div>
                       );
                     })}
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
                   </div>
 
                   <button 
@@ -480,7 +375,7 @@ const Precio = () => {
                     onClick={handleSaveManualPrices}
                     disabled={!hasAnyPrice()}
                   >
-                    ­ƒÆ¥ Guardar precios ({getPricesWithValues().length})
+                    💾 Guardar precios ({getPricesWithValues().length})
                   </button>
                 </div>
               )}
@@ -488,21 +383,21 @@ const Precio = () => {
               {hasAnyPrice() && (
                 <div className='precio-summary'>
                   <div className='summary-card'>
-                    <span className='summary-label'>Precio m├ís bajo</span>
+                    <span className='summary-label'>Precio más bajo</span>
                     <span className='summary-value' style={{ color: '#4CAF50' }}>
-                      {getLowestPrice()?.toFixed(2)}Ôé¼
+                      {getLowestPrice()?.toFixed(2)}€
                     </span>
                   </div>
                   <div className='summary-card'>
-                    <span className='summary-label'>Precio m├ís alto</span>
+                    <span className='summary-label'>Precio más alto</span>
                     <span className='summary-value' style={{ color: '#f44336' }}>
-                      {getHighestPrice()?.toFixed(2)}Ôé¼
+                      {getHighestPrice()?.toFixed(2)}€
                     </span>
                   </div>
                   <div className='summary-card'>
                     <span className='summary-label'>Ahorro potencial</span>
                     <span className='summary-value' style={{ color: '#2196F3' }}>
-                      {getSavings()}Ôé¼
+                      {getSavings()}€
                     </span>
                   </div>
                 </div>
@@ -529,7 +424,7 @@ const Precio = () => {
                       <div className='card-price'>
                         {hasValue ? (
                           <>
-                            <span className='price-value'>{parseFloat(item.price).toFixed(2)}Ôé¼</span>
+                            <span className='price-value'>{parseFloat(item.price).toFixed(2)}€</span>
                           </>
                         ) : (
                           <span className='price-value-placeholder'>-</span>
@@ -537,7 +432,7 @@ const Precio = () => {
                       </div>
                       {isLowest && hasValue && pricesWithValues.length > 1 && (
                         <div className='card-ahorro'>
-                          <span>Ahorra {getSavings()}Ôé¼</span>
+                          <span>Ahorra {getSavings()}€</span>
                         </div>
                       )}
                     </div>
@@ -549,23 +444,23 @@ const Precio = () => {
 
           {!hasSearched && !loading && (
             <div className='precio-info'>
-              <h2>┬┐C├│mo funciona?</h2>
+              <h2>¿Cómo funciona?</h2>
               <div className='info-steps'>
                 <div className='step'>
                   <div className='step-icon'>1</div>
-                  <p>Busca un producto o selecciona una categor├¡a</p>
+                  <p>Busca un producto o selecciona una categoría</p>
                 </div>
                 <div className='step'>
                   <div className='step-icon'>2</div>
-                  <p>Selecciona el producto y a├▒ade los precios que conoces</p>
+                  <p>Selecciona el producto y añade los precios que conoces</p>
                 </div>
                 <div className='step'>
                   <div className='step-icon'>3</div>
-                  <p>Compara y ahorra en tu pr├│xima compra</p>
+                  <p>Compara y ahorra en tu próxima compra</p>
                 </div>
               </div>
               <p className='info-note'>
-                * Las im├ígenes provienen de Open Food Facts (Espa├▒a). A├▒ade los precios que ves en los supermercados.
+                * Las imágenes provienen de Open Food Facts (España). Añade los precios que ves en los supermercados.
               </p>
             </div>
           )}
@@ -581,17 +476,13 @@ const Precio = () => {
               ))}
             </div>
           </div>
+          </div>
         </div>
-      </Layout>
-    );
-  };
+      </section>
 
-<<<<<<< HEAD
-=======
       <Footer />
     </div>
   );
 };
 
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 export default Precio;

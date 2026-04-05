@@ -1,39 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo3 from "../IMG/img23.jpg.jpeg";
 import Footer from '../FOOTER/Footer';
 import { useAuth } from '../../context/AuthContext';
-import { getUserProfile } from '../../service/firestoreService';
 import './Home.css';
 
 const Home = () => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [userDisplayName, setUserDisplayName] = useState('');
-  const profileLoaded = useRef(false);
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      if (user && !profileLoaded.current) {
-        try {
-          const profile = await getUserProfile(user.uid);
-          if (profile && profile.displayName) {
-            setUserDisplayName(profile.displayName);
-          } else {
-            setUserDisplayName(user.displayName || user?.email?.split('@')[0] || 'Usuario');
-          }
-          profileLoaded.current = true;
-        } catch (e) {
-          console.error('Error loading profile:', e);
-          setUserDisplayName(user.displayName || user?.email?.split('@')[0] || 'Usuario');
-          profileLoaded.current = true;
-        }
-      }
-    };
-
-    loadProfile();
-  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -50,27 +25,19 @@ const Home = () => {
     <div className="home-page">
       <section className='section-header'>
         <header className='header_home'>
-          <img className='logo3' src={logo3} alt="Logo" />
+          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
-<<<<<<< HEAD
-              <li className="titulo2">TICKETERA</li>
-              <li><Link className={isActive('/home')} to="/home">HOME</Link></li>
-              <li><Link className={isActive('/precio')} to="/precio">PRECIO</Link></li>
-              <li><Link className={isActive('/tickets')} to="/tickets">TICKETS</Link></li>
-              <li><Link className={isActive('/lista')} to="/lista">LISTA</Link></li>
-              <li><Link className={isActive('/perfil')} to="/perfil">PERFIL</Link></li>
-=======
               <h2 className='titulo2'> TICKETERA</h2>
               <Link className={isActive('/home')} to="/home">HOME</Link>
               <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
               <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
               <Link className={isActive('/lista')} to="/lista">LISTA</Link>
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
+              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
             </ul>
           </nav>
           <div className="user-menu">
-            <span className="user-name">Bienvenido, <strong>{userDisplayName || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
+            <span className="user-name">Bienvenido, <strong>{user?.displayName || user?.email?.split('@')[0]}</strong></span>
             <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </header>
@@ -97,14 +64,11 @@ const Home = () => {
                 <h3>PRECIO</h3>
                 <p>Compara precios en supermercados</p>
               </Link>
-<<<<<<< HEAD
               <Link to="/perfil" className="home-card">
                 <div className="card-icon">👤</div>
                 <h3>PERFIL</h3>
-                <p>Gestiona tu perfil y sugerencias</p>
+                <p>Gestiona tu perfil</p>
               </Link>
-=======
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
             </div>
           </div>
         </div>

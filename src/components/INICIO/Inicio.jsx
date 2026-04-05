@@ -1,9 +1,5 @@
-﻿import './style.css';
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-=======
+import './style.css';
 import React, { useState } from 'react';
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 import logo from "../IMG/img23.jpg.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../FOOTER/Footer';
@@ -14,37 +10,12 @@ const Inicio = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
   const { login, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      navigate('/home', { replace: true });
-    } else {
-      setCheckingAuth(false);
-    }
-  }, [user, navigate]);
-
-  if (checkingAuth) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#f5f5f5'
-      }}>
-        <div style={{
-          textAlign: 'center',
-          color: '#FF9800',
-          fontSize: '24px',
-          fontWeight: 'bold'
-        }}>
-          Cargando...
-        </div>
-      </div>
-    );
+  if (user) {
+    navigate('/home', { replace: true });
+    return null;
   }
 
   const loginWithEmail = async () => {
@@ -63,34 +34,27 @@ const Inicio = () => {
       setLoading(false);
       switch (error.code) {
         case 'auth/user-not-found':
-          setError('No existe una cuenta con este correo electr├│nico');
+          setError('No existe una cuenta con este correo electrónico');
           break;
         case 'auth/wrong-password':
-          setError('Contrase├▒a incorrecta');
+          setError('Contraseña incorrecta');
           break;
         case 'auth/invalid-email':
-          setError('El correo electr├│nico no es v├ílido');
+          setError('El correo electrónico no es válido');
           break;
         case 'auth/too-many-requests':
-          setError('Demasiados intentos fallidos. Intenta m├ís tarde');
+          setError('Demasiados intentos fallidos. Intenta más tarde');
           break;
         case 'auth/invalid-credential':
-          setError('Credenciales inv├ílidas. Verifica tu correo y contrase├▒a');
+          setError('Credenciales inválidas. Verifica tu correo y contraseña');
           break;
         default:
-          setError('Error al iniciar sesi├│n: ' + error.message);
+          setError('Error al iniciar sesión: ' + error.message);
       }
     }
   };
 
-  const handleProtectedLink = (e) => {
-    if (!user) {
-      e.preventDefault();
-      setError('Debes iniciar sesión para acceder a esta sección');
-    }
-  };
-
-  const handleKeyDown = (e) => {
+  const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       loginWithEmail();
     }
@@ -100,30 +64,15 @@ const Inicio = () => {
     <div>
       <section className='section-header'>
         <header className='header_home'>
-          <img className='logo' src={logo} alt="Logo" />
+          <a className='container'><img className='logo' src={logo} alt="Logo" /></a>
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal">
-<<<<<<< HEAD
-              <li className="titulo2">TICKETERA</li>
-              <li><Link className='l-inicial' to="/home" onClick={handleProtectedLink}>HOME</Link></li>
-              <li><Link className='l-inicial' to="/precio" onClick={handleProtectedLink}>PRECIO</Link></li>
-              <li><Link className='l-inicial' to="/tickets" onClick={handleProtectedLink}>TICKETS</Link></li>
-              <li><Link className='l-inicial' to="/lista" onClick={handleProtectedLink}>LISTA</Link></li>
-              <li><Link className='l-inicial' to="/perfil" onClick={handleProtectedLink}>PERFIL</Link></li>
-            </ul>
-            <div className="responsive-menu">
-              <ul>
-                <li><Link to="/home" onClick={handleProtectedLink}>HOME</Link></li>
-                <li><Link to="/precio" onClick={handleProtectedLink}>PRECIO</Link></li>
-                <li><Link to="/tickets" onClick={handleProtectedLink}>TICKETS</Link></li>
-                <li><Link to="/lista" onClick={handleProtectedLink}>LISTA</Link></li>
-                <li><Link to="/perfil" onClick={handleProtectedLink}>PERFIL</Link></li>
-=======
               <h2 className='titulo2'> TICKETERA</h2>
               <Link className='l-inicial' to="/home">HOME</Link>
               <Link className='l-inicial' to="/precio">PRECIO</Link>
               <Link className='l-inicial' to="/tickets">TICKETS</Link>
               <Link className='l-inicial' to="/lista">LISTA</Link>
+              <Link className='l-inicial' to="/perfil">PERFIL</Link>
             </ul>
             <div className="responsive-menu">
               <ul>
@@ -131,7 +80,7 @@ const Inicio = () => {
                 <li><Link to="/precio">PRECIO</Link></li>
                 <li><Link to="/tickets">TICKETS</Link></li>
                 <li><Link to="/lista">LISTA</Link></li>
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
+                <li><Link to="/perfil">PERFIL</Link></li>
               </ul>
             </div>
           </nav>
@@ -144,15 +93,10 @@ const Inicio = () => {
             BIENVENIDOS A TICKETERA
           </h1>
           <p className='p_2'>WEB APP PARA LLEVAR UN CONTROL DE TUS GASTOS, TUS TICKETS Y TUS COMPRAS</p>
-          <form className='form1' onKeyDown={handleKeyDown}>
+          <form className='form1' onKeyPress={handleKeyPress}>
             <input className='input-form1'
               type="email"
-<<<<<<< HEAD
               placeholder="Correo electrónico"
-              autoComplete="email"
-=======
-              placeholder="Correo electr├│nico"
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -161,12 +105,7 @@ const Inicio = () => {
             />
             <input className='input-form1'
               type="password"
-<<<<<<< HEAD
               placeholder="Contraseña"
-              autoComplete="current-password"
-=======
-              placeholder="Contrase├▒a"
->>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -187,13 +126,13 @@ const Inicio = () => {
               </div>
             )}
             <button className='boton-form1' type="button" onClick={loginWithEmail} disabled={loading}>
-              {loading ? <span className="loading-spinner"></span> : 'INICIAR SESION'}
+              {loading ? 'CARGANDO...' : 'INICIAR SESION'}
             </button>
-            <p className="crear-cuenta">┬┐No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
-            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">┬┐Olvidaste tu contrase├▒a?</Link></p>
+            <p className="crear-cuenta">¿No tienes una cuenta? <Link to="/registro">Crea una</Link></p>
+            <p className="olvide-contrasena"><Link to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link></p>
           </form>
-          {user && !checkingAuth && (
-            <p>Bienvenido, {user.displayName || user.email?.split('@')[0]}</p>
+          {user && (
+            <p>Bienvenido, {user.displayName}</p>
           )}
         </div>
       </section>
