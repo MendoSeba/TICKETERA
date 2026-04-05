@@ -53,12 +53,20 @@ const Home = () => {
           <img className='logo3' src={logo3} alt="Logo" />
           <nav id="nav" className="">
             <ul id="links" className="links-horizontal" >
+<<<<<<< HEAD
               <li className="titulo2">TICKETERA</li>
               <li><Link className={isActive('/home')} to="/home">HOME</Link></li>
               <li><Link className={isActive('/precio')} to="/precio">PRECIO</Link></li>
               <li><Link className={isActive('/tickets')} to="/tickets">TICKETS</Link></li>
               <li><Link className={isActive('/lista')} to="/lista">LISTA</Link></li>
               <li><Link className={isActive('/perfil')} to="/perfil">PERFIL</Link></li>
+=======
+              <h2 className='titulo2'> TICKETERA</h2>
+              <Link className={isActive('/home')} to="/home">HOME</Link>
+              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
+              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
+              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
             </ul>
           </nav>
           <div className="user-menu">
@@ -89,11 +97,14 @@ const Home = () => {
                 <h3>PRECIO</h3>
                 <p>Compara precios en supermercados</p>
               </Link>
+<<<<<<< HEAD
               <Link to="/perfil" className="home-card">
                 <div className="card-icon">👤</div>
                 <h3>PERFIL</h3>
                 <p>Gestiona tu perfil y sugerencias</p>
               </Link>
+=======
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
             </div>
           </div>
         </div>

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+=======
+﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 import { v4 as uuid } from 'uuid';
 import Tesseract from 'tesseract.js';
 import './Tickets.css';
@@ -91,6 +96,7 @@ const Tickets = () => {
     return 0;
   };
 
+<<<<<<< HEAD
   const borrarMes = async (mesAno) => {
     const grupos = agruparPorMes();
     const gastosDelMes = grupos[mesAno] || [];
@@ -99,6 +105,11 @@ const Tickets = () => {
       if (gasto.id) {
         await deleteTicket(gasto.id, user.uid);
       }
+=======
+  const borrarMes = (mesAno) => {
+    if (!window.confirm(`┬┐Est├ís seguro de eliminar todos los gastos de ${formatearMesAno(mesAno)}?`)) {
+      return;
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
     }
     
     const nuevosGastos = gastos.filter(gasto => {
@@ -355,6 +366,7 @@ const Tickets = () => {
   }, []);
 
   return (
+<<<<<<< HEAD
     <Layout>
       <div className="tickets-container">
         <div className="botones-vista">
@@ -371,6 +383,138 @@ const Tickets = () => {
             />
           </label>
           {vista === 'mes' && <button className='boton-tickets' onClick={volverATodos}>Volver</button>}
+=======
+    <div className="tickets-page">
+      <section className='section-header'>
+        <header className='header_home'>
+          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
+          <nav id="nav" className="">
+            <ul id="links" className="links-horizontal" >
+              <h2 className='titulo2'> TICKETERA</h2>
+              <Link className={isActive('/home')} to="/home">HOME</Link>
+              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
+              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
+              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+            </ul>
+            <div className="responsive-menu">
+              <ul>
+                <li><Link to="/home">HOME</Link></li>
+                <li><Link to="/precio">PRECIO</Link></li>
+                <li><Link to="/tickets">TICKETS</Link></li>
+                <li><Link to="/lista">LISTA</Link></li>
+              </ul>
+            </div>
+          </nav>
+        </header>
+      </section>
+      <section className='tickets-section'>
+        <div className="tickets-container">
+          <div className="botones-vista">
+            <button className='boton-tickets' onClick={() => setVista('todos')}>Ver Todos los Gastos</button>
+            <button className='boton-tickets' onClick={() => setVista('meses')}>Ver por Meses</button>
+            {vista === 'mes' && <button className='boton-tickets' onClick={volverATodos}>Volver</button>}
+          </div>
+          <form className='form3' onSubmit={handleSubmit}>
+            <h3>AGREGAR GASTO:</h3>
+            <label className='label-form3' htmlFor="gasto">Gasto:</label>
+            <input className='input-form3' type="number" id="gasto" value={cantidad} onChange={(e) => setCantidad(e.target.value)} required />
+            
+            <label className='label-form3' htmlFor="opcion">Opcion:</label>
+              <select id="opcion-t" value={opcion} onChange={(e) => setOpcion(e.target.value)} required>
+              <option value="">Seleccione supermercado</option>
+              <option value="Mercadona">Mercadona</option>
+              <option value="Carrefour">Carrefour</option>
+              <option value="Lidl">Lidl</option>
+              <option value="Aldi">Aldi</option>
+              <option value="Dia">Dia</option>
+              <option value="Consum">Consum</option>
+              <option value="Eroski">Eroski</option>
+              <option value="Otro">Otro</option>
+            </select>
+            <button className='boton-tickets' type="submit">AGREGAR</button>
+          </form>
+          {vista === 'todos' && (
+            <div className='div-del-body2'>
+              <table className='table1'>
+                <thead>
+                  <tr>
+                    <th onClick={() => handleOrden('fecha')} className={ordenActual === 'fecha' ? 'active' : ''}>
+                      Fecha {ordenActual === 'fecha' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                    </th>
+                    <th onClick={() => handleOrden('opcion')} className={ordenActual === 'opcion' ? 'active' : ''}>
+                      Opcion {ordenActual === 'opcion' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                    </th>
+                    <th onClick={() => handleOrden('cantidad')} className={ordenActual === 'cantidad' ? 'active' : ''}>
+                      Cantidad {ordenActual === 'cantidad' ? (ordenamiento === 'asc' ? 'Ôåæ' : 'Ôåô') : ''}
+                    </th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gastosOrdenados.map((gasto) => (
+                    <tr key={gasto.id}>
+                      <td>{gasto.fecha}</td>
+                      <td>{gasto.opcion}</td>
+                      <td>{gasto.cantidad}</td>
+                      <td>
+                        <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="totales">
+                <p>Total Semana: {totalSemana}</p>
+                <p>Total Mes: {totalMes}</p>
+                <p>Total A├▒o: {totalAnio}</p>
+              </div>
+            </div>
+          )}
+          {vista === 'meses' && (
+            <div className='div-del-body2'>
+              <h3>Meses con Gastos:</h3>
+              <ul className="lista-meses">
+                {Object.keys(agruparPorMes()).sort().reverse().map(mesAno => (
+                  <li key={mesAno} className="mes-item">
+                    <span>{formatearMesAno(mesAno)} - Total: {calcularTotalMesEspecifico(mesAno)}</span>
+                    <button className='boton-tickets' onClick={() => verMes(mesAno)}>Ver Gastos</button>
+                    <button className='boton-tickets eliminar' onClick={() => borrarMes(mesAno)}>Borrar Mes</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {vista === 'mes' && mesSeleccionado && agruparPorMes()[mesSeleccionado] && (
+            <div className='div-del-body2'>
+              <h3>Gastos del Mes: {formatearMesAno(mesSeleccionado)}</h3>
+              <table className='table1'>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Opcion</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agruparPorMes()[mesSeleccionado].sort(ordenarGastos).map((gasto) => (
+                    <tr key={gasto.id}>
+                      <td>{gasto.fecha}</td>
+                      <td>{gasto.opcion}</td>
+                      <td>{gasto.cantidad}</td>
+                      <td>
+                        <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="totales">
+                <p>Total del Mes: {calcularTotalMesEspecifico(mesSeleccionado)}</p>
+              </div>
+            </div>
+          )}
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
         </div>
         {scanning && (
           <div className="scan-progress">

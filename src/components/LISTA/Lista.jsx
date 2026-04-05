@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from 'react';
+=======
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
 import logo3 from '../IMG/img23.jpg.jpeg';
 import listaImg from '../IMG/lista.jpeg';
 import './Lista.css';
@@ -217,6 +222,7 @@ const Lista = () => {
     }
   };
 
+<<<<<<< HEAD
   const compartirLista = async (listaGuardada, index) => {
     if (!logoDataUrl) {
       showError('El logo aún está cargando, espera un momento');
@@ -326,6 +332,19 @@ const Lista = () => {
       showError('Error al compartir la lista');
     } finally {
       document.body.removeChild(container);
+=======
+  const compartirLista = (listaACompartir) => {
+    if (navigator.share) {
+      const texto = listaACompartir.map(p => `${p.producto.toUpperCase()} - ${p.cantidad} - ${p.opciones}`).join('\n');
+      navigator.share({
+        title: 'Mi Lista de Compras',
+        text: texto,
+      })
+        .then(() => console.log('Compartido correctamente.'))
+        .catch((error) => console.log('Error al compartir:', error));
+    } else {
+      console.log('La API Web Share no est├í disponible en este dispositivo.');
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
     }
   };
 
@@ -373,6 +392,7 @@ const Lista = () => {
   }, [user]);
 
   return (
+<<<<<<< HEAD
     <Layout>
       <div className="caja-list">
         <form className='botones-lista'>
@@ -415,6 +435,29 @@ const Lista = () => {
                   <button className="eliminar" onClick={guardarListaEnLocalStorage}>GUARDAR</button>
                 </>
               )}
+=======
+    <div className="lista-page">
+      <section className="section-header">
+        <header className="header_home">
+          <a className="container">
+            <img className="logo3" src={logo3} alt="Logo" />
+          </a>
+          <nav id="nav" className="">
+            <ul id="links" className="links-horizontal">
+              <h2 className='titulo2'> TICKETERA</h2>
+              <Link className={isActive('/home')} to="/home">HOME</Link>
+              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
+              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
+              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
+            </ul>
+            <div className="responsive-menu">
+              <ul>
+                <li><Link to="/home">HOME</Link></li>
+                <li><Link to="/precio">PRECIO</Link></li>
+                <li><Link to="/tickets">TICKETS</Link></li>
+                <li><Link to="/lista">LISTA</Link></li>
+              </ul>
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
             </div>
           </div>
           
@@ -437,6 +480,7 @@ const Lista = () => {
                 <span>CANT.</span>
                 <span>CATEGORÍA</span>
               </div>
+<<<<<<< HEAD
               {lista
                 .slice()
                 .sort((a, b) => (a.opciones || '').localeCompare(b.opciones || ''))
@@ -450,6 +494,28 @@ const Lista = () => {
               <div className="producto-total">
                 <span>TOTAL:</span>
                 <span>{lista.length} artículos</span>
+=======
+              <div className="imagen-productos">
+                <div className="producto-titulo">
+                  <span>PRODUCTO</span>
+                  <span>CANT.</span>
+                  <span>CATEGOR├ìA</span>
+                </div>
+                {lista.map((producto, index) => (
+                  <div key={producto.id} className={`producto-fila ${index % 2 === 0 ? 'fila-par' : 'fila-impar'}`}>
+                    <span className="producto-nombre">{producto.producto.toUpperCase()}</span>
+                    <span className="producto-cantidad">{producto.cantidad}</span>
+                    <span className="producto-categoria">{producto.opciones}</span>
+                  </div>
+                ))}
+                <div className="producto-total">
+                  <span>TOTAL:</span>
+                  <span>{lista.length} art├¡culos</span>
+                </div>
+              </div>
+              <div className="imagen-footer">
+                <p>Generado por TICKETERA App</p>
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
               </div>
             </div>
             <div className="imagen-footer">
@@ -496,8 +562,13 @@ const Lista = () => {
                 <div className="ticket-header">
                   <img src={logo3} alt="Logo" className="ticket-logo" />
                   <div className="ticket-info">
+<<<<<<< HEAD
                     <span className="ticket-date">{listaGuardada.fecha}</span>
                     <span className="ticket-items">{listaGuardada.lista.length} artículos</span>
+=======
+                    <span className="ticket-date">­ƒùô´©Å {listaGuardada.fecha}</span>
+                    <span className="ticket-items">­ƒôª {listaGuardada.lista.length} art├¡culos</span>
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
                   </div>
                 </div>
                 <div className="ticket-body">
@@ -522,11 +593,20 @@ const Lista = () => {
                     })}
                 </div>
                 <div className="ticket-actions">
+<<<<<<< HEAD
                   <button className="boton-descargar" onClick={() => descargarListaGuardada(listaGuardada, index)}>DESCARGAR</button>
                   <button className='eliminar2' onClick={() => compartirLista(listaGuardada, index)}>COMPARTIR</button>
                   {listaGuardada.id && (
                     <button className="eliminar" onClick={() => eliminarListaGuardada(listaGuardada.id)}>ELIMINAR</button>
                   )}
+=======
+                  <button className="eliminar3" onClick={() => eliminarChecks(index)}>ELIMINAR CHECKS</button>
+                  <button className="eliminar1" onClick={() => {
+                    const listaActual = [...lista, ...listaGuardada.lista.map((p, i) => ({...p, id: lista.length + i + 1}))];
+                    setLista(listaActual);
+                  }}>A├æADIR A ACTUAL</button>
+                  <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
                 </div>
               </div>
             );})

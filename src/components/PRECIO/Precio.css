@@ -27,6 +27,31 @@
 }
 
 .search-layout {
+<<<<<<< HEAD
+=======
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.categories-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.search-form-container {
+  flex: 1;
+  max-width: 600px;
+}
+
+.precio-search {
+  margin-bottom: 20px;
+}
+
+.search-input-container {
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
   display: flex;
   gap: 30px;
   align-items: flex-start;
@@ -733,6 +758,7 @@
 @media (max-width: 768px) {
   .precio-header h1 {
     font-size: 28px;
+<<<<<<< HEAD
   }
 
   .search-layout {
@@ -758,6 +784,8 @@
 
   .categories-nav .cat-name {
     font-size: 10px;
+=======
+>>>>>>> c9ab882ab8da79c9e97b585bde9e6976bc33ee9a
   }
 
   .search-input-container {
@@ -768,6 +796,23 @@
 
   .search-button {
     width: 100%;
+  }
+
+  .categories-nav {
+    gap: 8px;
+  }
+
+  .category-btn {
+    padding: 10px 14px;
+    min-width: 70px;
+  }
+
+  .cat-icon {
+    font-size: 20px;
+  }
+
+  .cat-name {
+    font-size: 10px;
   }
 
   .precio-summary {
