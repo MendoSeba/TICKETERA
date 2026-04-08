@@ -40,13 +40,6 @@ const Lista = ({ guardarLista }) => {
     if (guardarLista) guardarLista();
   };
 
-  const eliminarListaGuardada = (index) => {
-    const nuevasListasGuardadas = [...listasGuardadas];
-    nuevasListasGuardadas.splice(index, 1);
-    localStorage.setItem("listasGuardadas", JSON.stringify(nuevasListasGuardadas));
-    setListasGuardadas(nuevasListasGuardadas);
-  };
-
   const eliminarChecks = (index) => {
     const ticketCard = document.querySelector(`[data-index="${index}"]`);
     if (ticketCard) {

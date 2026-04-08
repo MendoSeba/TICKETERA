@@ -8,20 +8,13 @@ export const FIRESTORE_COLLECTIONS = {
   USER_PROFILES: 'userProfiles',
 };
 
-const validateUserId = (userId, dataUserId) => {
-  if (!userId || typeof userId !== 'string') {
-    throw new Error('userId inválido');
-  }
-  if (dataUserId !== userId) {
-    throw new Error('No tienes permiso para realizar esta operación');
-  }
-};
-
 export const addTicket = async (ticketData, userId) => {
   if (!ticketData || typeof ticketData !== 'object') {
     throw new Error('Datos de ticket inválidos');
   }
-  validateUserId(userId, ticketData.userId);
+  if (!userId || typeof userId !== 'string') {
+    throw new Error('userId requerido');
+  }
   const docRef = await addDoc(collection(db, FIRESTORE_COLLECTIONS.TICKETS), {
     ...ticketData,
     createdAt: serverTimestamp(),

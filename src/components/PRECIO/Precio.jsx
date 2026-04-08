@@ -5,7 +5,6 @@ import './Precio.css';
 import { 
   searchProductsOpenFoodFacts, 
   getProductsByCategory,
-  getProductWithStoredPrices,
   supermarkets, 
   categories,
 } from '../../service/supermarketService';
@@ -244,9 +243,9 @@ const Precio = () => {
             <div className='products-results'>
               <h3>Resultados de búsqueda ({products.length})</h3>
               <div className='products-grid'>
-                {products.map((product, index) => (
+                {products.map((product) => (
                   <div 
-                    key={index} 
+                    key={product.name} 
                     className='product-card'
                     onClick={() => handleProductSelect(product)}
                   >
@@ -354,7 +353,7 @@ const Precio = () => {
                   </div>
 
                   <div className='added-prices'>
-                    {Object.entries(manualPrices).filter(([key, val]) => val && val !== '').map(([supermarketId, price]) => {
+                    {Object.entries(manualPrices).filter(([, value]) => value && value !== '').map(([supermarketId, price]) => {
                       const superm = supermarkets.find(s => s.id === supermarketId);
                       if (!superm) return null;
                       return (
@@ -404,7 +403,7 @@ const Precio = () => {
               )}
 
               <div className='precios-grid'>
-                {getCurrentPrices().map((item, index) => {
+                {getCurrentPrices().map((item) => {
                   const hasValue = item.price !== null && item.price !== undefined && item.price !== '';
                   const pricesWithValues = getPricesWithValues();
                   const isLowest = hasValue && pricesWithValues.length > 0 && 
@@ -412,7 +411,7 @@ const Precio = () => {
                   
                   return (
                     <div 
-                      key={index} 
+                      key={item.id} 
                       className={`precio-card ${!hasValue ? 'sin-precio' : ''} ${isLowest ? 'precio-mejor' : ''}`}
                       style={{ borderColor: hasValue ? item.color : '#ccc' }}
                     >

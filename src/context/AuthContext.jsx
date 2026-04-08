@@ -11,6 +11,7 @@ import { auth } from '../service/fireservice';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -61,7 +62,24 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: '#f5f5f5'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            color: '#FF9800',
+            fontSize: '24px',
+            fontWeight: 'bold'
+          }}>
+            Cargando...
+          </div>
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 };

@@ -1,5 +1,5 @@
 import './style.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from "../IMG/img23.jpg.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../FOOTER/Footer';
@@ -13,10 +13,11 @@ const Inicio = () => {
   const { login, user } = useAuth();
   const navigate = useNavigate();
 
-  if (user) {
-    navigate('/home', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      navigate('/home', { replace: true });
+    }
+  }, [user, navigate]);
 
   const loginWithEmail = async () => {
     if (!email || !password) {
@@ -30,9 +31,9 @@ const Inicio = () => {
     try {
       await login(email, password);
       navigate('/home', { replace: true });
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      switch (error.code) {
+      switch (err.code) {
         case 'auth/user-not-found':
           setError('No existe una cuenta con este correo electrónico');
           break;
@@ -49,12 +50,12 @@ const Inicio = () => {
           setError('Credenciales inválidas. Verifica tu correo y contraseña');
           break;
         default:
-          setError('Error al iniciar sesión: ' + error.message);
+          setError('Error al iniciar sesión: ' + err.message);
       }
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       loginWithEmail();
     }
@@ -93,7 +94,7 @@ const Inicio = () => {
             BIENVENIDOS A TICKETERA
           </h1>
           <p className='p_2'>WEB APP PARA LLEVAR UN CONTROL DE TUS GASTOS, TUS TICKETS Y TUS COMPRAS</p>
-          <form className='form1' onKeyPress={handleKeyPress}>
+            <form className='form1' onKeyDown={handleKeyDown}>
             <input className='input-form1'
               type="email"
               placeholder="Correo electrónico"

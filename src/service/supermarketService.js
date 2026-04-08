@@ -1,4 +1,4 @@
-import { loadPricesFromStorage, savePricesToStorage } from './storageService';
+import { loadPricesFromStorage } from './storageService';
 
 export const supermarkets = [
   { id: 'mercadona', name: 'Mercadona', logo: '🛒', color: '#DA291C' },

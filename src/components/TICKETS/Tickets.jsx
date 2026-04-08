@@ -17,9 +17,9 @@ const Tickets = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
-  Date.prototype.getWeek = function() {
-    const onejan = new Date(this.getFullYear(), 0, 1);
-    return Math.ceil(((this - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+  const getWeek = (date) => {
+    const onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil(((date - onejan) / 86400000 + onejan.getDay() + 1) / 7);
   };
 
   useEffect(() => {
@@ -118,10 +118,10 @@ const Tickets = () => {
 
   const calcularTotalSemana = () => {
     const fechaActual = new Date();
-    const semanaActual = fechaActual.getWeek();
+    const semanaActual = getWeek(fechaActual);
     const gastosSemanaActual = gastos.filter((gasto) => {
       const fechaGasto = new Date(gasto.fecha);
-      return fechaGasto.getWeek() === semanaActual;
+      return getWeek(fechaGasto) === semanaActual;
     });
     return gastosSemanaActual.reduce((acum, gasto) => acum + gasto.cantidad, 0);
   };
