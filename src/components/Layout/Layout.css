@@ -87,21 +87,21 @@
 
 .logout-button {
   padding: 15px 30px;
-  border: 2px solid #000;
+  border: none;
   border-radius: 50px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;
   font-family: inherit;
-  background: linear-gradient(135deg, #FF9800, #F57C00);
+  background: linear-gradient(135deg, #E65100, #BF360C);
   color: white;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 5px 20px rgba(230, 81, 0, 0.4);
 }
 
 .logout-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(230, 81, 0, 0.5);
 }
 
 .btn-primary {
@@ -127,14 +127,14 @@
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #FF9800, #F57C00);
+  background: linear-gradient(135deg, #E65100, #BF360C);
   color: white;
-  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 5px 20px rgba(230, 81, 0, 0.4);
 }
 
 .btn-danger:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(230, 81, 0, 0.5);
 }
 
 .btn-success {
