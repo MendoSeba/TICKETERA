@@ -12,19 +12,36 @@ const Layout = ({ children }) => {
   const [userDisplayName, setUserDisplayName] = useState('');
 
   useEffect(() => {
-    if (user) {
-      const storedProfile = localStorage.getItem('userProfile');
-      let localName = '';
-      if (storedProfile) {
-        try {
-          const profile = JSON.parse(storedProfile);
-          localName = profile.displayName || '';
-        } catch (e) {
-          console.error('Error parsing profile:', e);
+    const loadDisplayName = () => {
+      if (user) {
+        const storedProfile = localStorage.getItem('userProfile');
+        let localName = '';
+        if (storedProfile) {
+          try {
+            const profile = JSON.parse(storedProfile);
+            localName = profile.displayName || '';
+          } catch (e) {
+            console.error('Error parsing profile:', e);
+          }
         }
+        const newName = user.displayName || localName || '';
+        setUserDisplayName(prev => prev !== newName ? newName : prev);
       }
-      setUserDisplayName(user.displayName || localName || '');
-    }
+    };
+
+    loadDisplayName();
+
+    const handleProfileUpdate = (e) => {
+      const profile = e.detail;
+      if (profile && profile.displayName !== undefined) {
+        setUserDisplayName(profile.displayName || user?.displayName || '');
+      } else {
+        loadDisplayName();
+      }
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
   }, [user]);
 
   const handleLogout = async () => {

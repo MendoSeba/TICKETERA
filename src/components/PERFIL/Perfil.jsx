@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import './Perfil.css';
@@ -6,28 +6,41 @@ import './Perfil.css';
 const Perfil = () => {
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
-
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
   const [sugerencia, setSugerencia] = useState('');
   const [loading, setLoading] = useState(true);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => { isMounted.current = false; };
+  }, []);
 
   useEffect(() => {
     if (user) {
       const storedProfile = localStorage.getItem('userProfile');
-      const localName = storedProfile ? JSON.parse(storedProfile).displayName : null;
-      setDisplayName(user.displayName || localName || '');
-      const stored = localStorage.getItem('userProfile');
-      if (stored) {
+      if (storedProfile) {
         try {
-          const profile = JSON.parse(stored);
-          setPhone(profile.phone || '');
-          setSugerencia(profile.sugerencia || '');
+          const profile = JSON.parse(storedProfile);
+          if (isMounted.current) {
+            setDisplayName(user.displayName || profile.displayName || '');
+            setPhone(profile.phone || '');
+            setSugerencia(profile.sugerencia || '');
+          }
         } catch (e) {
           console.error('Error loading profile:', e);
+          if (isMounted.current) {
+            setDisplayName(user.displayName || '');
+          }
+        }
+      } else {
+        if (isMounted.current) {
+          setDisplayName(user.displayName || '');
         }
       }
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }, [user]);
 
@@ -38,8 +51,13 @@ const Perfil = () => {
         displayName,
         phone,
         email: user.email,
+        lastUpdated: Date.now()
       };
       localStorage.setItem('userProfile', JSON.stringify(profileData));
+      
+      const event = new CustomEvent('profileUpdated', { detail: { displayName, phone } });
+      window.dispatchEvent(event);
+      
       showSuccess('Perfil guardado correctamente');
     } catch (error) {
       console.error('Error guardando perfil:', error);
