@@ -109,21 +109,20 @@
 .boton-registro {
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  padding: 14px 24px;
+  padding: 15px 30px;
   border: none;
   border-radius: 50px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
   margin-top: 10px;
 }
 
 .boton-registro:hover:not(:disabled) {
-  background: #e68900;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .boton-registro:disabled {

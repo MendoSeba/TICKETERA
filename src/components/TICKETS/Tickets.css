@@ -128,9 +128,9 @@
 .form3 input,
 .form3 select {
   width: 100%;
-  padding: 10px 15px;
+  padding: 12px 15px;
   border: 2px solid #ddd;
-  border-radius: 25px;
+  border-radius: 50px;
   margin-bottom: 12px;
   font-size: 14px;
   font-family: inherit;

@@ -86,65 +86,66 @@
 }
 
 .logout-button {
-  padding: 10px 20px;
+  padding: 15px 30px;
   border: 2px solid #000;
-  border-radius: 25px;
+  border-radius: 50px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   font-family: inherit;
-  background: #333;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  transition: all 0.3s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .logout-button:hover {
-  background: #000;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .btn-primary:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-secondary {
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .btn-secondary:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-danger {
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .btn-danger:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-success {
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .btn-success:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 @media (max-width: 768px) {

@@ -60,15 +60,15 @@ select.input-field {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
+  padding: 15px 30px;
   border: none;
   border-radius: 50px;
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
 }
 
 .btn-primary {
@@ -77,8 +77,8 @@ select.input-field {
 }
 
 .btn-primary:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-secondary {
@@ -87,8 +87,8 @@ select.input-field {
 }
 
 .btn-secondary:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-danger {
@@ -97,8 +97,8 @@ select.input-field {
 }
 
 .btn-danger:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-success {
@@ -107,8 +107,8 @@ select.input-field {
 }
 
 .btn-success:hover {
-  background: #e68900;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .btn-outline {

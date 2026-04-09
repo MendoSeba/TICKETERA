@@ -45,8 +45,21 @@
 }
 
 .lista-header-buttons button {
-  padding: 8px 16px;
-  font-size: 12px;
+  padding: 15px 30px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+}
+
+.lista-header-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .botones-lista {
@@ -68,9 +81,9 @@
 
 .botones-lista input,
 .botones-lista select {
-  padding: 10px 15px;
+  padding: 12px 15px;
   border: 2px solid #ddd;
-  border-radius: 25px;
+  border-radius: 50px;
   font-size: 14px;
   transition: border-color 0.3s;
 }
@@ -82,8 +95,21 @@
 }
 
 .botones-lista button {
-  padding: 10px 18px;
-  font-size: 13px;
+  padding: 15px 30px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+}
+
+.botones-lista button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .lista-imagen {
@@ -196,8 +222,21 @@
 }
 
 .tabla button {
-  padding: 6px 12px;
-  font-size: 11px;
+  padding: 15px 30px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+}
+
+.tabla button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 .mis-listas {
@@ -274,8 +313,21 @@
 
 .ticket-actions button {
   flex: 1;
-  padding: 8px 10px;
-  font-size: 11px;
+  padding: 15px 30px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+}
+
+.ticket-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
 }
 
 @media (max-width: 768px) {
