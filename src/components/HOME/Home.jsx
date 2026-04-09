@@ -1,47 +1,10 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import logo3 from "../IMG/img23.jpg.jpeg";
-import Footer from '../FOOTER/Footer';
-import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 const Home = () => {
-  const { logout, user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-    }
-  };
-
-  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
-
   return (
     <div className="home-page">
-      <section className='section-header'>
-        <header className='header_home'>
-          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-              <h2 className='titulo2'> TICKETERA</h2>
-              <Link className={isActive('/home')} to="/home">HOME</Link>
-              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
-              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
-            </ul>
-          </nav>
-          <div className="user-menu">
-            <span className="user-name">Bienvenido, <strong>{user?.displayName || user?.email?.split('@')[0]}</strong></span>
-            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
-          </div>
-        </header>
-      </section>
       <section className='home-section'>
         <div className="home-container">
           <div className="home-welcome">
@@ -73,7 +36,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };

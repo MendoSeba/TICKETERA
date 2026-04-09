@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import logo3 from '../IMG/img23.jpg.jpeg';
 import listaImg from '../IMG/lista.jpeg';
 import './Lista.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import html2canvas from 'html2canvas';
-import Footer from '../FOOTER/Footer';
 
 const Lista = ({ guardarLista }) => {
   const [lista, setLista] = useState([]);
@@ -14,8 +11,6 @@ const Lista = ({ guardarLista }) => {
   const cantidadRef = useRef(null);
   const opcionesRef = useRef(null);
   const listaImageRef = useRef(null);
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   const limpiarCampos = () => {
     if (productoRef.current) productoRef.current.value = '';
@@ -112,32 +107,6 @@ const Lista = ({ guardarLista }) => {
 
   return (
     <div className="lista-page">
-      <section className="section-header">
-        <header className="header_home">
-          <a className="container">
-            <img className="logo3" src={logo3} alt="Logo" />
-          </a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal">
-              <h2 className='titulo2'> TICKETERA</h2>
-              <Link className={isActive('/home')} to="/home">HOME</Link>
-              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
-              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
-            </ul>
-            <div className="responsive-menu">
-              <ul>
-                <li><Link to="/home">HOME</Link></li>
-                <li><Link to="/precio">PRECIO</Link></li>
-                <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
-              </ul>
-            </div>
-          </nav>
-        </header>
-      </section>
       <section className="lista-section">
         <div className='caja-list'>
           <form className='botones-lista'>
@@ -165,7 +134,7 @@ const Lista = ({ guardarLista }) => {
               <option value="Otro">Otro</option>
             </select>
 
-            <button type="button" className="eliminar" onClick={agregarProducto}>AGREGAR PRODUCTOS A LA LISTA</button>
+            <button type="button" className="btn-primary" onClick={agregarProducto}>AGREGAR PRODUCTOS A LA LISTA</button>
           </form>
           
           <div className="nueva-lista">
@@ -174,10 +143,10 @@ const Lista = ({ guardarLista }) => {
               <div className="lista-header-buttons">
                 {lista.length > 0 && (
                   <>
-                    <button className="boton-descargar" onClick={descargarListaImagen}>
+                    <button className="btn-success" onClick={descargarListaImagen}>
                       DESCARGAR LISTA
                     </button>
-                    <button className="eliminar" onClick={guardarListaEnLocalStorage}>GUARDAR</button>
+                    <button className="btn-primary" onClick={guardarListaEnLocalStorage}>GUARDAR</button>
                   </>
                 )}
               </div>
@@ -225,7 +194,7 @@ const Lista = ({ guardarLista }) => {
                 <div className="cantidad">{producto.cantidad}</div>
                 <div className="precio">{producto.opciones}</div>
                 <button
-                  className="eliminar"
+                  className="btn-danger"
                   onClick={() => {
                     const nuevaLista = lista.filter((p) => p.id !== producto.id);
                     setLista(nuevaLista);
@@ -242,7 +211,6 @@ const Lista = ({ guardarLista }) => {
             {listasGuardadas.map((listaGuardada, index) => (
               <div className='ticket-card' key={index} data-index={index}>
                 <div className="ticket-header">
-                  <img src={logo3} alt="Logo" className="ticket-logo" />
                   <div className="ticket-info">
                     <span className="ticket-date">🗓️ {listaGuardada.fecha}</span>
                     <span className="ticket-items">📦 {listaGuardada.lista.length} artículos</span>
@@ -259,19 +227,18 @@ const Lista = ({ guardarLista }) => {
                   ))}
                 </div>
                 <div className="ticket-actions">
-                  <button className="eliminar3" onClick={() => eliminarChecks(index)}>ELIMINAR CHECKS</button>
-                  <button className="eliminar1" onClick={() => {
+                  <button className="btn-secondary" onClick={() => eliminarChecks(index)}>ELIMINAR CHECKS</button>
+                  <button className="btn-danger" onClick={() => {
                     const listaActual = [...lista, ...listaGuardada.lista.map((p, i) => ({...p, id: lista.length + i + 1}))];
                     setLista(listaActual);
                   }}>AÑADIR A ACTUAL</button>
-                  <button className='eliminar2' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
+                  <button className='btn-success' onClick={() => compartirLista(listaGuardada.lista)}>COMPARTIR</button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };

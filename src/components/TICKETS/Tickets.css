@@ -1,8 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #ff6b35;
+  --primary-gradient: linear-gradient(135deg, #ff6b35, #ff3d00);
+  --secondary-color: #2196F3;
+  --danger-color: #f44336;
+  --success-color: #4CAF50;
+  --text-color: #333;
+  --text-light: #666;
+  --white: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 25px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-color);
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  min-height: 100vh;
+}
+
 .tickets-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
 }
 
 .tickets-section {
@@ -15,32 +49,11 @@
   margin: 0 auto;
 }
 
-.titulo2 {
-  text-decoration: none;
-  color: #000000;
-  font-size: 50px;
-  margin-right: 5rem;
-  margin-top: 10px;
-}
-
-.logo3 {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  vertical-align: middle;
-}
-
 .botones-vista {
   display: flex;
   gap: 15px;
   margin-bottom: 30px;
   flex-wrap: wrap;
-}
-
-.botones-vista .boton-tickets {
-  padding: 12px 24px;
-  font-size: 14px;
 }
 
 .lista-meses {
@@ -55,28 +68,34 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 25px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .mes-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 .mes-item span {
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
 .div-del-body2 {
-  background: white;
+  background: var(--white);
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   margin-bottom: 30px;
+  overflow-x: auto;
+}
+
+.table1 {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .div-del-body2 th,
@@ -87,81 +106,64 @@
 }
 
 .div-del-body2 th {
-  background: linear-gradient(135deg, orange, orangered);
-  color: white;
+  background: var(--primary-gradient);
+  color: var(--white);
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .div-del-body2 th:hover {
-  background: linear-gradient(135deg, orangered, #e65100);
+  background: linear-gradient(135deg, #ff3d00, #e65100);
+}
+
+.div-del-body2 th.active {
+  background: #000;
 }
 
 .div-del-body2 tbody tr:hover {
-  background: rgba(255, 152, 0, 0.05);
+  background: rgba(255, 107, 53, 0.05);
 }
 
 .form3 {
-  background: white;
+  background: var(--white);
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   margin-bottom: 30px;
 }
 
 .form3 h3 {
-  color: #333;
+  color: var(--text-color);
   margin-bottom: 20px;
   font-size: 20px;
+  font-weight: 600;
 }
 
 .form3 label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #555;
+  color: var(--text-light);
 }
 
-.form3 select,
-.form3 input {
+.form3 input,
+.form3 select {
   width: 100%;
-  padding: 12px 15px;
+  padding: 12px 16px;
   border: 2px solid #ddd;
-  border-radius: 10px;
+  border-radius: var(--radius-full);
   margin-bottom: 15px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.form3 select:focus,
-.form3 input:focus {
+.form3 input:focus,
+.form3 select:focus {
   outline: none;
-  border-color: orange;
-}
-
-.boton-tickets {
-  background: linear-gradient(135deg, orange, orangered);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-}
-
-.boton-tickets:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
-}
-
-.boton-tickets.eliminar {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
-}
-
-.boton-tickets.eliminar:hover {
-  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
 .totales {
@@ -177,33 +179,17 @@
 .totales p {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
-}
-
-.totales p span {
-  color: orange;
-}
-
-.table1 {
-  width: 100%;
-  border-collapse: collapse;
+  color: var(--text-color);
 }
 
 @media (max-width: 768px) {
-  .body2 {
-    display: flow-root;
-  }
-
   .div-del-body2 {
-    width: 100%;
-    margin: 0;
     padding: 15px;
     overflow-x: auto;
   }
 
   .form3 {
     width: 100%;
-    margin: 0 auto 20px;
   }
 
   .table1 {
@@ -214,5 +200,11 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
+  }
+
+  .mes-item {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
   }
 }

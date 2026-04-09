@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
-import logo3 from '../IMG/img23.jpg.jpeg';
 import './Tickets.css';
-import Footer from '../FOOTER/Footer';
 
 const Tickets = () => {
   const [gastos, setGastos] = useState([]);
@@ -14,8 +11,6 @@ const Tickets = () => {
   const [ordenActual, setOrdenActual] = useState('fecha');
   const [vista, setVista] = useState('todos');
   const [mesSeleccionado, setMesSeleccionado] = useState(null);
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   const getWeek = (date) => {
     const onejan = new Date(date.getFullYear(), 0, 1);
@@ -168,36 +163,12 @@ const Tickets = () => {
 
   return (
     <div className="tickets-page">
-      <section className='section-header'>
-        <header className='header_home'>
-          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-              <h2 className='titulo2'> TICKETERA</h2>
-              <Link className={isActive('/home')} to="/home">HOME</Link>
-              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
-              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
-            </ul>
-            <div className="responsive-menu">
-              <ul>
-                <li><Link to="/home">HOME</Link></li>
-                <li><Link to="/precio">PRECIO</Link></li>
-                <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
-              </ul>
-            </div>
-          </nav>
-        </header>
-      </section>
       <section className='tickets-section'>
         <div className="tickets-container">
           <div className="botones-vista">
-            <button className='boton-tickets' onClick={() => setVista('todos')}>Ver Todos los Gastos</button>
-            <button className='boton-tickets' onClick={() => setVista('meses')}>Ver por Meses</button>
-            {vista === 'mes' && <button className='boton-tickets' onClick={volverATodos}>Volver</button>}
+            <button className='btn-primary' onClick={() => setVista('todos')}>Ver Todos los Gastos</button>
+            <button className='btn-primary' onClick={() => setVista('meses')}>Ver por Meses</button>
+            {vista === 'mes' && <button className='btn-primary' onClick={volverATodos}>Volver</button>}
           </div>
           <form className='form3' onSubmit={handleSubmit}>
             <h3>AGREGAR GASTO:</h3>
@@ -216,7 +187,7 @@ const Tickets = () => {
               <option value="Eroski">Eroski</option>
               <option value="Otro">Otro</option>
             </select>
-            <button className='boton-tickets' type="submit">AGREGAR</button>
+            <button className='btn-primary' type="submit">AGREGAR</button>
           </form>
           {vista === 'todos' && (
             <div className='div-del-body2'>
@@ -242,7 +213,7 @@ const Tickets = () => {
                       <td>{gasto.opcion}</td>
                       <td>{gasto.cantidad}</td>
                       <td>
-                        <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+                        <button className='btn-primary' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
                       </td>
                     </tr>
                   ))}
@@ -262,8 +233,8 @@ const Tickets = () => {
                 {Object.keys(agruparPorMes()).sort().reverse().map(mesAno => (
                   <li key={mesAno} className="mes-item">
                     <span>{formatearMesAno(mesAno)} - Total: {calcularTotalMesEspecifico(mesAno)}</span>
-                    <button className='boton-tickets' onClick={() => verMes(mesAno)}>Ver Gastos</button>
-                    <button className='boton-tickets eliminar' onClick={() => borrarMes(mesAno)}>Borrar Mes</button>
+                    <button className='btn-primary' onClick={() => verMes(mesAno)}>Ver Gastos</button>
+                    <button className='btn-danger' onClick={() => borrarMes(mesAno)}>Borrar Mes</button>
                   </li>
                 ))}
               </ul>
@@ -288,7 +259,7 @@ const Tickets = () => {
                       <td>{gasto.opcion}</td>
                       <td>{gasto.cantidad}</td>
                       <td>
-                        <button className='boton-tickets' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
+                        <button className='btn-primary' onClick={() => handleDelete(gasto.id)}>ELIMINAR</button>
                       </td>
                     </tr>
                   ))}
@@ -301,7 +272,6 @@ const Tickets = () => {
           )}
         </div>
       </section>
-      <Footer />
     </div>
   );
 };

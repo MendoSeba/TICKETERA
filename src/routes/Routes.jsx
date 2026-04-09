@@ -7,6 +7,7 @@ import Lista from '../components/LISTA/Lista';
 import Precio from '../components/PRECIO/Precio';
 import Tickets from '../components/TICKETS/Tickets';
 import Perfil from '../components/PERFIL/Perfil';
+import Layout from '../components/Layout/Layout';
 import Error from '../components/404/404';
 import ProtectedRoute from '../components/ProtectedRoute';
 import ForgotPassword from '../components/RECUPERAR/ForgotPassword';
@@ -20,27 +21,27 @@ export function Ruta() {
         <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
         <Route path="/home" element={
           <ProtectedRoute>
-            <Home />
+            <Layout><Home /></Layout>
           </ProtectedRoute>
         } />
         <Route path="/lista" element={
           <ProtectedRoute>
-            <Lista />
+            <Layout><Lista /></Layout>
           </ProtectedRoute>
         } />
         <Route path="/precio" element={
           <ProtectedRoute>
-            <Precio />
+            <Layout><Precio /></Layout>
           </ProtectedRoute>
         } />
         <Route path="/tickets" element={
           <ProtectedRoute>
-            <Tickets />
+            <Layout><Tickets /></Layout>
           </ProtectedRoute>
         } />
         <Route path="/perfil" element={
           <ProtectedRoute>
-            <Perfil />
+            <Layout><Perfil /></Layout>
           </ProtectedRoute>
         } />
         <Route path="/404" element={<Error />} />

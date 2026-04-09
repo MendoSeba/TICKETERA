@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import logo3 from "../IMG/img23.jpg.jpeg";
 import './Precio.css';
 import { 
   searchProductsOpenFoodFacts, 
@@ -9,7 +7,6 @@ import {
   categories,
 } from '../../service/supermarketService';
 import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
-import Footer from '../FOOTER/Footer';
 
 const Precio = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,8 +17,6 @@ const Precio = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [manualPrices, setManualPrices] = useState({});
   const [showPriceForm, setShowPriceForm] = useState(false);
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   useEffect(() => {
     const stored = loadPricesFromStorage();
@@ -165,31 +160,6 @@ const Precio = () => {
 
   return (
     <div>
-      <section className='section-header'>
-        <header className='header_home'>
-          <a className='container'><img className='logo3' src={logo3} alt="Logo" /></a>
-          <nav id="nav" className="">
-            <ul id="links" className="links-horizontal" >
-              <h2 className='titulo2'> TICKETERA</h2>
-              <Link className={isActive('/home')} to="/home">HOME</Link>
-              <Link className={isActive('/precio')} to="/precio">PRECIO</Link>
-              <Link className={isActive('/tickets')} to="/tickets">TICKETS</Link>
-              <Link className={isActive('/lista')} to="/lista">LISTA</Link>
-              <Link className={isActive('/perfil')} to="/perfil">PERFIL</Link>
-            </ul>
-            <div className="responsive-menu">
-              <ul>
-                <li><Link to="/home">HOME</Link></li>
-                <li><Link to="/precio">PRECIO</Link></li>
-                <li><Link to="/tickets">TICKETS</Link></li>
-                <li><Link to="/lista">LISTA</Link></li>
-                <li><Link to="/perfil">PERFIL</Link></li>
-              </ul>
-            </div>
-          </nav>
-        </header>
-      </section>
-
       <section className='body2'>
         <div className='precio-layout'>
           <aside className='categories-sidebar'>
@@ -478,8 +448,6 @@ const Precio = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };

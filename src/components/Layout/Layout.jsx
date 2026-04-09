@@ -72,7 +72,7 @@ const Layout = ({ children }) => {
           </nav>
           <div className="user-menu">
             <span className="user-name">Bienvenido, <strong>{userDisplayName || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
-            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
+            <button className="btn-danger logout-button" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </header>
       </section>
