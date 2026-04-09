@@ -14,7 +14,9 @@ const Perfil = () => {
 
   useEffect(() => {
     if (user) {
-      setDisplayName(user.displayName || '');
+      const storedProfile = localStorage.getItem('userProfile');
+      const localName = storedProfile ? JSON.parse(storedProfile).displayName : null;
+      setDisplayName(user.displayName || localName || '');
       const stored = localStorage.getItem('userProfile');
       if (stored) {
         try {

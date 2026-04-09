@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import Footer from '../FOOTER/Footer';
 import { useAuth } from '../../context/AuthContext';
-import { getUserProfile } from '../../service/firestoreService';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -11,28 +10,21 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userDisplayName, setUserDisplayName] = useState('');
-  const profileLoaded = useRef(false);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (user && !profileLoaded.current) {
+    if (user) {
+      const storedProfile = localStorage.getItem('userProfile');
+      let localName = '';
+      if (storedProfile) {
         try {
-          const profile = await getUserProfile(user.uid);
-          if (profile && profile.displayName) {
-            setUserDisplayName(profile.displayName);
-          } else {
-            setUserDisplayName(user.displayName || '');
-          }
-          profileLoaded.current = true;
+          const profile = JSON.parse(storedProfile);
+          localName = profile.displayName || '';
         } catch (e) {
-          console.error('Error loading profile:', e);
-          setUserDisplayName(user.displayName || '');
-          profileLoaded.current = true;
+          console.error('Error parsing profile:', e);
         }
       }
-    };
-
-    loadProfile();
+      setUserDisplayName(user.displayName || localName || '');
+    }
   }, [user]);
 
   const handleLogout = async () => {
@@ -72,6 +64,7 @@ const Layout = ({ children }) => {
           </nav>
           <div className="user-menu">
             <span className="user-name">Bienvenido, <strong>{userDisplayName || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
+            <span className="username">{userDisplayName || user?.displayName || ''}</span>
             <button className="btn-danger logout-button" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </header>
