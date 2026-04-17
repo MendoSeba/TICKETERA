@@ -129,15 +129,15 @@ const Inicio = () => {
                   setPassword(e.target.value);
                   setError('');
                 }}
-                style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+                style={{ width: '100%', paddingRight: '45px', boxSizing: 'border-box' }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
                   position: 'absolute',
-                  right: '10px',
-                  top: '50%',
+                  right: '12px',
+                  top: '45%',
                   transform: 'translateY(-50%)',
                   background: 'none',
                   border: 'none',

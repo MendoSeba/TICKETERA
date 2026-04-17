@@ -28,11 +28,13 @@ html, body {
   background-color: orange; 
   color: rgb(14, 13, 13);  
   padding: 10px 20px;
+}
 
 .header-login {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
   padding: 20px 40px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
   gap: 20px;
@@ -53,15 +55,7 @@ html, body {
   color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   margin: 0;
-  display: block;
-} 
-  background-size: cover;
-  background-position: center center;
-  display: flex;
-  justify-content: space-between; 
-  align-items: center; 
-  flex-wrap: wrap;
-  gap: 10px;
+  display: inline-block;
 }
 
 .container {
@@ -346,9 +340,15 @@ html, body {
   
 @media (max-width: 768px) {
     .header-login {
-      padding: 10px 20px;
+      padding: 12px 15px;
       gap: 10px;
       flex-direction: row;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      box-sizing: border-box;
+      flex-wrap: nowrap !important;
     }
 
     .h1_2 {
@@ -360,14 +360,16 @@ html, body {
     }
 
     .logo-grande {
-      width: 50px;
-      height: 50px;
+      width: 50px !important;
+      height: 50px !important;
+      flex-shrink: 0;
     }
 
     .titulo-grande {
-      font-size: 28px !important;
-      display: inline-block !important;
+      font-size: 26px !important;
+      display: inline !important;
       color: white !important;
+      white-space: nowrap;
     }
   }
   
