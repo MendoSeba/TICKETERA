@@ -20,6 +20,7 @@ const Perfil = () => {
   const [newEmail, setNewEmail] = useState('');
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [cambiandoEmail, setCambiandoEmail] = useState(false);
 
   useEffect(() => {
@@ -177,7 +178,7 @@ const Perfil = () => {
                 </button>
               </div>
             ) : (
-              <div className="email-change-form">
+              <div className="email-change-form" style={{ position: 'relative' }}>
                 <input
                   type="email"
                   id="newEmail"
@@ -185,13 +186,32 @@ const Perfil = () => {
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="Nuevo email"
                 />
-                <input
-                  type="password"
-                  id="passwordConfirm"
-                  value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value)}
-                  placeholder="Contraseña actual"
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showPasswordConfirm ? "text" : "password"}
+                    id="passwordConfirm"
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    placeholder="Contraseña actual"
+                    style={{ paddingRight: '40px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '18px'
+                    }}
+                  >
+                    {showPasswordConfirm ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
                 <div className="email-change-buttons">
                   <button
                     className="boton-tickets"

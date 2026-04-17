@@ -1,4 +1,4 @@
-﻿import './style.css';
+import './style.css';
 import React, { useState, useEffect } from 'react';
 import logo from "../IMG/img23.jpg.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 const Inicio = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -119,7 +120,7 @@ const Inicio = () => {
               }}
             />
             <input className='input-form1'
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
               autoComplete="current-password"
               value={password}
@@ -127,7 +128,24 @@ const Inicio = () => {
                 setPassword(e.target.value);
                 setError('');
               }}
+              style={{ paddingRight: '40px' }}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '18px'
+              }}
+            >
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
             {error && (
               <div className="error-message" style={{
                 color: '#ff6b6b',
