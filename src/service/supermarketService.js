@@ -13,18 +13,18 @@ export const supermarkets = [
 const OPEN_FOOD_FACTS_API = 'https://es.openfoodfacts.org';
 
 export const categories = [
-  { id: 'lacteos', name: 'Lácteos', icon: '🥛', searchTerms: ['leche', 'yogur', 'queso'] },
-  { id: 'carne', name: 'Carne', icon: '🥩', searchTerms: ['pollo', 'ternera', 'cerdo'] },
-  { id: 'pescado', name: 'Pescado', icon: '🐟', searchTerms: ['merluza', 'salmón', 'atún'] },
-  { id: 'fruta', name: 'Fruta', icon: '🍎', searchTerms: ['manzana', 'plátano', 'naranja'] },
-  { id: 'verdura', name: 'Verdura', icon: '🥬', searchTerms: ['tomate', 'lechuga', 'patata'] },
-  { id: 'panaderia', name: 'Panadería', icon: '🍞', searchTerms: ['pan', 'baguette'] },
-  { id: 'bebidas', name: 'Bebidas', icon: '🥤', searchTerms: ['agua', 'zumo', 'cerveza'] },
-  { id: 'aceites', name: 'Aceites', icon: '🫒', searchTerms: ['aceite de oliva'] },
-  { id: 'arroz', name: 'Arroz y Pasta', icon: '🍚', searchTerms: ['arroz', 'pasta', 'legumbres'] },
-  { id: 'huevos', name: 'Huevos', icon: '🥚', searchTerms: ['huevos'] },
-  { id: 'azucar', name: 'Azúcar', icon: '🍬', searchTerms: ['azúcar', 'miel'] },
-  { id: 'cafe', name: 'Café', icon: '☕', searchTerms: ['café', 'té'] },
+  { id: 'leche', name: 'Leche', icon: '🥛', searchTerms: ['leche fresca', 'leche entera', 'leche semidescremada'] },
+  { id: 'yogur', name: 'Yogur', icon: '🥛', searchTerms: ['yogur natural', 'yogur griego', 'yogur frutas'] },
+  { id: 'queso', name: 'Queso', icon: '🧀', searchTerms: ['queso mozzarella', 'queso cheddar', 'queso havanti'] },
+  { id: 'pollo', name: 'Pollo', icon: '🥩', searchTerms: ['pollo entero', 'pechuga pollo', 'muslos pollo'] },
+  { id: 'cerdo', name: 'Cerdo', icon: '🥓', searchTerms: ['filete cerdo', 'lomo cerdo', 'paleta cerdo'] },
+  { id: 'merluza', name: 'Pescado', icon: '🐟', searchTerms: ['merluza fresca', 'salmón fresco', 'filete merluza'] },
+  { id: 'manzana', name: 'Fruta', icon: '🍎', searchTerms: ['manzana roja', 'plátano canario', 'naranja Valencia'] },
+  { id: 'tomate', name: 'Verdura', icon: '🍅', searchTerms: ['tomate raff', 'patata gallega', 'cebolla blanca'] },
+  { id: 'pan', name: 'Pan', icon: '🍞', searchTerms: ['pan integral', 'baguette francesa', 'pan candeal'] },
+  { id: 'agua', name: 'Agua', icon: '💧', searchTerms: ['agua mineral', 'agua sin gas', 'agua con gas'] },
+  { id: 'aceite', name: 'Aceite', icon: '🫒', searchTerms: ['aceite oliva virgen', 'aceite girasol', 'aceite orujo'] },
+  { id: 'arroz', name: 'Arroz', icon: '🍚', searchTerms: ['arroz bomba', 'arroz Basmati', 'arroz redondo'] },
 ];
 
 const normalizeProductName = (name) => {
@@ -35,32 +35,35 @@ const normalizeProductName = (name) => {
     .trim();
 };
 
-const filterSpanishProducts = (products) => {
+const filterSpanishProducts = (products, searchTerm = '') => {
   const spanishBrands = [
     'mercadona', 'carrefour', 'dia', 'eroski', 'lidl', 'aldi', 'consum',
-    'el corte inglés', 'hipercor', 'alcampo', 'bonarea', 'coviran',
-    'el pozo', 'campofrío', 'gallina blanca', 'hacendado', 'pascual',
-    'danone', 'nestlé', 'coca-cola', 'heineken', 'estrella'
+    'el corte inglés', 'hipercor', 'bonarea', 'coviran',
+    'pascual', 'danone', 'nestlé'
   ];
   
-  const spanishTerms = ['españa', 'espana', 'spain', 'es'];
+  if (!searchTerm) {
+    return products.slice(0, 12);
+  }
   
-  const filtered = products.filter(p => {
-    const text = [
-      p.product_name,
-      p.brands,
-      p.countries,
-      p.categories
-    ].join(' ').toLowerCase();
+  const busquedaNormalizada = searchTerm.toLowerCase().trim();
+  
+  const productsConPuntuacion = products.map(p => {
+    let puntos = 0;
+    const texto = (p.name + ' ' + p.brand).toLowerCase();
     
-    return spanishBrands.some(b => text.includes(b)) || 
-           spanishTerms.some(t => text.includes(t)) ||
-           text.includes('español') || text.includes('valencia');
+    if (spanishBrands.some(b => texto.includes(b))) puntos += 15;
+    if (texto.includes(busquedaNormalizada)) puntos += 20;
+    if (texto.startsWith(busquedaNormalizada)) puntos += 10;
+    if (p.image?.length > 10) puntos += 3;
+    if (p.name?.length > 5 && p.name?.length < 50) puntos += 1;
+    
+    return { ...p, puntos };
   });
   
-  if (filtered.length >= 3) return filtered.slice(0, 8);
+  productsConPuntuacion.sort((a, b) => b.puntos - a.puntos);
   
-  return products.slice(0, 10);
+  return productsConPuntuacion.slice(0, 12);
 };
 
 export const searchProductsOpenFoodFacts = async (query) => {
@@ -84,7 +87,7 @@ export const searchProductsOpenFoodFacts = async (query) => {
           quantity: product.quantity || '',
         }));
       
-      return filterSpanishProducts(products);
+      return filterSpanishProducts(products, query);
     }
     
     return [];
@@ -98,21 +101,34 @@ export const getProductsByCategory = async (categoryId) => {
   const category = categories.find(c => c.id === categoryId);
   if (!category) return [];
   
-  const results = [];
+  const searchTerm = category.searchTerms[0];
   
-  for (const term of category.searchTerms.slice(0, 2)) {
-    const products = await searchProductsOpenFoodFacts(term);
-    results.push(...products);
-  }
-  
-  const unique = results.reduce((acc, product) => {
-    if (!acc.find(p => p.name === product.name)) {
-      acc.push(product);
+  try {
+    const response = await fetch(
+      `${OPEN_FOOD_FACTS_API}/cgi/search.pl?search_terms=${encodeURIComponent(searchTerm)}&search_simple=1&action=process&json=1&page_size=15&fields=product_name,brands,image_front_url,quantity,categories`
+    );
+    
+    const data = await response.json();
+    
+    if (data.products) {
+      const products = data.products
+        .filter(p => p.product_name && p.image_front_url && p.product_name.length > 3)
+        .map(product => ({
+          name: normalizeProductName(product.product_name),
+          brand: product.brands || 'Sin marca',
+          image: product.image_front_url,
+          category: product.categories?.split(',')[0] || '',
+          quantity: product.quantity || '',
+        }));
+      
+      return filterSpanishProducts(products, searchTerm);
     }
-    return acc;
-  }, []);
-  
-  return unique.slice(0, 12);
+    
+    return [];
+  } catch (error) {
+    console.error('Open Food Facts API error:', error);
+    return [];
+  }
 };
 
 export const getProductWithStoredPrices = (productName) => {

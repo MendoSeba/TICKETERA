@@ -1,0 +1,38 @@
+.admob-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  background: #f5f5f5;
+  min-height: 50px;
+}
+
+.admob-banner ins {
+  width: 100%;
+  max-width: 100%;
+}
+
+.admob-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.admob-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  background: #f5f5f5;
+  min-height: 50px;
+}
+
+@media (max-width: 768px) {
+  .admob-banner ins {
+    width: 100% !important;
+  }
+}

@@ -7,10 +7,37 @@ const Footer = () => {
   const openModal = (type) => setShowModal(type);
   const closeModal = () => setShowModal(null);
 
+  const handleDownloadApp = () => {
+    const link = document.createElement('a');
+    link.href = '/tiketera.bin';
+    link.download = 'tiketera.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <footer className='section-footer'>
         <div className="footer-content">
+          <button 
+            onClick={handleDownloadApp}
+            style={{
+              background: 'linear-gradient(135deg, #ff6b00, #ff9800)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 25px',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              marginBottom: '15px',
+              boxShadow: '0 4px 15px rgba(255, 107, 0, 0.3)'
+            }}
+          >
+            📥 DESCARGAR APP
+          </button>
+          
           <p className="footer-contact">Número de contacto: +54 637-62-89-25</p>
           
           <div className="footer-social">

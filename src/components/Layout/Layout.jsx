@@ -1,48 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import Footer from '../FOOTER/Footer';
 import { useAuth } from '../../context/AuthContext';
 import './Layout.css';
+import '../ADMOB/AdMob.css';
 
 const Layout = ({ children }) => {
-  const { logout, user } = useAuth();
+  const { logout, user, userDisplayName } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [userDisplayName, setUserDisplayName] = useState('');
-
-  useEffect(() => {
-    const loadDisplayName = () => {
-      if (user) {
-        const storedProfile = localStorage.getItem('userProfile');
-        let localName = '';
-        if (storedProfile) {
-          try {
-            const profile = JSON.parse(storedProfile);
-            localName = profile.displayName || '';
-          } catch (e) {
-            console.error('Error parsing profile:', e);
-          }
-        }
-        const newName = user.displayName || localName || '';
-        setUserDisplayName(prev => prev !== newName ? newName : prev);
-      }
-    };
-
-    loadDisplayName();
-
-    const handleProfileUpdate = (e) => {
-      const profile = e.detail;
-      if (profile && profile.displayName !== undefined) {
-        setUserDisplayName(profile.displayName || user?.displayName || '');
-      } else {
-        loadDisplayName();
-      }
-    };
-
-    window.addEventListener('profileUpdated', handleProfileUpdate);
-    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
-  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -81,13 +48,26 @@ const Layout = ({ children }) => {
           </nav>
           <div className="user-menu">
             <span className="user-name">Bienvenido, <strong>{userDisplayName || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
-            <button className="btn-danger logout-button" onClick={handleLogout}>Cerrar sesión</button>
+            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </header>
       </section>
       <section className='layout-section'>
         {children}
       </section>
+      
+      {/* AdMob Banner */}
+      <div className='admob-banner admob-bottom'>
+        <ins
+          className='adsbygoogle'
+          style={{ display: 'block' }}
+          data-ad-client='ca-pub-7509915300679259'
+          data-ad-slot='DIRECT'
+          data-ad-format='horizontal'
+          data-full-width-responsive='true'
+        />
+      </div>
+      
       <Footer />
     </div>
   );

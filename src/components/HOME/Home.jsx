@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Layout from '../Layout/Layout';
+import Footer from '../FOOTER/Footer';
 import './Home.css';
 
 const Home = () => {
   return (
-    <div className="home-page">
+    <Layout>
       <section className='home-section'>
         <div className="home-container">
           <div className="home-welcome">
@@ -30,13 +32,13 @@ const Home = () => {
               <Link to="/perfil" className="home-card">
                 <div className="card-icon">👤</div>
                 <h3>PERFIL</h3>
-                <p>Gestiona tu perfil</p>
+                <p>Gestiona tu perfil y sugerencias</p>
               </Link>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </Layout>
   );
 };
 

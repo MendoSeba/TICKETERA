@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import ToastProvider from './components/ToastProvider';
 import ErrorBoundary from './components/ErrorBoundary';
 import Ruta from './routes/Routes';
-import './styles/global.css';
 
 const container = document.getElementById('root');
 if (container) {

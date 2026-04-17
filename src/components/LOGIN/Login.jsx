@@ -81,19 +81,9 @@ const Login = () => {
 
   return (
     <div>
-      <header className='header_home'>
-        <a className='container2'><img className='logo3' src={logo2} alt="Logo" /></a>
-        <h1 className="titulo">TICKETERA</h1>
-        <nav id="nav" className="">
-          <ul id="links" className="links-horizontal" >
-            <Link className="l1" to="/">INICIO</Link>
-          </ul>
-          <div className="responsive-menu">
-            <ul>
-              <li><Link to="/">INICIO</Link></li>
-            </ul>
-          </div>
-        </nav>
+      <header className='header-login'>
+        <img className='logo-grande' src={logo2} alt="Logo" />
+        <h1 className="titulo-grande">TICKETERA</h1>
       </header>
       <div className="body2">
         {success ? (
@@ -155,6 +145,7 @@ const Login = () => {
                 <input
                   type="password"
                   id="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -170,6 +161,7 @@ const Login = () => {
                 <input
                   type="password"
                   id="confirmPassword"
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);

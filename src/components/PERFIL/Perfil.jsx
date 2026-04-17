@@ -1,63 +1,61 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../hooks/useToast';
+import { useToast } from '../ToastProvider';
+import { addSugerencia, getUserProfile, saveUserProfile } from '../../service/firestoreService';
 import './Perfil.css';
+import Layout from '../Layout/Layout';
+import { updateEmail as firebaseUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 
 const Perfil = () => {
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
+  const auth = getAuth();
+
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
   const [sugerencia, setSugerencia] = useState('');
   const [loading, setLoading] = useState(true);
-  const isMounted = useRef(true);
+  const [enviando, setEnviando] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [cambiandoEmail, setCambiandoEmail] = useState(false);
 
   useEffect(() => {
-    return () => { isMounted.current = false; };
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      const storedProfile = localStorage.getItem('userProfile');
-      if (storedProfile) {
-        try {
-          const profile = JSON.parse(storedProfile);
-          if (isMounted.current) {
-            setDisplayName(user.displayName || profile.displayName || '');
-            setPhone(profile.phone || '');
-            setSugerencia(profile.sugerencia || '');
-          }
-        } catch (e) {
-          console.error('Error loading profile:', e);
-          if (isMounted.current) {
-            setDisplayName(user.displayName || '');
-          }
-        }
-      } else {
-        if (isMounted.current) {
+    const loadProfile = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        const profile = await getUserProfile(user.uid);
+        if (profile) {
+          setDisplayName(profile.displayName || user.displayName || '');
+          setPhone(profile.phone || '');
+        } else {
           setDisplayName(user.displayName || '');
         }
+      } catch (e) {
+        console.error('Error loading profile:', e);
+        setDisplayName(user.displayName || '');
       }
-      if (isMounted.current) {
-        setLoading(false);
-      }
-    }
+      setLoading(false);
+    };
+
+    loadProfile();
   }, [user]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!user) return;
     try {
       const profileData = {
         displayName,
         phone,
         email: user.email,
-        lastUpdated: Date.now()
       };
-      localStorage.setItem('userProfile', JSON.stringify(profileData));
-      
-      const event = new CustomEvent('profileUpdated', { detail: { displayName, phone } });
-      window.dispatchEvent(event);
-      
+      await saveUserProfile(user.uid, profileData);
       showSuccess('Perfil guardado correctamente');
     } catch (error) {
       console.error('Error guardando perfil:', error);
@@ -65,98 +63,197 @@ const Perfil = () => {
     }
   };
 
-  const handleEnviarSugerencia = () => {
+  const handleEnviarSugerencia = async () => {
     if (!sugerencia.trim()) {
       showError('Escribe algo en el campo de sugerencias');
       return;
     }
-    const contactEmail = import.meta.env.VITE_CONTACT_EMAIL;
-    const subject = encodeURIComponent('Sugerencia/Queja TICKETERA');
-    const body = encodeURIComponent(sugerencia + '\n\nEnviado desde TICKETERA App');
-    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
-    showSuccess('Abriendo tu cliente de correo...');
+
+    setEnviando(true);
+
+    try {
+      await addSugerencia({
+        nombre: displayName || user?.email || 'Usuario',
+        email: user?.email || '',
+        telefono: phone || '',
+        mensaje: sugerencia,
+        userId: user?.uid
+      });
+      showSuccess('Sugerencia enviada correctamente');
+      setSugerencia('');
+    } catch (error) {
+      console.error('Error enviando sugerencia:', error);
+      showError('Error al enviar la sugerencia');
+      setSugerencia('');
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const handleChangeEmail = async () => {
+    if (!newEmail.trim() || !passwordConfirm.trim()) {
+      showError('Completa el email y la contraseña');
+      return;
+    }
+
+    if (!user) return;
+
+    setCambiandoEmail(true);
+
+    try {
+      const credential = EmailAuthProvider.credential(user.email, passwordConfirm);
+      await reauthenticateWithCredential(user, credential);
+      await firebaseUpdateEmail(user, newEmail);
+      showSuccess('Email actualizado correctamente');
+      setShowEmailInput(false);
+      setNewEmail('');
+      setPasswordConfirm('');
+    } catch (error) {
+      console.error('Error cambiando email:', error);
+      if (error.code === 'auth/wrong-password') {
+        showError('Contraseña incorrecta');
+      } else if (error.code === 'auth/email-already-in-use') {
+        showError('Este email ya está en uso');
+      } else {
+        showError('Error al cambiar el email');
+      }
+    } finally {
+      setCambiandoEmail(false);
+    }
   };
 
   if (loading) {
-    return <div className="perfil-page"></div>;
+    return (
+      <Layout>
+        <div className="perfil-container">
+          <p>Cargando...</p>
+        </div>
+      </Layout>
+    );
   }
 
   return (
-    <div className="perfil-page">
-      <section className="perfil-section">
-        <div className="perfil-container">
-          <div className="perfil-header">
-            <div className="perfil-avatar">
-              <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
-            </div>
-            <div className="perfil-title">
-              <h2>Mi Perfil</h2>
-              <p>{user?.email}</p>
-            </div>
+    <Layout>
+      <div className="perfil-container">
+        <div className="perfil-header">
+          <div className="perfil-avatar">
+            <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
           </div>
-
-          <div className="perfil-form">
-            <div className="form-group">
-              <label htmlFor="displayName">Nombre:</label>
-              <input
-                type="text"
-                id="displayName"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Tu nombre"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                value={user?.email || ''}
-                disabled
-                className="disabled-input"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Teléfono:</label>
-              <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+34 600 000 000"
-              />
-            </div>
-
-            <button
-              className="btn-primary"
-              onClick={handleSave}
-            >
-              💾 Guardar
-            </button>
-
-            <div className="form-group sugerencia-group">
-              <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
-              <textarea
-                id="sugerencia"
-                value={sugerencia}
-                onChange={(e) => setSugerencia(e.target.value)}
-                placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
-                rows={3}
-              />
-            </div>
-
-            <button
-              className="btn-primary"
-              onClick={handleEnviarSugerencia}
-            >
-              📤 Enviar Sugerencia
-            </button>
+          <div className="perfil-title">
+            <h2>Mi Perfil</h2>
+            <p>{user?.email}</p>
           </div>
         </div>
-      </section>
-    </div>
+
+        <div className="perfil-form">
+          <div className="form-group">
+            <label htmlFor="displayName">Nombre:</label>
+            <input
+              type="text"
+              id="displayName"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="Tu nombre"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            {!showEmailInput ? (
+              <div className="email-display">
+                <input
+                  type="email"
+                  id="email"
+                  value={user?.email || ''}
+                  disabled
+                  className="disabled-input"
+                />
+                <button
+                  type="button"
+                  className="boton-tickets cambiar-email-btn"
+                  onClick={() => setShowEmailInput(true)}
+                >
+                  Cambiar
+                </button>
+              </div>
+            ) : (
+              <div className="email-change-form">
+                <input
+                  type="email"
+                  id="newEmail"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="Nuevo email"
+                />
+                <input
+                  type="password"
+                  id="passwordConfirm"
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  placeholder="Contraseña actual"
+                />
+                <div className="email-change-buttons">
+                  <button
+                    className="boton-tickets"
+                    onClick={handleChangeEmail}
+                    disabled={cambiandoEmail}
+                  >
+                    {cambiandoEmail ? 'Cambiando...' : '✓ Confirmar'}
+                  </button>
+                  <button
+                    className="boton-tickets cancelar-btn"
+                    onClick={() => {
+                      setShowEmailInput(false);
+                      setNewEmail('');
+                      setPasswordConfirm('');
+                    }}
+                  >
+                    ✕ Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="phone">Teléfono:</label>
+            <input
+              type="tel"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+34 600 000 000"
+            />
+          </div>
+
+          <button
+            className="boton-tickets save-profile-btn"
+            onClick={handleSave}
+          >
+            💾 Guardar
+          </button>
+
+          <div className="form-group sugerencia-group">
+            <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
+            <textarea
+              id="sugerencia"
+              value={sugerencia}
+              onChange={(e) => setSugerencia(e.target.value)}
+              placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
+              rows={3}
+            />
+          </div>
+
+          <button
+            className="boton-tickets enviar-sugerencia-btn"
+            onClick={handleEnviarSugerencia}
+            disabled={enviando}
+          >
+            {enviando ? 'Enviando...' : '📤 Enviar Sugerencia'}
+          </button>
+        </div>
+      </div>
+    </Layout>
   );
 };
 

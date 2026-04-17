@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ToastProvider = ({ children }) => {
@@ -19,6 +19,15 @@ const ToastProvider = ({ children }) => {
       />
     </>
   );
+};
+
+export const useToast = () => {
+  const showSuccess = (message) => toast.success(message);
+  const showError = (message) => toast.error(message);
+  const showInfo = (message) => toast.info(message);
+  const showWarning = (message) => toast.warning(message);
+
+  return { showSuccess, showError, showInfo, showWarning };
 };
 
 export default ToastProvider;

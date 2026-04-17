@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
@@ -8,10 +8,10 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth } from '../service/fireservice';
+import { getUserProfile } from '../service/firestoreService';
 
 const AuthContext = createContext();
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -23,10 +23,28 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userDisplayName, setUserDisplayName] = useState(null);
+  const profileLoaded = useRef(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      if (user && !profileLoaded.current) {
+        profileLoaded.current = true;
+        try {
+          const profile = await getUserProfile(user.uid);
+          if (profile && profile.displayName) {
+            setUserDisplayName(profile.displayName);
+          } else {
+            setUserDisplayName(user.displayName || user?.email?.split('@')[0] || 'Usuario');
+          }
+        } catch (e) {
+          console.error('Error loading profile:', e);
+          setUserDisplayName(user?.email?.split('@')[0] || 'Usuario');
+        }
+      } else if (!user) {
+        setUserDisplayName(null);
+      }
       setLoading(false);
     });
 
@@ -53,6 +71,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    userDisplayName,
     login,
     register,
     logout,
@@ -62,24 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {loading ? (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundColor: '#f5f5f5'
-        }}>
-          <div style={{
-            textAlign: 'center',
-            color: '#FF9800',
-            fontSize: '24px',
-            fontWeight: 'bold'
-          }}>
-            Cargando...
-          </div>
-        </div>
-      ) : children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

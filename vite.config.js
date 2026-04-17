@@ -9,18 +9,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/functions'],
-          ui: ['react-bootstrap', 'bootstrap', 'react-toastify'],
-          utils: ['date-fns', 'uuid', 'html2canvas', 'tesseract.js'],
-          charts: ['recharts']
-        }
-      }
-    }
+    sourcemap: true
   },
   resolve: {
     alias: {
