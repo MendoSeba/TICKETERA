@@ -119,33 +119,35 @@ const Inicio = () => {
                 setError('');
               }}
             />
-            <input className='input-form1'
-              type={showPassword ? "text" : "password"}
-              placeholder="Contraseña"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setError('');
-              }}
-              style={{ paddingRight: '40px' }}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '18px'
-              }}
-            >
-              {showPassword ? '👁️' : '👁️‍🗨️'}
-            </button>
+            <div style={{ position: 'relative' }}>
+              <input className='input-form1'
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
+                style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '18px'
+                }}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
             {error && (
               <div className="error-message" style={{
                 color: '#ff6b6b',

@@ -348,6 +348,7 @@ html, body {
     .header-login {
       padding: 10px 20px;
       gap: 10px;
+      flex-direction: row;
     }
 
     .h1_2 {
@@ -365,7 +366,7 @@ html, body {
 
     .titulo-grande {
       font-size: 28px !important;
-      display: block !important;
+      display: inline-block !important;
       color: white !important;
     }
   }
