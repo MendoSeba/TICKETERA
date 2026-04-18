@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import Footer from '../FOOTER/Footer';
@@ -10,7 +10,6 @@ const Layout = ({ children }) => {
   const { logout, user, userDisplayName } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -21,77 +20,41 @@ const Layout = ({ children }) => {
     }
   };
 
-  const isActive = (path) => location.pathname === path ? 'menu-item active' : 'menu-item';
-
-  const menuItems = [
-    { path: '/home', label: '🏠 HOME' },
-    { path: '/precio', label: '💰 PRECIO' },
-    { path: '/tickets', label: '🧾 TICKETS' },
-    { path: '/lista', label: '🛒 LISTA' },
-    { path: '/perfil', label: '👤 PERFIL' },
-  ];
-
-  const currentPage = menuItems.find(item => item.path === location.pathname)?.label || 'MENU';
+  const isActive = (path) => location.pathname === path ? 'l-inicial active' : 'l-inicial';
 
   return (
     <div className="layout-page">
-      {/* Header profesional */}
-      <header className='header-app'>
-        <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-          <span className="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-        
-        <div className="header-brand">
-          <img className='logo-mini' src={logo3} alt="Logo" />
-          <span className="header-title">TICKETERA</span>
-        </div>
-        
-        <div className="header-user">
-          <span className="user-badge">
-            {userDisplayName || user?.email?.split('@')[0] || 'U'}
-          </span>
-        </div>
-      </header>
-
-      {/* Menú desplegable estilo app nativa */}
-      <div className={`slide-menu ${menuOpen ? 'open' : ''}`}>
-        <div className="menu-header">
-          <img className='menu-logo' src={logo3} alt="Logo" />
-          <h3>TICKETERA</h3>
-          <p>{user?.email || 'Usuario'}</p>
-        </div>
-        
-        <nav className="menu-nav">
-          {menuItems.map(item => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={isActive(item.path)}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <button className="menu-item logout" onClick={handleLogout}>
-            🚪 Cerrar sesión
-          </button>
-        </nav>
-      </div>
-
-      {/* Overlay cuando el menú está abierto */}
-      {menuOpen && <div className="menu-overlay" onClick={() => setMenuOpen(false)} />}
-
-      {/* Contenido principal */}
-      <main className='layout-content'>
-        <div className="page-indicator">
-          <span>{currentPage}</span>
-        </div>
+      <section className='section-header'>
+        <header className='header_home'>
+          <img className='logo3' src={logo3} alt="Logo" />
+          <nav id="nav" className="">
+            <ul id="links" className='links-horizontal' >
+              <li className="titulo2">TICKETERA</li>
+              <li><Link className={isActive('/home')} to="/home">HOME</Link></li>
+              <li><Link className={isActive('/precio')} to="/precio">PRECIO</Link></li>
+              <li><Link className={isActive('/tickets')} to="/tickets">TICKETS</Link></li>
+              <li><Link className={isActive('/lista')} to="/lista">LISTA</Link></li>
+              <li><Link className={isActive('/perfil')} to="/perfil">PERFIL</Link></li>
+            </ul>
+            <div className="responsive-menu">
+              <ul>
+                <li><Link to="/home">HOME</Link></li>
+                <li><Link to="/precio">PRECIO</Link></li>
+                <li><Link to="/tickets">TICKETS</Link></li>
+                <li><Link to="/lista">LISTA</Link></li>
+                <li><Link to="/perfil">PERFIL</Link></li>
+              </ul>
+            </div>
+          </nav>
+          <div className="user-menu">
+            <span className="user-name">Bienvenido, <strong>{userDisplayName || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
+            <button className="boton-gradiente logout-button" onClick={handleLogout}>Cerrar sesión</button>
+          </div>
+        </header>
+      </section>
+      <section className='layout-section'>
         {children}
-      </main>
+      </section>
       
       {/* AdMob Banner */}
       <div className='admob-banner admob-bottom'>

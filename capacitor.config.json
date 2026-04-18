@@ -1,0 +1,6 @@
+{
+  "appId": "com.tiketera.app",
+  "appName": "TICKETERA",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
