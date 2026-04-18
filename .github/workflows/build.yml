@@ -2,9 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [master, main]
-  pull_request:
-    branches: [master, main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -12,38 +10,33 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
+          node-version: '22'
+          
       - name: Install dependencies
         run: npm ci
 
       - name: Build web app
         run: npm run build
 
-      - name: Install Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
-
+          
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Add Capacitor Android
-        run: npx @capacitor/cli plugin add @capacitor/android || echo "Already added"
-
-      - name: Copy web to android
+      - name: Sync Capacitor
         run: npx cap sync android
 
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: chmod +x gradlew && ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
