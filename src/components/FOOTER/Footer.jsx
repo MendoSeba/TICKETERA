@@ -35,7 +35,7 @@ const Footer = () => {
               boxShadow: '0 4px 15px rgba(255, 107, 0, 0.3)'
             }}
           >
-            🔄 ACTUALIZAR APP
+            📥 DESCARGAR APP
           </button>
           
           <p className="footer-contact">Número de contacto: +54 637-62-89-25</p>
