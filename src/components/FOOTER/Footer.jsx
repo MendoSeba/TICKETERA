@@ -9,8 +9,8 @@ const Footer = () => {
 
   const handleDownloadApp = () => {
     const link = document.createElement('a');
-    link.href = '/tiketera.bin';
-    link.download = 'tiketera.apk';
+    link.href = 'https://tourmaline-swan-46534f.netlify.app/TICKETERA.apk';
+    link.download = 'TICKETERA.apk';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

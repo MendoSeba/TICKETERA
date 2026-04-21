@@ -1,0 +1,7 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#FF9800"/>
+  <g transform="translate(150, 300)">
+    <image href="src/components/IMG/img23.jpg.jpeg" width="500" height="500"/>
+  </g>
+  <text x="750" y="600" font-family="Arial" font-size="200" fill="white" font-weight="bold">TICKETERA</text>
+</svg>
