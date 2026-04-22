@@ -10,15 +10,15 @@
   "scope": "/",
   "icons": [
     {
-      "src": "./src/components/IMG/img23.jpg.jpeg",
+      "src": "./logo/examples/iconoapp.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./src/components/IMG/img23.jpg.jpeg",
+      "src": "./logo/examples/iconoapp.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

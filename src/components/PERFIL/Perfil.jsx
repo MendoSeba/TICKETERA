@@ -5,12 +5,10 @@ import { addSugerencia, getUserProfile, saveUserProfile } from '../../service/fi
 import './Perfil.css';
 import Layout from '../Layout/Layout';
 import { updateEmail as firebaseUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
 
 const Perfil = () => {
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
-  const auth = getAuth();
 
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');

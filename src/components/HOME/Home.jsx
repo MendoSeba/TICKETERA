@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../Layout/Layout';
-import Footer from '../FOOTER/Footer';
 import './Home.css';
 
 const Home = () => {

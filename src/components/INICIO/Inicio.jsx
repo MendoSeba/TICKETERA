@@ -80,13 +80,6 @@ const Inicio = () => {
     }
   };
 
-  const handleProtectedLink = (e) => {
-    if (!user) {
-      e.preventDefault();
-      setError('Debes iniciar sesión para acceder a esta sección');
-    }
-  };
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       loginWithEmail();

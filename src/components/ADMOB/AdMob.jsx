@@ -3,7 +3,9 @@ import React, { useEffect } from 'react';
 const AdMobBanner = () => {
   useEffect(() => {
     try {
-      (adsbygoogle = window.adsbygoogle || []).push({});
+      if (window.adsbygoogle) {
+        window.adsbygoogle.push({});
+      }
     } catch (e) {
       console.error('AdMob error:', e);
     }

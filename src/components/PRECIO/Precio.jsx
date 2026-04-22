@@ -1,19 +1,21 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Precio.css';
-import { 
-  searchProductsOpenFoodFacts, 
+import {
+  searchProductsOpenFoodFacts,
   getProductsByCategory,
-  supermarkets, 
+  supermarkets,
   categories,
 } from '../../service/supermarketService';
 import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
 import Layout from '../Layout/Layout';
 import { useToast } from '../ToastProvider';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Precio = () => {
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,7 +35,6 @@ const Precio = () => {
   const [newProductCategory, setNewProductCategory] = useState('');
   const [newProductSupermarket, setNewProductSupermarket] = useState('');
   const [newProductPrice, setNewProductPrice] = useState('');
-  const [showCustomProducts, setShowCustomProducts] = useState(false);
 
   const [customProductToEdit, setCustomProductToEdit] = useState(null);
 
@@ -64,15 +65,6 @@ const Precio = () => {
       savePricesToStorage(stored);
       setManualPrices(stored);
     }
-  };
-
-  const handleEditCustomProduct = (product) => {
-    setCustomProductToEdit(product);
-    setNewProductName(product.name);
-    setNewProductBrand(product.brand || '');
-    setNewProductDesc(product.description || '');
-    setNewProductImage(product.image || '');
-    setShowAddProduct(true);
   };
 
   useEffect(() => {
@@ -230,16 +222,14 @@ const Precio = () => {
     }
     
     try {
-      const { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } = await import('firebase/firestore');
+      const { collection, addDoc, serverTimestamp, query, where, getDocs } = await import('firebase/firestore');
       const { db } = await import('../../service/fireservice');
       
       const q = query(collection(db, 'listas'), where('userId', '==', user.uid));
       const snapshot = await getDocs(q);
       
-      let listRef;
-      
-      if (snapshot.empty) {
-        listRef = await addDoc(collection(db, 'listas'), {
+if (snapshot.empty) {
+          await addDoc(collection(db, 'listas'), {
           userId: user.uid,
           nombre: 'Mi Lista',
           lista: [{
@@ -296,15 +286,6 @@ const Precio = () => {
       });
     savePricesToStorage(allPrices);
     showSuccess('Precios guardados correctamente');
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    setProducts([]);
-    setSelectedProduct(null);
-    setHasSearched(false);
-    setActiveCategory(null);
-    setShowPriceForm(false);
   };
 
   const getPricesWithValues = () => {

@@ -321,21 +321,6 @@ const Tickets = () => {
     }
   };
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setShowCamera(true);
-      }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      showError('No se pudo acceder a la cámara');
-    }
-  };
-
   const capturePhoto = () => {
     if (videoRef.current && canvasRef.current) {
       const canvas = canvasRef.current;
@@ -363,8 +348,9 @@ const Tickets = () => {
 
   useEffect(() => {
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      const videoEl = videoRef.current;
+      if (videoEl && videoEl.srcObject) {
+        videoEl.srcObject.getTracks().forEach(track => track.stop());
       }
     };
   }, []);

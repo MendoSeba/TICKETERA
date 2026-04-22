@@ -2,5 +2,23 @@
   "appId": "com.tiketera.app",
   "appName": "TICKETERA",
   "webDir": "dist",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchFadeOutDuration": 1000,
+      "launchAutoHide": true,
+      "backgroundColor": "#ff9800",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpin": false,
+      "navigationBarExtra": false
+    }
+  },
+  "android": {
+    "allowMixedContent": true
+  },
+  "ios": {
+    "allowsInsecureWebRT": true
+  }
 }
