@@ -1,27 +1,17 @@
-plugins = []
-headers = []
-redirects = []
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-cache"
 
-[functions]
-
-[functions."*"]
+[[headers]]
+  for = "/*.apk"
+  [headers.values]
+    Content-Disposition = "attachment"
+    Cache-Control = "no-cache"
 
 [build]
-publish = "C:\\Users\\mendo\\Downloads\\TICKETERA-main\\TICKETERA-main\\dist"
-publishOrigin = "ui"
-commandOrigin = "ui"
-command = "npm run build"
+  publish = "dist"
+  command = "npm run build"
 
 [build.environment]
-
-[build.processing]
-
-[build.processing.css]
-
-[build.processing.html]
-
-[build.processing.images]
-
-[build.processing.js]
-
-[build.services]
+  NODE_VERSION = "22"
