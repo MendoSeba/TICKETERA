@@ -9,7 +9,7 @@ const Footer = () => {
 
   const handleDownloadApp = () => {
     const link = document.createElement('a');
-    link.href = `https://github.com/MendoSeba/TICKETERA/releases/download/v1.0/app-debug.apk?_v=${Date.now()}`;
+    link.href = `https://github.com/MendoSeba/TICKETERA/releases/download/v2.0.1/Tiketera.apk?_v=${Date.now()}`;
     link.download = 'TICKETERA.apk';
     document.body.appendChild(link);
     link.click();
