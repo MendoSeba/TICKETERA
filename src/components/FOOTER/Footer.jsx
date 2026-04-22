@@ -9,7 +9,7 @@ const Footer = () => {
 
   const handleDownloadApp = () => {
     const link = document.createElement('a');
-    link.href = 'https://ticketera-652e0.netlify.app/TICKETERA.apk';
+    link.href = 'https://github.com/MendoSeba/TICKETERA/releases/download/v1.0/app-debug.apk';
     link.download = 'TICKETERA.apk';
     document.body.appendChild(link);
     link.click();
