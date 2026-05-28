@@ -7,6 +7,7 @@ import Lista from '../components/LISTA/Lista';
 import Precio from '../components/PRECIO/Precio';
 import Tickets from '../components/TICKETS/Tickets';
 import Perfil from '../components/PERFIL/Perfil';
+import Stats from '../components/STATS/Stats';
 import Error from '../components/404/404';
 import ProtectedRoute from '../components/ProtectedRoute';
 import ForgotPassword from '../components/RECUPERAR/ForgotPassword';
@@ -44,6 +45,11 @@ export function Ruta() {
         <Route path="/perfil" element={
           <ProtectedRoute>
             <Perfil />
+          </ProtectedRoute>
+        } />
+        <Route path="/stats" element={
+          <ProtectedRoute>
+            <Stats />
           </ProtectedRoute>
         } />
         <Route path="/404" element={<Error />} />

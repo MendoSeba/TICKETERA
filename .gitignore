@@ -9,3 +9,6 @@ dist/
 coverage/
 .vscode/
 .idea/
+*.apk
+*.zip
+android/app/google-services.json

@@ -36,6 +36,8 @@ export const addTicket = async (ticketData, userId) => {
     cantidad: ticketData.cantidad,
     opcion: ticketData.opcion,
     fecha: ticketData.fecha,
+    items: ticketData.items || [], // Guardamos desglose si existe
+    rawText: ticketData.rawText || '', // Guardamos texto bruto para análisis futuro
     createdAt: serverTimestamp(),
   });
   return { 
@@ -43,7 +45,9 @@ export const addTicket = async (ticketData, userId) => {
     userId: ticketData.userId,
     cantidad: ticketData.cantidad,
     opcion: ticketData.opcion,
-    fecha: ticketData.fecha 
+    fecha: ticketData.fecha,
+    items: ticketData.items || [],
+    rawText: ticketData.rawText || ''
   };
 };
 
@@ -53,8 +57,7 @@ export const getTickets = async (userId) => {
   }
   const q = query(
     collection(db, FIRESTORE_COLLECTIONS.TICKETS),
-    where('userId', '==', userId),
-    orderBy('fecha', 'desc')
+    where('userId', '==', userId)
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -105,8 +108,7 @@ export const getShoppingLists = async (userId) => {
   }
   const q = query(
     collection(db, FIRESTORE_COLLECTIONS.SHOPPING_LISTS),
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
+    where('userId', '==', userId)
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -178,9 +180,9 @@ export const getUserProfile = async (userId) => {
   const snapshot = await getDocs(q);
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() };
+    return { id: doc.id, isPremium: false, ...doc.data() }; // Valor por defecto false
   }
-  return null;
+  return { isPremium: false };
 };
 
 export const saveUserProfile = async (userId, profileData) => {
@@ -194,18 +196,27 @@ export const saveUserProfile = async (userId, profileData) => {
   
   if (existingProfile) {
     const docRef = doc(db, FIRESTORE_COLLECTIONS.USER_PROFILES, existingProfile.id);
-    await updateDoc(docRef, {
+    const updateData = {
       ...profileData,
       updatedAt: serverTimestamp()
-    });
-    return { id: existingProfile.id, ...profileData };
+    };
+    // Asegurarse de que monthlyLimit sea número si existe
+    if (updateData.monthlyLimit !== undefined) {
+      updateData.monthlyLimit = parseFloat(updateData.monthlyLimit) || 0;
+    }
+    await updateDoc(docRef, updateData);
+    return { id: existingProfile.id, ...updateData };
   } else {
-    const docRef = await addDoc(collection(db, FIRESTORE_COLLECTIONS.USER_PROFILES), {
+    const newData = {
       ...profileData,
       userId,
       createdAt: serverTimestamp(),
-    });
-    return { id: docRef.id, ...profileData };
+    };
+    if (newData.monthlyLimit !== undefined) {
+      newData.monthlyLimit = parseFloat(newData.monthlyLimit) || 0;
+    }
+    const docRef = await addDoc(collection(db, FIRESTORE_COLLECTIONS.USER_PROFILES), newData);
+    return { id: docRef.id, ...newData };
   }
 };
 

@@ -1,13 +1,5 @@
-.tickets-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
-}
-
-.tickets-section {
-  flex: 1;
-  padding: 40px 20px;
+.tickets-app {
+  width: 100%;
 }
 
 .tickets-container {
@@ -49,10 +41,10 @@ label.scan-btn {
   background: linear-gradient(135deg, #2196F3, #1976D2) !important;
   color: white !important;
   border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
+  border-radius: 50px;
+  padding: 12px 28px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.3s;
   box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
   display: inline-flex;
@@ -134,6 +126,22 @@ label.scan-btn:hover {
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   margin-bottom: 30px;
+  width: 100%; /* Asegurar que ocupe todo el ancho */
+  box-sizing: border-box;
+}
+
+.table1 {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.supermarket-tag {
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 11px;
 }
 
 .div-del-body2 th,
@@ -200,12 +208,14 @@ label.scan-btn:hover {
   background: linear-gradient(135deg, orange, orangered);
   color: white;
   border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
+  border-radius: 50px; /* Estilo píldora */
+  padding: 12px 28px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .boton-tickets:hover {
@@ -334,14 +344,48 @@ label.scan-btn:hover {
   color: #333;
 }
 
-.totales p span {
-  color: orange;
+.total-mensual-container {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  text-align: center;
 }
 
-.table1 {
-  width: 100%;
-  border-collapse: collapse;
+.total-mensual-container p {
+  font-size: 20px;
+  font-weight: 800;
+  color: #333;
+  margin: 0;
 }
+
+.total-mensual-container span {
+  color: #ff9800;
+  font-size: 24px;
+}
+
+/* Colores por temporalidad en las filas */
+.row-semana {
+  background-color: rgba(76, 175, 80, 0.1) !important; /* Verde muy suave */
+}
+
+.row-mes {
+  background-color: rgba(255, 152, 0, 0.1) !important; /* Naranja muy suave */
+}
+
+.row-anio {
+  background-color: rgba(33, 150, 243, 0.1) !important; /* Azul muy suave */
+}
+
+.row-anterior {
+  background-color: rgba(158, 158, 158, 0.1) !important; /* Gris muy suave */
+}
+
+.table1 tr {
+  transition: background-color 0.3s ease;
+}
+
 
 @media (max-width: 768px) {
   .tickets-section {

@@ -1,14 +1,35 @@
 import { loadPricesFromStorage } from './storageService';
 
 export const supermarkets = [
-  { id: 'mercadona', name: 'Mercadona', logo: '🛒', color: '#DA291C' },
-  { id: 'carrefour', name: 'Carrefour', logo: '🛒', color: '#004F9F' },
-  { id: 'lidl', name: 'LIDL', logo: '🛒', color: '#00529B' },
-  { id: 'dia', name: 'Dia', logo: '🛒', color: '#E30613' },
-  { id: 'eroski', name: 'Eroski', logo: '🛒', color: '#007B3D' },
-  { id: 'consum', name: 'Consum', logo: '🛒', color: '#FF6600' },
-  { id: 'aldi', name: 'Aldi', logo: '🛒', color: '#003399' },
+  { id: 'mercadona', name: 'Mercadona', logo: '🛒', color: '#219653' }, // Verde
+  { id: 'carrefour', name: 'Carrefour', logo: '🛒', color: '#004F9F' }, // Azul
+  { id: 'lidl', name: 'LIDL', logo: '🛒', color: '#FFD700' }, // Amarillo
+  { id: 'dia', name: 'Dia', logo: '🛒', color: '#E30613' }, // Rojo
+  { id: 'eroski', name: 'Eroski', logo: '🛒', color: '#005CA9' }, // Azul
+  { id: 'consum', name: 'Consum', logo: '🛒', color: '#FF6600' }, // Naranja
+  { id: 'charter', name: 'Charter', logo: '🛒', color: '#d32f2f' }, // Rojo Charter
+  { id: 'aldi', name: 'Aldi', logo: '🛒', color: '#002C95' }, // Azul Aldi
+  { id: 'alcampo', name: 'Alcampo', logo: '🛒', color: '#ED1C24' },
+  { id: 'hipercor', name: 'Hipercor', logo: '🛒', color: '#006B3E' },
+  { id: 'bonarea', name: 'BonArea', logo: '🛒', color: '#E2001A' },
 ];
+
+export const getSuperColor = (name) => {
+  if (!name) return '#94a3b8';
+
+  const s = supermarkets.find(sup => sup.name.toLowerCase() === name.toLowerCase());
+  if (s) return s.color;
+
+  // Si no está en la lista, generamos un color determinista basado en el nombre
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const c = (hash & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
+  return '#' + '00000'.substring(0, 6 - c.length) + c;
+};
 
 const OPEN_FOOD_FACTS_API = 'https://es.openfoodfacts.org';
 
@@ -78,13 +99,14 @@ export const searchProductsOpenFoodFacts = async (query) => {
     
     if (data.products) {
       const products = data.products
-        .filter(p => p.product_name && p.image_front_url && p.product_name.length > 3)
+        .filter(p => p.product_name && p.product_name.length > 3)
         .map(product => ({
           name: normalizeProductName(product.product_name),
-          brand: product.brands || 'Sin marca',
-          image: product.image_front_url,
+          brand: product.brands || 'Marca blanca / Genérico',
+          image: product.image_front_url || '',
           category: product.categories?.split(',')[0] || '',
           quantity: product.quantity || '',
+          hasImage: !!product.image_front_url
         }));
       
       return filterSpanishProducts(products, query);

@@ -374,7 +374,13 @@ const Lista = () => {
 
   return (
     <Layout>
-      <div className="caja-list">
+      <div className="lista-app">
+        <header className="page-header">
+          <h2 className="title-app">Mi Lista de Compras</h2>
+          <p className="subtitle-app">Planifica tus compras y ahorra tiempo</p>
+        </header>
+
+        <div className="caja-list">
         <form className='botones-lista'>
           <label htmlFor="producto">PRODUCTO:</label>
           <input ref={productoRef} type="text" id="producto" name="producto" style={{textTransform: 'uppercase'}} />

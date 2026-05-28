@@ -10,7 +10,7 @@
       "launchAutoHide": true,
       "backgroundColor": "#ff9800",
       "androidSplashResourceName": "splash",
-      "androidScaleType": "CENTER_CROP",
+      "androidScaleType": "CENTER",
       "showSpin": false,
       "navigationBarExtra": false
     }

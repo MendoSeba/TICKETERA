@@ -27,19 +27,33 @@ const Inicio = () => {
     return (
       <div style={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#f5f5f5'
+        background: 'linear-gradient(135deg, orange, orangered)',
+        color: 'white'
       }}>
+        <img
+          src={logo}
+          alt="Logo"
+          style={{
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            marginBottom: '20px',
+            border: '4px solid white',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+          }}
+        />
         <div style={{
-          textAlign: 'center',
-          color: '#FF9800',
-          fontSize: '24px',
-          fontWeight: 'bold'
+          fontSize: '28px',
+          fontWeight: '900',
+          letterSpacing: '2px'
         }}>
-          Cargando...
+          TICKETERA
         </div>
+        <div className="spinner-white" style={{ marginTop: '20px' }}></div>
       </div>
     );
   }

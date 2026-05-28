@@ -133,16 +133,22 @@ const Perfil = () => {
 
   return (
     <Layout>
-      <div className="perfil-container">
-        <div className="perfil-header">
-          <div className="perfil-avatar">
-            <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
+      <div className="perfil-app">
+        <header className="page-header">
+          <h2 className="title-app">Mi Perfil</h2>
+          <p className="subtitle-app">Gestiona tu información personal</p>
+        </header>
+
+        <div className="perfil-container">
+          <div className="perfil-user-header">
+            <div className="perfil-avatar">
+              <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="perfil-user-info">
+              <h3>{displayName || 'Usuario'}</h3>
+              <p>{user?.email}</p>
+            </div>
           </div>
-          <div className="perfil-title">
-            <h2>Mi Perfil</h2>
-            <p>{user?.email}</p>
-          </div>
-        </div>
 
         <div className="perfil-form">
           <div className="form-group">

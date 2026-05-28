@@ -6,12 +6,14 @@ import Layout from '../Layout/Layout';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ToastProvider';
 import { getTickets, addTicket, deleteTicket } from '../../service/firestoreService';
+import { supermarkets, getSuperColor } from '../../service/supermarketService';
 
 const Tickets = () => {
   const { showSuccess, showError } = useToast();
   const [gastos, setGastos] = useState([]);
   const [cantidad, setCantidad] = useState('');
   const [opcion, setOpcion] = useState('');
+  const [customOpcion, setCustomOpcion] = useState('');
   const [ordenamiento, setOrdenamiento] = useState('asc');
   const [ordenActual, setOrdenActual] = useState('fecha');
   const [vista, setVista] = useState('todos');
@@ -87,11 +89,45 @@ const Tickets = () => {
     return monto.toFixed(2).replace('.', ',');
   };
 
-  const getTotalColor = (total) => {
-    if (total < 100) return 'green';
-    if (total < 300) return 'orange';
-    return 'red';
+  const getTotalColor = (totalActual, totalAnterior) => {
+    if (totalAnterior === 0) return 'green'; // Primer periodo
+    if (totalActual < totalAnterior) return 'green'; // Gastado menos que antes
+    if (totalActual <= totalAnterior * 1.1) return 'orange'; // Hasta un 10% más
+    return 'red'; // Más de un 10% de aumento
   };
+
+  const calcularTotalesAnteriores = () => {
+    const hoy = new Date();
+
+    // Semana anterior
+    const haceUnaSemana = new Date(hoy);
+    haceUnaSemana.setDate(hoy.getDate() - 7);
+    const semanaAnterior = getWeekNumber(haceUnaSemana);
+    const totalSemanaAnterior = gastos
+      .filter(g => {
+        const d = new Date(g.fecha);
+        return getWeekNumber(d) === semanaAnterior && d.getFullYear() === haceUnaSemana.getFullYear();
+      })
+      .reduce((acc, g) => acc + g.cantidad, 0);
+
+    // Mes anterior
+    const dMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+    const totalMesAnterior = gastos
+      .filter(g => {
+        const d = new Date(g.fecha);
+        return d.getMonth() === dMesAnterior.getMonth() && d.getFullYear() === dMesAnterior.getFullYear();
+      })
+      .reduce((acc, g) => acc + g.cantidad, 0);
+
+    // Año anterior
+    const totalAnioAnterior = gastos
+      .filter(g => new Date(g.fecha).getFullYear() === hoy.getFullYear() - 1)
+      .reduce((acc, g) => acc + g.cantidad, 0);
+
+    return { totalSemanaAnterior, totalMesAnterior, totalAnioAnterior };
+  };
+
+  const { totalSemanaAnterior, totalMesAnterior, totalAnioAnterior } = useMemo(calcularTotalesAnteriores, [gastos]);
 
   const calcularTotalMesEspecifico = (mesAno) => {
     const grupos = agruparPorMes();
@@ -154,7 +190,7 @@ const Tickets = () => {
     const nuevoGasto = {
       id,
       cantidad: cantidadNum,
-      opcion,
+      opcion: opcion === 'Otro' ? customOpcion : opcion,
       fecha: date,
       userId: user.uid
     };
@@ -357,7 +393,13 @@ const Tickets = () => {
 
   return (
     <Layout>
-      <div className="tickets-container">
+      <div className="tickets-app">
+        <header className="page-header">
+          <h2 className="title-app">Mis Tickets</h2>
+          <p className="subtitle-app">Gestiona y escanea tus gastos</p>
+        </header>
+
+        <div className="tickets-container">
         <div className="botones-vista">
           <button className='boton-tickets' onClick={() => setVista('todos')}>Ver Todos los Gastos</button>
           <button className='boton-tickets' onClick={() => setVista('meses')}>Ver por Meses</button>
@@ -401,10 +443,44 @@ const Tickets = () => {
             <option value="Dia">Dia</option>
             <option value="Consum">Consum</option>
             <option value="Eroski">Eroski</option>
+            <option value="Alcampo">Alcampo</option>
+            <option value="Hipercor">Hipercor</option>
+            <option value="BonArea">BonArea</option>
             <option value="Otro">Otro</option>
           </select>
+          {opcion === 'Otro' && (
+            <input
+              className='input-form3'
+              type="text"
+              placeholder="Escribe el nombre del super"
+              value={customOpcion}
+              onChange={(e) => setCustomOpcion(e.target.value)}
+              required
+            />
+          )}
           <button className='boton-tickets' type="submit" disabled={scanning}>AGREGAR</button>
         </form>
+
+        {!loading && !error && vista === 'todos' && (
+          <div className="totales">
+            <div className={`totales-card ${getTotalColor(totalSemana, totalSemanaAnterior)}`}>
+              <p>Semana</p>
+              <strong>{formatearMonto(totalSemana)}€</strong>
+              <small style={{fontSize: '10px', opacity: 0.8}}>Ant: {formatearMonto(totalSemanaAnterior)}€</small>
+            </div>
+            <div className={`totales-card ${getTotalColor(totalMes, totalMesAnterior)}`}>
+              <p>Mes</p>
+              <strong>{formatearMonto(totalMes)}€</strong>
+              <small style={{fontSize: '10px', opacity: 0.8}}>Ant: {formatearMonto(totalMesAnterior)}€</small>
+            </div>
+            <div className={`totales-card ${getTotalColor(totalAnio, totalAnioAnterior)}`}>
+              <p>Año</p>
+              <strong>{formatearMonto(totalAnio)}€</strong>
+              <small style={{fontSize: '10px', opacity: 0.8}}>Ant: {formatearMonto(totalAnioAnterior)}€</small>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="loading">Cargando...</div>
         ) : error ? (
@@ -429,35 +505,42 @@ const Tickets = () => {
                 </tr>
               </thead>
               <tbody>
-                {gastosOrdenados.map((gasto) => (
-                  <tr key={gasto.id}>
-                    <td>{gasto.fecha}</td>
-                    <td>{gasto.opcion}</td>
-                    <td>{gasto.cantidad}</td>
-                    <td>
-                      <button className='boton-tickets eliminar-btn' onClick={() => handleDelete(gasto.id)} title="Eliminar">
-                        <span className="btn-text">Eliminar</span>
-                        <svg className="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {gastosOrdenados.map((gasto) => {
+                  const gastoFecha = new Date(gasto.fecha);
+                  const hoy = new Date();
+                  const esMismoAnio = gastoFecha.getFullYear() === hoy.getFullYear();
+                  const esMismoMes = esMismoAnio && gastoFecha.getMonth() === hoy.getMonth();
+                  const esMismaSemana = esMismoMes && getWeekNumber(gastoFecha) === getWeekNumber(hoy);
+
+                  let rowColorClass = '';
+                  if (esMismaSemana) rowColorClass = 'row-semana';
+                  else if (esMismoMes) rowColorClass = 'row-mes';
+                  else if (esMismoAnio) rowColorClass = 'row-anio';
+                  else rowColorClass = 'row-anterior';
+
+                  return (
+                    <tr key={gasto.id} className={rowColorClass}>
+                      <td>{gasto.fecha}</td>
+                      <td>
+                        <span
+                          className="supermarket-tag"
+                          style={{ backgroundColor: getSuperColor(gasto.opcion) }}
+                        >
+                          {gasto.opcion}
+                        </span>
+                      </td>
+                      <td><strong>{formatearMonto(gasto.cantidad)}€</strong></td>
+                      <td>
+                        <button className='boton-tickets eliminar-btn' onClick={() => handleDelete(gasto.id)} title="Eliminar">
+                          <span className="btn-text">Eliminar</span>
+                          <svg className="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
-            <div className="totales">
-              <div className={`totales-card ${getTotalColor(totalSemana)}`}>
-                <p>Semana</p>
-                <strong>{formatearMonto(totalSemana)}€</strong>
-              </div>
-              <div className={`totales-card ${getTotalColor(totalMes)}`}>
-                <p>Mes</p>
-                <strong>{formatearMonto(totalMes)}€</strong>
-              </div>
-              <div className={`totales-card ${getTotalColor(totalAnio)}`}>
-                <p>Año</p>
-                <strong>{formatearMonto(totalAnio)}€</strong>
-              </div>
-            </div>
           </div>
         )}
         {vista === 'meses' && (
@@ -470,7 +553,7 @@ const Tickets = () => {
                 return (
                 <li key={mesAno} className="mes-item">
                   <span className="mes-nombre">{formatearMesAno(mesAno)}</span>
-                  <span className={`mes-total ${color}`}>{total}€</span>
+                  <span className={`mes-total ${color}`}>{formatearMonto(total)}€</span>
                   <div className="mes-botones">
                     <button className='boton-tickets' onClick={() => verMes(mesAno)}>Ver Gastos</button>
                     <button className='boton-tickets eliminar' onClick={() => borrarMes(mesAno)}>Borrar</button>
@@ -497,8 +580,15 @@ const Tickets = () => {
                 {agruparPorMes()[mesSeleccionado].sort(ordenarGastos).map((gasto) => (
                   <tr key={gasto.id}>
                     <td>{gasto.fecha}</td>
-                    <td>{gasto.opcion}</td>
-                    <td>{gasto.cantidad}</td>
+                    <td>
+                      <span
+                        className="supermarket-tag"
+                        style={{ backgroundColor: getSuperColor(gasto.opcion) }}
+                      >
+                        {gasto.opcion}
+                      </span>
+                    </td>
+                    <td><strong>{formatearMonto(gasto.cantidad)}€</strong></td>
                     <td>
                       <button className='boton-tickets eliminar-btn' onClick={() => handleDelete(gasto.id)} title="Eliminar">
                         <span className="btn-text">Eliminar</span>
@@ -509,8 +599,8 @@ const Tickets = () => {
                 ))}
               </tbody>
             </table>
-            <div className="totales">
-              <p>Total del Mes: {calcularTotalMesEspecifico(mesSeleccionado)}</p>
+            <div className="total-mensual-container">
+              <p>Total del Mes: <span>{formatearMonto(calcularTotalMesEspecifico(mesSeleccionado))}€</span></p>
             </div>
           </div>
         )}

@@ -1,248 +1,145 @@
-.home-page {
-  min-height: 100vh;
+.home-app {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
-}
-
-.home-section {
-  flex: 1;
-  min-height: calc(100vh - 200px);
-  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
 }
 
 .home-container {
+  max-width: 900px;
   width: 100%;
-  max-width: 1200px;
-}
-
-.header_home {
+  margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 10px 20px;
-  background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.logo3 {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  vertical-align: middle;
-  border: 2px solid #ddd;
-}
-
-.links-horizontal {
-  display: flex;
-  gap: 15px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.links-horizontal .titulo2 {
-  font-weight: 800;
-  font-size: 32px;
-  color: #000000;
-  margin-right: 15px;
-  padding: 8px 15px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  white-space: nowrap;
-}
-
-.l-inicial {
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  white-space: nowrap;
-}
-
-.l-inicial:hover {
-  color: #FF9800;
-  background: rgba(255, 152, 0, 0.1);
-  border-color: #FF9800;
-}
-
-.l-inicial.active {
-  color: white;
-  background: linear-gradient(135deg, orange, orangered);
-  border-color: orange;
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.user-name {
-  font-size: 14px;
-  color: #333;
-}
-
-.user-name strong {
-  color: #FF9800;
-}
-
-.boton-gradiente {
-  background: linear-gradient(135deg, orange, orangered);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-}
-
-.boton-gradiente:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
-}
-
-.logout-button {
-  padding: 10px 20px;
-  font-size: 14px;
+  text-align: center;
 }
 
 .home-welcome {
-  text-align: center;
-  padding: 20px;
-}
-
-.home-welcome h1 {
-  color: #333;
-  font-size: 42px;
-  margin-bottom: 15px;
-  font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-.home-subtitle {
-  color: #666;
-  font-size: 20px;
-  margin-bottom: 50px;
-  font-weight: 400;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .home-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-top: 30px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 10px;
+  width: 100%;
 }
 
 .home-card {
   background: white;
-  padding: 40px 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 35px 20px;
+  border-radius: 30px;
   text-decoration: none;
-  color: #333;
-  transition: transform 0.3s, box-shadow 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.home-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(135deg, orange, orangered);
-  transform: scaleX(0);
-  transition: transform 0.3s;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
 .home-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
-
-.home-card:hover::before {
-  transform: scaleX(1);
+  box-shadow: 0 25px 40px rgba(0, 0, 0, 0.1);
+  border-color: #ff9800;
 }
 
 .card-icon {
-  font-size: 50px;
-  margin-bottom: 20px;
+  font-size: 40px;
+  margin-bottom: 15px;
+  background: #f8fafc;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Iconos circulares */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .home-card h3 {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 10px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
 .home-card p {
-  font-size: 16px;
-  color: #666;
-  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.5;
 }
 
 @media (max-width: 768px) {
-  .header_home {
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-    text-align: center;
-  }
-
-  .links-horizontal {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .user-menu {
-    flex-direction: column;
+  .home-cards {
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
 
   .home-welcome h1 {
     font-size: 28px;
   }
-
-  .home-subtitle {
-    font-size: 16px;
-  }
-
-  .home-cards {
-    grid-template-columns: 1fr;
-    max-width: 100%;
-  }
 }
 
 @media (max-width: 480px) {
-  .home-welcome h1 {
-    font-size: 24px;
+  .home-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .home-section {
+    padding: 20px 15px;
+  }
+}
+
+
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  background: #f8fafc;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+.home-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.home-card p {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Colores temáticos suaves */
+.home-card:nth-child(1) .card-icon { background: #eff6ff; } /* Tickets - Azul */
+.home-card:nth-child(2) .card-icon { background: #f0fdf4; } /* Lista - Verde */
+.home-card:nth-child(3) .card-icon { background: #fffbeb; } /* Precio - Oro */
+.home-card:nth-child(4) .card-icon { background: #fdf2f8; } /* Perfil - Rosa */
+.home-card:nth-child(5) .card-icon { background: #faf5ff; } /* Stats - Morado */
+
+@media (max-width: 480px) {
+  .home-cards {
+    grid-template-columns: 1fr;
   }
   
-  .home-cards {
-    gap: 15px;
+  .home-welcome h1 {
+    font-size: 24px;
   }
 }

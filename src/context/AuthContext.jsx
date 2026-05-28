@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      if (user && !profileLoaded.current) {
-        profileLoaded.current = true;
+      if (user) {
+        // Cargar siempre el perfil para asegurar nombre actualizado
         try {
           const profile = await getUserProfile(user.uid);
           if (profile && profile.displayName) {
@@ -42,8 +42,9 @@ export const AuthProvider = ({ children }) => {
           console.error('Error loading profile:', e);
           setUserDisplayName(user?.email?.split('@')[0] || 'Usuario');
         }
-      } else if (!user) {
+      } else {
         setUserDisplayName(null);
+        profileLoaded.current = false;
       }
       setLoading(false);
     });

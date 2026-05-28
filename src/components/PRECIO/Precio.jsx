@@ -267,10 +267,18 @@ if (snapshot.empty) {
 
   const handleAddManualPrice = (supermarketId, value) => {
     if (!selectedProduct) return;
-    setManualPrices(prev => ({
-      ...prev,
-      [`${selectedProduct.name}_${supermarketId}`]: value ? parseFloat(value) : null
-    }));
+    const allPrices = loadPricesFromStorage();
+    const key = `${selectedProduct.name}_${supermarketId}`;
+
+    if (value && parseFloat(value) > 0) {
+      allPrices[key] = parseFloat(value);
+      savePricesToStorage(allPrices);
+      setManualPrices(prev => ({
+        ...prev,
+        [key]: parseFloat(value)
+      }));
+      showSuccess('Precio actualizado');
+    }
   };
 
   const handleSaveManualPrices = () => {
@@ -342,11 +350,11 @@ if (snapshot.empty) {
 
   return (
     <Layout>
-        <div className='precio-container'>
-        <div className='precio-header'>
-          <h1>COMPARADOR DE PRECIOS</h1>
-          <p>Encuentra los mejores precios en supermercados de Valencia</p>
-        </div>
+        <div className='precio-app'>
+        <header className='page-header'>
+          <h2 className="title-app">Comparador de Precios</h2>
+          <p className="subtitle-app">Encuentra los mejores precios en supermercados</p>
+        </header>
 
           {!hasSearched && !loading && (
             <div className='precio-info'>
@@ -378,7 +386,7 @@ if (snapshot.empty) {
                   <div className='search-input-container'>
                     <input
                       type="text"
-                      placeholder="Buscar producto (ej: leche, aceite, arroz...)"
+                      placeholder="Buscar producto..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className='search-input'
@@ -551,7 +559,10 @@ if (snapshot.empty) {
 
           {!loading && hasSearched && products.length > 0 && !selectedProduct && (
             <div className='products-results'>
-              <h3>Resultados de búsqueda ({products.length})</h3>
+              <div className="results-header-flex">
+                <h3>Resultados ({products.length})</h3>
+                <p className="results-hint">Si no encuentras el producto, dale a "Nuevo" para crearlo con tu propia foto.</p>
+              </div>
               <div className='products-grid'>
                 {products.map((product, index) => (
                   <div 
@@ -560,18 +571,19 @@ if (snapshot.empty) {
                     onClick={() => handleProductSelect(product)}
                   >
                     <div className="image-wrapper">
-                      <img 
-                        src={product.image} 
-                        alt={product.name}
-                        className='product-image'
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.querySelector('.product-image-placeholder').style.display = 'flex';
-                        }}
-                      />
-                      <div className='product-image-placeholder'>
-                        <span>🛒</span>
-                      </div>
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className='product-image'
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className='product-image-placeholder' style={{ display: 'flex' }}>
+                          <span>{product.isCustom ? '⭐' : '🛒'}</span>
+                        </div>
+                      )}
+                      {product.isCustom && <span className="custom-badge">MÍO</span>}
                     </div>
                     <div className='product-info'>
                       <h4>{product.name}</h4>
@@ -666,14 +678,33 @@ if (snapshot.empty) {
                     <select 
                       className='supermarket-select'
                       value={newSupermarket}
-                      onChange={(e) => setNewSupermarket(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setNewSupermarket(val);
+                        if (val !== 'otro') {
+                          const stored = loadPricesFromStorage();
+                          const key = `${selectedProduct.name}_${val}`;
+                          setNewPrice(stored[key] || '');
+                        }
+                      }}
                     >
                       <option value="">Seleccionar supermercado</option>
                       {supermarkets.map(s => (
                         <option key={s.id} value={s.id}>{s.name}</option>
                       ))}
+                      <option value="otro">Otro (Especificar nombre)...</option>
                     </select>
-                    
+
+                    {newSupermarket === 'otro' && (
+                      <input
+                        type="text"
+                        placeholder="Nombre del super"
+                        className='price-input custom-super-name'
+                        id="customSuperName"
+                        style={{ marginTop: '10px', width: '100%' }}
+                      />
+                    )}
+
                     <div className='price-input-group'>
                       <input
                         type="number"
@@ -690,8 +721,19 @@ if (snapshot.empty) {
                     <button 
                       className='add-price-btn'
                       onClick={() => {
-                        if (newSupermarket && newPrice) {
-                          handleAddManualPrice(newSupermarket, newPrice);
+                        let superId = newSupermarket;
+                        if (superId === 'otro') {
+                          const customName = document.getElementById('customSuperName')?.value;
+                          if (!customName) {
+                            showError('Especifica el nombre del supermercado');
+                            return;
+                          }
+                          superId = customName.toLowerCase().replace(/\s+/g, '_');
+                          // Temporalmente añadimos a la lista si no existe o usamos el nombre
+                        }
+
+                        if (superId && newPrice) {
+                          handleAddManualPrice(superId, newPrice);
                           setNewSupermarket('');
                           setNewPrice('');
                         }
@@ -745,13 +787,13 @@ if (snapshot.empty) {
                     <div 
                       key={index} 
                       className={`precio-card ${!hasValue ? 'sin-precio' : ''} ${isLowest ? 'precio-mejor' : ''}`}
-                      style={{ borderColor: hasValue ? item.color : '#ccc' }}
                     >
                       {isLowest && <span className='badge-mejor'>MEJOR PRECIO</span>}
                       {!hasValue && <span className='badge-sin-precio'>Sin precio</span>}
-                      <div className='card-supermarket' style={{ background: item.color + '20' }}>
-                        <h3 style={{ color: item.color }}>{item.supermarket}</h3>
+                      <div className='card-supermarket-circle' style={{ backgroundColor: item.color }}>
+                        <span>{item.supermarket.charAt(0)}</span>
                       </div>
+                      <h3 className="supermarket-name-under" style={{ color: item.color }}>{item.supermarket}</h3>
                       <div className='card-price'>
                         {hasValue ? (
                           <>
