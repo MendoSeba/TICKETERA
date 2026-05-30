@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import listaImg from '../IMG/lista.jpeg';
 import './Lista.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import html2canvas from 'html2canvas';
 import Layout from '../Layout/Layout';
 import { useAuth } from '../../context/AuthContext';
@@ -483,7 +482,7 @@ const Lista = () => {
         <div className='mis-listas'>
           <h2 className='titulo-mi-lista'>MIS LISTAS GUARDADAS:</h2>
           {loading ? (
-            <div className="loading-state" style={{textAlign: 'center', padding: '30px', color: '#64748b'}}>
+            <div className="loading-state">
               <p>Cargando listas...</p>
             </div>
           ) : listasGuardadas.length === 0 ? (

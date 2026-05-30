@@ -253,15 +253,15 @@
 
 .layout-section {
   flex: 1;
-  padding: 20px 24px 40px 24px; /* Ajustado */
-  max-width: 1000px;
+  padding: 20px 24px 40px 24px;
+  max-width: 1200px; /* Aumentado para coincidir con el contenido más ancho */
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
-  will-change: transform; /* Optimización de renderizado */
+  will-change: transform;
 }
 
 /* Contenedor estándar para todas las páginas */

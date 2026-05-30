@@ -1,20 +1,33 @@
 .lista-app {
   width: 100%;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .caja-list {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 30px;
+  box-sizing: border-box;
+  align-items: stretch;
 }
 
-.nueva-lista {
+.nueva-lista,
+.botones-lista,
+.mis-listas {
+  width: 100% !important;
   background: white;
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .titulo-mi-lista {
@@ -573,6 +586,23 @@
   color: white;
   padding: 12px;
   font-weight: bold;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #64748b;
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  background: #f8fafc;
+  border-radius: 15px;
+  margin: 10px 0;
+  box-sizing: border-box;
 }
 
 .imagen-footer {
