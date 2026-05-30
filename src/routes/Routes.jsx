@@ -8,6 +8,7 @@ import Precio from '../components/PRECIO/Precio';
 import Tickets from '../components/TICKETS/Tickets';
 import Perfil from '../components/PERFIL/Perfil';
 import Stats from '../components/STATS/Stats';
+import Layout from '../components/Layout/Layout';
 import Error from '../components/404/404';
 import ProtectedRoute from '../components/ProtectedRoute';
 import ForgotPassword from '../components/RECUPERAR/ForgotPassword';
@@ -22,36 +23,21 @@ export function Ruta() {
         <Route path="/" element={<Inicio />} />
         <Route path="/registro" element={<Login />} />
         <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
-        <Route path="/home" element={
+
+        {/* LAYOUT PERSISTENTE: Envuelve todas las rutas protegidas */}
+        <Route element={
           <ProtectedRoute>
-            <Home />
+            <Layout />
           </ProtectedRoute>
-        } />
-        <Route path="/lista" element={
-          <ProtectedRoute>
-            <Lista />
-          </ProtectedRoute>
-        } />
-        <Route path="/precio" element={
-          <ProtectedRoute>
-            <Precio />
-          </ProtectedRoute>
-        } />
-        <Route path="/tickets" element={
-          <ProtectedRoute>
-            <Tickets />
-          </ProtectedRoute>
-        } />
-        <Route path="/perfil" element={
-          <ProtectedRoute>
-            <Perfil />
-          </ProtectedRoute>
-        } />
-        <Route path="/stats" element={
-          <ProtectedRoute>
-            <Stats />
-          </ProtectedRoute>
-        } />
+        }>
+          <Route path="/home" element={<Home />} />
+          <Route path="/lista" element={<Lista />} />
+          <Route path="/precio" element={<Precio />} />
+          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/stats" element={<Stats />} />
+        </Route>
+
         <Route path="/404" element={<Error />} />
         <Route path="*" element={<Error />} />
       </Routes>

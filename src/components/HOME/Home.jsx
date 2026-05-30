@@ -5,7 +5,6 @@ import './Home.css';
 
 const Home = () => {
   return (
-    <Layout>
       <div className="home-app">
         <header className="page-header">
           <h1 className="title-app">¡Bienvenido a TICKETERA!</h1>
@@ -44,7 +43,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </Layout>
   );
 };
 

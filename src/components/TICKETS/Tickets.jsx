@@ -10,7 +10,7 @@ import { supermarkets, getSuperColor } from '../../service/supermarketService';
 
 const Tickets = () => {
   const { showSuccess, showError } = useToast();
-  const [gastos, setGastos] = useState([]);
+  const { user, tickets: gastos, loadingData, refreshData } = useAuth();
   const [cantidad, setCantidad] = useState('');
   const [opcion, setOpcion] = useState('');
   const [customOpcion, setCustomOpcion] = useState('');
@@ -18,32 +18,12 @@ const Tickets = () => {
   const [ordenActual, setOrdenActual] = useState('fecha');
   const [vista, setVista] = useState('todos');
   const [mesSeleccionado, setMesSeleccionado] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const loadGastos = async () => {
-      if (!user) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const tickets = await getTickets(user.uid);
-        setGastos(tickets);
-      } catch (err) {
-        console.error('Error al cargar los gastos:', err);
-        setError('Error al cargar los gastos. Intenta de nuevo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadGastos();
-  }, [user]);
 
   const getWeekNumber = (date) => {
     const onejan = new Date(date.getFullYear(), 0, 1);
@@ -197,7 +177,7 @@ const Tickets = () => {
 
     try {
       const ticketGuardado = await addTicket(nuevoGasto, user.uid);
-      setGastos(prev => [ticketGuardado, ...prev]);
+      await refreshData();
       setCantidad('');
       setOpcion('');
       showSuccess("Ticket guardado correctamente");
@@ -241,7 +221,7 @@ const Tickets = () => {
   const handleDelete = async (id) => {
     try {
       await deleteTicket(id, user.uid);
-      setGastos(prev => prev.filter(gasto => gasto.id !== id));
+      await refreshData();
       showSuccess('Gasto eliminado');
     } catch (error) {
       console.error('Error al eliminar el gasto:', error);
@@ -392,7 +372,6 @@ const Tickets = () => {
   }, []);
 
   return (
-    <Layout>
       <div className="tickets-app">
         <header className="page-header">
           <h2 className="title-app">Mis Tickets</h2>
@@ -461,7 +440,7 @@ const Tickets = () => {
           <button className='boton-tickets' type="submit" disabled={scanning}>AGREGAR</button>
         </form>
 
-        {!loading && !error && vista === 'todos' && (
+        {!loadingData && !error && vista === 'todos' && (
           <div className="totales">
             <div className={`totales-card ${getTotalColor(totalSemana, totalSemanaAnterior)}`}>
               <p>Semana</p>
@@ -481,8 +460,10 @@ const Tickets = () => {
           </div>
         )}
 
-        {loading ? (
-          <div className="loading">Cargando...</div>
+        {loadingData && gastos.length === 0 ? (
+          <div className="loading-state" style={{textAlign: 'center', padding: '50px', color: '#64748b'}}>
+            <p>Cargando tus tickets...</p>
+          </div>
         ) : error ? (
           <div className="error-message" style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
             {error}
@@ -618,7 +599,7 @@ const Tickets = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </div>
   );
 };
 

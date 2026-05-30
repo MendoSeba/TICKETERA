@@ -373,7 +373,6 @@ const Lista = () => {
   }, [user]);
 
   return (
-    <Layout>
       <div className="lista-app">
         <header className="page-header">
           <h2 className="title-app">Mi Lista de Compras</h2>
@@ -484,60 +483,63 @@ const Lista = () => {
         <div className='mis-listas'>
           <h2 className='titulo-mi-lista'>MIS LISTAS GUARDADAS:</h2>
           {loading ? (
-            <div className="loading">Cargando...</div>
+            <div className="loading-state" style={{textAlign: 'center', padding: '30px', color: '#64748b'}}>
+              <p>Cargando listas...</p>
+            </div>
           ) : listasGuardadas.length === 0 ? (
             <p>No hay listas guardadas</p>
           ) : (
             listasGuardadas.map((listaGuardada, index) => {
               const checkedCount = getCheckedCountForList(index);
               return (
-              <div className='ticket-card' key={listaGuardada.id || index} data-index={index} ref={el => listaRefs.current[index] = el}>
-                <div className="ticket-header">
-                  <img src={logo3} alt="Logo" className="ticket-logo" />
-                  <div className="ticket-info">
-                    <span className="ticket-date">{listaGuardada.fecha}</span>
-                    <span className="ticket-items">{listaGuardada.lista.length} artículos</span>
+                <div className='ticket-card' key={listaGuardada.id || index} data-index={index} ref={el => listaRefs.current[index] = el}>
+                  <div className="ticket-header">
+                    <img src={logo3} alt="Logo" className="ticket-logo" />
+                    <div className="ticket-info">
+                      <span className="ticket-date">{listaGuardada.fecha}</span>
+                      <span className="ticket-items">{listaGuardada.lista.length} artículos</span>
+                    </div>
                   </div>
-                </div>
-                <div className="ticket-body">
-                  {listaGuardada.lista
-                    .slice()
-                    .sort((a, b) => (a.opciones || '').localeCompare(b.opciones || ''))
-                    .map((producto) => {
-                      const key = `${index}-${producto.id}`;
-                      return (
-                      <div className={`ticket-row ${checkedItems[key] ? 'checked' : ''}`} key={producto.id}>
-                        <input 
-                          type="checkbox" 
-                          checked={!!checkedItems[key]} 
-                          onChange={() => toggleChecked(index, producto.id)}
-                          className="ticket-checkbox"
-                        />
-                        <span className="ticket-product">{producto.producto.toUpperCase()}</span>
-                        <span className="ticket-qty">x{producto.cantidad}</span>
-                        <span className="ticket-store">{producto.opciones}</span>
-                      </div>
-                    );
-                    })}
-                </div>
-                <div className="ticket-actions">
-                  <div className="ticket-actions-row">
-                    <button className="boton-descargar" onClick={() => descargarListaGuardada(listaGuardada, index)}>DESCARGAR</button>
-                    <button className='eliminar2' onClick={() => compartirLista(listaGuardada, index)}>COMPARTIR</button>
-                    {listaGuardada.id && (
-                      <button className="eliminar" onClick={() => eliminarListaGuardada(listaGuardada.id)}>ELIMINAR</button>
+                  <div className="ticket-body">
+                    {listaGuardada.lista
+                      .slice()
+                      .sort((a, b) => (a.opciones || '').localeCompare(b.opciones || ''))
+                      .map((producto) => {
+                        const key = `${index}-${producto.id}`;
+                        return (
+                        <div className={`ticket-row ${checkedItems[key] ? 'checked' : ''}`} key={producto.id}>
+                          <input
+                            type="checkbox"
+                            checked={!!checkedItems[key]}
+                            onChange={() => toggleChecked(index, producto.id)}
+                            className="ticket-checkbox"
+                          />
+                          <span className="ticket-product">{producto.producto.toUpperCase()}</span>
+                          <span className="ticket-qty">x{producto.cantidad}</span>
+                          <span className="ticket-store">{producto.opciones}</span>
+                        </div>
+                      );
+                      })}
+                  </div>
+                  <div className="ticket-actions">
+                    <div className="ticket-actions-row">
+                      <button className="boton-descargar" onClick={() => descargarListaGuardada(listaGuardada, index)}>DESCARGAR</button>
+                      <button className='eliminar2' onClick={() => compartirLista(listaGuardada, index)}>COMPARTIR</button>
+                      {listaGuardada.id && (
+                        <button className="eliminar" onClick={() => eliminarListaGuardada(listaGuardada.id)}>ELIMINAR</button>
+                      )}
+                    </div>
+                    {checkedCount > 0 && (
+                      <button className="eliminar" onClick={() => clearChecksForList(index)}>LIMPIAR CHECKS</button>
                     )}
                   </div>
-                  {checkedCount > 0 && (
-                    <button className="eliminar" onClick={() => clearChecksForList(index)}>LIMPIAR CHECKS</button>
-                  )}
                 </div>
-              </div>
-            );})
+              );
+            })
           )}
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

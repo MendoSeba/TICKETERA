@@ -349,7 +349,6 @@ if (snapshot.empty) {
   const hasAnyPrice = () => getPricesWithValues().length > 0;
 
   return (
-    <Layout>
         <div className='precio-app'>
         <header className='page-header'>
           <h2 className="title-app">Comparador de Precios</h2>
@@ -827,7 +826,6 @@ if (snapshot.empty) {
             </div>
           </div>
         </div>
-      </Layout>
     );
   };
 

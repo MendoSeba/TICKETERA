@@ -9,27 +9,11 @@ import { supermarkets, getSuperColor } from '../../service/supermarketService';
 import './Stats.css';
 
 const Stats = () => {
-  const [gastos, setGastos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { user, isPremium } = useAuth();
+  const { user, isPremium, tickets: gastos, loadingData } = useAuth();
   const { showSuccess, showError } = useToast();
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (!user) return;
-      try {
-        const ticketsData = await getTickets(user.uid);
-        setGastos(ticketsData);
-      } catch (error) {
-        console.error("Error al cargar datos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [user]);
-
   const statsPorSuper = useMemo(() => {
+    if (!gastos) return [];
     const map = {};
     gastos.forEach(g => {
       const nombre = g.opcion || 'Otro';
@@ -40,6 +24,7 @@ const Stats = () => {
   }, [gastos]);
 
   const frecuenciaSuper = useMemo(() => {
+    if (!gastos) return [];
     const map = {};
     gastos.forEach(g => {
       const nombre = g.opcion || 'Otro';
@@ -129,145 +114,147 @@ const Stats = () => {
     }));
   }, [gastos]);
 
-  if (loading) return <Layout><div className="stats-app"><p>Analizando tus hábitos...</p></div></Layout>;
-
   return (
-    <Layout>
-      <div className="stats-app">
-        <header className="page-header">
-          <h2 className="title-app">Mis Estadísticas</h2>
-          <p className="subtitle-app">Control de gastos mensual</p>
-        </header>
+    <div className="stats-app">
+      <header className="page-header">
+        <h2 className="title-app">Mis Estadísticas</h2>
+        <p className="subtitle-app">Control de gastos mensual</p>
+      </header>
 
-        <div id="stats-content" className="stats-grid">
-          {/* Gráfico de Evolución Mensual */}
-          <div className="card-native chart-card wide-card">
-            <h4>Evolución de Gastos (Últimos 6 meses)</h4>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={gastosPorMesData}>
-                  <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(val) => `${val}€`} />
-                  <Tooltip formatter={(val) => [`${val}€`, 'Gasto total']} />
-                  <Bar dataKey="total" fill="#4F46E5" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        {loadingData && gastos.length === 0 ? (
+          <div className="loading-state" style={{textAlign: 'center', padding: '100px 0', color: '#64748b', minHeight: '400px'}}>
+            <p>Analizando tus hábitos...</p>
           </div>
-          {/* Gráfico de Distribución de Gasto */}
-          <div className="card-native chart-card">
-            <h4>Distribución por Supermercado (€)</h4>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={statsPorSuper}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {statsPorSuper.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={getSuperColor(entry.name)} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value}€`} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="chart-legend">
-                {statsPorSuper.slice(0, 6).map((item, i) => (
-                    <div key={i} className="legend-item">
-                        <span className="dot" style={{backgroundColor: getSuperColor(item.name)}}></span>
-                        <span className="name">{item.name}</span>
-                        <span className="val">{item.value}€</span>
-                    </div>
-                ))}
-            </div>
-          </div>
-
-          {/* Gráfico de Frecuencia de Visitas */}
-          <div className="card-native chart-card">
-            <h4>Frecuencia de Compras (Visitas)</h4>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={frecuenciaSuper.slice(0, 8)}>
-                  <XAxis dataKey="name" fontSize={10} />
-                  <YAxis />
-                  <Tooltip cursor={{fill: 'transparent'}} />
-                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                    {frecuenciaSuper.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={getSuperColor(entry.name)} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Top Insights */}
-          <div className="card-native insights-card">
-            <h4>Resumen de Inteligencia</h4>
-            <div className="insight-row">
-                <span className="icon">🏆</span>
-                <div className="text">
-                    <p className="label">Tu favorito</p>
-                    <p className="value">{statsPorSuper[0]?.name || 'N/A'}</p>
-                </div>
-            </div>
-            <div className="insight-row">
-                <span className="icon">📊</span>
-                <div className="text">
-                    <p className="label">Gasto medio por ticket</p>
-                    <p className="value">
-                        {gastos.length > 0
-                          ? (gastos.reduce((acc, g) => acc + g.cantidad, 0) / gastos.length).toFixed(2)
-                          : '0'}€
-                    </p>
-                </div>
-            </div>
-          </div>
-
-          {/* Metas de Ahorro - EXCLUSIVO PRO */}
-          <div className={`card-native goals-card ${!isPremium ? 'locked-section' : ''}`}>
-            <div className="section-header-pro">
-              <h4>Metas de Ahorro</h4>
-              {!isPremium && <span className="pro-badge-mini">PRO</span>}
-            </div>
-
-            {!isPremium ? (
-              <div className="locked-overlay-content">
-                <p>Define presupuestos por tienda y controla tus ahorros con el Plan Pro.</p>
-                <button className="btn-native btn-primary-mini" onClick={() => showError("Función exclusiva de Ticketera Pro 👑")}>
-                  Saber más
-                </button>
+        ) : (
+          <div id="stats-content" className="stats-grid">
+            {/* Gráfico de Evolución Mensual */}
+            <div className="card-native chart-card wide-card">
+              <h4>Evolución de Gastos (Últimos 6 meses)</h4>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={gastosPorMesData}>
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(val) => `${val}€`} />
+                    <Tooltip formatter={(val) => [`${val}€`, 'Gasto total']} />
+                    <Bar dataKey="total" fill="#4F46E5" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-            ) : (
-              statsPorSuper.slice(0, 3).map((item, index) => {
-                const meta = 100; // Meta estática de ejemplo o basada en profile
-                const porcentaje = Math.min((item.value / meta) * 100, 100);
-                return (
-                  <div key={index} className="goal-item">
-                    <div className="goal-info">
-                      <span>{item.name}</span>
-                      <span>{item.value}€ / {meta}€</span>
-                    </div>
-                    <div className="progress-bar-bg">
-                      <div
-                        className={`progress-bar-fill ${porcentaje > 90 ? 'danger' : porcentaje > 70 ? 'warning' : ''}`}
-                        style={{ width: `${porcentaje}%` }}
-                      ></div>
-                    </div>
+            </div>
+            {/* Gráfico de Distribución de Gasto */}
+            <div className="card-native chart-card">
+              <h4>Distribución por Supermercado (€)</h4>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={statsPorSuper}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {statsPorSuper.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={getSuperColor(entry.name)} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value}€`} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="chart-legend">
+                  {statsPorSuper.slice(0, 6).map((item, i) => (
+                      <div key={i} className="legend-item">
+                          <span className="dot" style={{backgroundColor: getSuperColor(item.name)}}></span>
+                          <span className="name">{item.name}</span>
+                          <span className="val">{item.value}€</span>
+                      </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Gráfico de Frecuencia de Visitas */}
+            <div className="card-native chart-card">
+              <h4>Frecuencia de Compras (Visitas)</h4>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={frecuenciaSuper.slice(0, 8)}>
+                    <XAxis dataKey="name" fontSize={10} />
+                    <YAxis />
+                    <Tooltip cursor={{fill: 'transparent'}} />
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                      {frecuenciaSuper.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={getSuperColor(entry.name)} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Top Insights */}
+            <div className="card-native insights-card">
+              <h4>Resumen de Inteligencia</h4>
+              <div className="insight-row">
+                  <span className="icon">🏆</span>
+                  <div className="text">
+                      <p className="label">Tu favorito</p>
+                      <p className="value">{statsPorSuper[0]?.name || 'N/A'}</p>
                   </div>
-                );
-              })
-            )}
+              </div>
+              <div className="insight-row">
+                  <span className="icon">📊</span>
+                  <div className="text">
+                      <p className="label">Gasto medio por ticket</p>
+                      <p className="value">
+                          {gastos.length > 0
+                            ? (gastos.reduce((acc, g) => acc + g.cantidad, 0) / gastos.length).toFixed(2)
+                            : '0'}€
+                      </p>
+                  </div>
+              </div>
+            </div>
+
+            {/* Metas de Ahorro - EXCLUSIVO PRO */}
+            <div className={`card-native goals-card ${!isPremium ? 'locked-section' : ''}`}>
+              <div className="section-header-pro">
+                <h4>Metas de Ahorro</h4>
+                {!isPremium && <span className="pro-badge-mini">PRO</span>}
+              </div>
+
+              {!isPremium ? (
+                <div className="locked-overlay-content">
+                  <p>Define presupuestos por tienda y controla tus ahorros con el Plan Pro.</p>
+                  <button className="btn-native btn-primary-mini" onClick={() => showError("Función exclusiva de Ticketera Pro 👑")}>
+                    Saber más
+                  </button>
+                </div>
+              ) : (
+                statsPorSuper.slice(0, 3).map((item, index) => {
+                  const meta = 100; // Meta estática de ejemplo o basada en profile
+                  const porcentaje = Math.min((item.value / meta) * 100, 100);
+                  return (
+                    <div key={index} className="goal-item">
+                      <div className="goal-info">
+                        <span>{item.name}</span>
+                        <span>{item.value}€ / {meta}€</span>
+                      </div>
+                      <div className="progress-bar-bg">
+                        <div
+                          className={`progress-bar-fill ${porcentaje > 90 ? 'danger' : porcentaje > 70 ? 'warning' : ''}`}
+                          style={{ width: `${porcentaje}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      </div>
-    </Layout>
+        )}
+    </div>
   );
 };
 

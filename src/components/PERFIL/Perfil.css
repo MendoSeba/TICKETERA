@@ -1,13 +1,4 @@
-.perfil-app {
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.perfil-header-external {
-  text-align: center;
-  margin-bottom: 30px;
-}
+/* Estilo unificado en Layout.css */
 
 .perfil-container {
   max-width: 600px;

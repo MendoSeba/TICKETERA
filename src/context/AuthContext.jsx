@@ -8,7 +8,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth } from '../service/fireservice';
-import { getUserProfile } from '../service/firestoreService';
+import { getUserProfile, getTickets } from '../service/firestoreService';
 
 const AuthContext = createContext();
 
@@ -24,26 +24,55 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userDisplayName, setUserDisplayName] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [loadingData, setLoadingData] = useState(false);
   const profileLoaded = useRef(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        // Cargar siempre el perfil para asegurar nombre actualizado
-        try {
-          const profile = await getUserProfile(user.uid);
-          if (profile && profile.displayName) {
-            setUserDisplayName(profile.displayName);
-          } else {
-            setUserDisplayName(user.displayName || user?.email?.split('@')[0] || 'Usuario');
-          }
-        } catch (e) {
-          console.error('Error loading profile:', e);
-          setUserDisplayName(user?.email?.split('@')[0] || 'Usuario');
-        }
+  const refreshData = async (userId) => {
+    if (!userId) return;
+
+    // Solo mostramos el spinner de carga si no tenemos ningún dato previo
+    // Esto evita que la pantalla "salte" al navegar
+    const isFirstLoad = tickets.length === 0 && !userProfile;
+    if (isFirstLoad) setLoadingData(true);
+
+    try {
+      const [profile, ticketsData] = await Promise.all([
+        getUserProfile(userId),
+        getTickets(userId)
+      ]);
+
+      setUserProfile(profile);
+      setTickets(ticketsData);
+
+      if (profile && profile.displayName) {
+        setUserDisplayName(profile.displayName);
       } else {
+        // Intentar obtener el nombre del objeto user de Firebase si no hay perfil en Firestore
+        const currentUser = auth.currentUser;
+        const nameFromEmail = currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario';
+        setUserDisplayName(currentUser?.displayName || nameFromEmail);
+      }
+    } catch (e) {
+      console.error('Error loading data:', e);
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        // ESPERAR a que los datos estén cargados antes de quitar el 'loading' inicial
+        // Esto evita que la app parpadee al entrar
+        await refreshData(currentUser.uid);
+      } else {
+        setUser(currentUser);
         setUserDisplayName(null);
+        setUserProfile(null);
+        setTickets([]);
         profileLoaded.current = false;
       }
       setLoading(false);
@@ -52,27 +81,28 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+
+  const register = async (email, password, displayName) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (displayName) {
+      await updateProfile(userCredential.user, { displayName });
+    }
+    return userCredential;
   };
 
-  const register = (email, password, displayName) => {
-    return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => updateProfile(userCredential.user, { displayName })
-        .then(() => userCredential));
-  };
-
-  const logout = () => {
-    return signOut(auth);
-  };
-
-  const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
-  };
+  const logout = () => signOut(auth);
+  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
 
   const value = {
     user,
     userDisplayName,
+    userProfile,
+    // INYECCIÓN DE SUPER USUARIO (PREMIUM TOTAL) PARA TU CUENTA
+    isPremium: user?.email?.toLowerCase() === 'mendoseba_@hotmail.com' || userProfile?.isPremium === true,
+    tickets,
+    loadingData,
+    refreshData: () => refreshData(user?.uid),
     login,
     register,
     logout,

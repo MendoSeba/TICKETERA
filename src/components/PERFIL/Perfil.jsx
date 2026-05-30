@@ -7,13 +7,12 @@ import Layout from '../Layout/Layout';
 import { updateEmail as firebaseUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 
 const Perfil = () => {
-  const { user } = useAuth();
+  const { user, userProfile, loadingData, refreshData } = useAuth();
   const { showSuccess, showError } = useToast();
 
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
   const [sugerencia, setSugerencia] = useState('');
-  const [loading, setLoading] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [showEmailInput, setShowEmailInput] = useState(false);
@@ -22,29 +21,13 @@ const Perfil = () => {
   const [cambiandoEmail, setCambiandoEmail] = useState(false);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const profile = await getUserProfile(user.uid);
-        if (profile) {
-          setDisplayName(profile.displayName || user.displayName || '');
-          setPhone(profile.phone || '');
-        } else {
-          setDisplayName(user.displayName || '');
-        }
-      } catch (e) {
-        console.error('Error loading profile:', e);
-        setDisplayName(user.displayName || '');
-      }
-      setLoading(false);
-    };
-
-    loadProfile();
-  }, [user]);
+    if (userProfile) {
+      setDisplayName(userProfile.displayName || user?.displayName || '');
+      setPhone(userProfile.phone || '');
+    } else if (user) {
+      setDisplayName(user.displayName || '');
+    }
+  }, [userProfile, user]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -55,6 +38,7 @@ const Perfil = () => {
         email: user.email,
       };
       await saveUserProfile(user.uid, profileData);
+      await refreshData();
       showSuccess('Perfil guardado correctamente');
     } catch (error) {
       console.error('Error guardando perfil:', error);
@@ -121,163 +105,158 @@ const Perfil = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="perfil-container">
-          <p>Cargando...</p>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
-    <Layout>
-      <div className="perfil-app">
-        <header className="page-header">
-          <h2 className="title-app">Mi Perfil</h2>
-          <p className="subtitle-app">Gestiona tu información personal</p>
-        </header>
+    <div className="perfil-app">
+      <header className="page-header">
+        <h2 className="title-app">Mi Perfil</h2>
+        <p className="subtitle-app">Gestiona tu información personal</p>
+      </header>
 
-        <div className="perfil-container">
-          <div className="perfil-user-header">
-            <div className="perfil-avatar">
-              <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
-            </div>
-            <div className="perfil-user-info">
-              <h3>{displayName || 'Usuario'}</h3>
-              <p>{user?.email}</p>
-            </div>
+        {loadingData && !userProfile ? (
+          <div className="loading-state" style={{textAlign: 'center', padding: '100px 0', color: '#64748b', minHeight: '400px'}}>
+            <p>Cargando perfil...</p>
           </div>
-
-        <div className="perfil-form">
-          <div className="form-group">
-            <label htmlFor="displayName">Nombre:</label>
-            <input
-              type="text"
-              id="displayName"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Tu nombre"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            {!showEmailInput ? (
-              <div className="email-display">
-                <input
-                  type="email"
-                  id="email"
-                  value={user?.email || ''}
-                  disabled
-                  className="disabled-input"
-                />
-                <button
-                  type="button"
-                  className="boton-tickets cambiar-email-btn"
-                  onClick={() => setShowEmailInput(true)}
-                >
-                  Cambiar
-                </button>
+        ) : (
+          <div className="perfil-container">
+            <div className="perfil-user-header">
+              <div className="perfil-avatar">
+                <span>{(displayName || user?.email || 'U').charAt(0).toUpperCase()}</span>
               </div>
-            ) : (
-              <div className="email-change-form" style={{ position: 'relative' }}>
-                <input
-                  type="email"
-                  id="newEmail"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="Nuevo email"
-                />
-                <div style={{ position: 'relative' }}>
+              <div className="perfil-user-info">
+                <h3>{displayName || 'Usuario'}</h3>
+                <p>{user?.email}</p>
+              </div>
+            </div>
+
+          <div className="perfil-form">
+            <div className="form-group">
+              <label htmlFor="displayName">Nombre:</label>
+              <input
+                type="text"
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Tu nombre"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email:</label>
+              {!showEmailInput ? (
+                <div className="email-display">
                   <input
-                    type={showPasswordConfirm ? "text" : "password"}
-                    id="passwordConfirm"
-                    value={passwordConfirm}
-                    onChange={(e) => setPasswordConfirm(e.target.value)}
-                    placeholder="Contraseña actual"
-                    style={{ paddingRight: '40px' }}
+                    type="email"
+                    id="email"
+                    value={user?.email || ''}
+                    disabled
+                    className="disabled-input"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '18px'
-                    }}
+                    className="boton-tickets cambiar-email-btn"
+                    onClick={() => setShowEmailInput(true)}
                   >
-                    {showPasswordConfirm ? '👁️' : '👁️‍🗨️'}
+                    Cambiar
                   </button>
                 </div>
-                <div className="email-change-buttons">
-                  <button
-                    className="boton-tickets"
-                    onClick={handleChangeEmail}
-                    disabled={cambiandoEmail}
-                  >
-                    {cambiandoEmail ? 'Cambiando...' : '✓ Confirmar'}
-                  </button>
-                  <button
-                    className="boton-tickets cancelar-btn"
-                    onClick={() => {
-                      setShowEmailInput(false);
-                      setNewEmail('');
-                      setPasswordConfirm('');
-                    }}
-                  >
-                    ✕ Cancelar
-                  </button>
+              ) : (
+                <div className="email-change-form" style={{ position: 'relative' }}>
+                  <input
+                    type="email"
+                    id="newEmail"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="Nuevo email"
+                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showPasswordConfirm ? "text" : "password"}
+                      id="passwordConfirm"
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                      placeholder="Contraseña actual"
+                      style={{ paddingRight: '40px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px'
+                      }}
+                    >
+                      {showPasswordConfirm ? '👁️' : '👁️‍🗨️'}
+                    </button>
+                  </div>
+                  <div className="email-change-buttons">
+                    <button
+                      className="boton-tickets"
+                      onClick={handleChangeEmail}
+                      disabled={cambiandoEmail}
+                    >
+                      {cambiandoEmail ? 'Cambiando...' : '✓ Confirmar'}
+                    </button>
+                    <button
+                      className="boton-tickets cancelar-btn"
+                      onClick={() => {
+                        setShowEmailInput(false);
+                        setNewEmail('');
+                        setPasswordConfirm('');
+                      }}
+                    >
+                      ✕ Cancelar
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="phone">Teléfono:</label>
+              <input
+                type="tel"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+34 600 000 000"
+              />
+            </div>
+
+            <button
+              className="boton-tickets save-profile-btn"
+              onClick={handleSave}
+            >
+              💾 Guardar
+            </button>
+
+            <div className="form-group sugerencia-group">
+              <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
+              <textarea
+                id="sugerencia"
+                value={sugerencia}
+                onChange={(e) => setSugerencia(e.target.value)}
+                placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
+                rows={3}
+              />
+            </div>
+
+            <button
+              className="boton-tickets enviar-sugerencia-btn"
+              onClick={handleEnviarSugerencia}
+              disabled={enviando}
+            >
+              {enviando ? 'Enviando...' : '📤 Enviar Sugerencia'}
+            </button>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Teléfono:</label>
-            <input
-              type="tel"
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+34 600 000 000"
-            />
-          </div>
-
-          <button
-            className="boton-tickets save-profile-btn"
-            onClick={handleSave}
-          >
-            💾 Guardar
-          </button>
-
-          <div className="form-group sugerencia-group">
-            <label htmlFor="sugerencia">💡 Sugerencias o Quejas:</label>
-            <textarea
-              id="sugerencia"
-              value={sugerencia}
-              onChange={(e) => setSugerencia(e.target.value)}
-              placeholder="¿Tienes alguna sugerencia o queja? Cuéntanos..."
-              rows={3}
-            />
-          </div>
-
-          <button
-            className="boton-tickets enviar-sugerencia-btn"
-            onClick={handleEnviarSugerencia}
-            disabled={enviando}
-          >
-            {enviando ? 'Enviando...' : '📤 Enviar Sugerencia'}
-          </button>
         </div>
+        )}
       </div>
-    </Layout>
   );
 };
 

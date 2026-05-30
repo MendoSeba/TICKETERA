@@ -60,31 +60,29 @@
   font-size: 13px;
   padding: 8px 16px !important;
   border-radius: 50px;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FF9800, #F57C00) !important;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3) !important;
-  min-width: auto; /* Quitamos el ancho mínimo fijo */
+  min-width: auto;
   border: 3px solid transparent !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
-  white-space: nowrap; /* Evita que el texto se parta */
+  white-space: nowrap;
 }
 
 .nav-link:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5) !important;
   filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4) !important;
 }
 
 .nav-link.active {
   background: linear-gradient(135deg, #FF9800, #F57C00) !important;
-  border: 3px solid #000000 !important; /* Borde negro activo */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
-  transform: translateY(0);
+  border: 3px solid #000000 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .user-menu {
@@ -192,13 +190,13 @@
   }
 }
 
-/* --- APP NATIVE BAR --- */
+/* --- APP NATIVE BAR (MOBILE) --- */
 .app-tab-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 75px;
+  height: 65px; /* Altura fija para evitar saltos */
   background: white;
   display: flex;
   justify-content: space-around;
@@ -209,41 +207,80 @@
   box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
 }
 
-.app-tab-bar a {
+.tab-item {
   text-decoration: none;
   color: #94a3b8;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  transition: all 0.3s;
+  justify-content: center;
+  gap: 2px;
+  transition: color 0.2s ease;
   flex: 1;
+  height: 100%;
+  border: none !important; /* Eliminamos bordes que causan saltos */
+  background: none !important;
+  box-shadow: none !important;
 }
 
-.app-tab-bar a span {
-  font-size: 9px;
-  font-weight: 800;
+.tab-item span {
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
-.app-tab-bar a.active {
-  color: #ff9800;
-  transform: translateY(-3px);
+.tab-item.active {
+  color: #ff9800 !important;
+  transform: none !important; /* Eliminamos el salto hacia arriba */
+}
+
+.tab-item.active span {
+  font-weight: 900;
+}
+
+
+/* --- ADMOB BANNER STABILIZATION --- */
+.admob-banner {
+  width: 100%;
+  min-height: 60px; /* RESERVA ESPACIO PARA QUE NO HAYA SALTOS */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+  overflow: hidden;
+  margin-top: auto; /* Empuja al fondo */
 }
 
 .layout-section {
   flex: 1;
-  padding: 40px 24px;
-  max-width: 1000px; /* Unificado para todas las vistas principales */
+  padding: 20px 24px 40px 24px; /* Ajustado */
+  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 150px);
+  will-change: transform; /* Optimización de renderizado */
+}
+
+/* Contenedor estándar para todas las páginas */
+.home-app, .stats-app, .perfil-app, .tickets-app, .lista-app, .precio-app {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 900px;
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 35px; /* Margen fijo para evitar saltos */
+  margin: 0 auto 30px auto;
   width: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .title-app {

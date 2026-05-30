@@ -1,13 +1,5 @@
 .stats-app {
-  padding: 0;
   padding-bottom: 80px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.stats-header {
-  margin-bottom: 15px;
-  text-align: center;
 }
 
 .chart-card {

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import logo3 from '../IMG/img23.jpg.jpeg';
 import Footer from '../FOOTER/Footer';
 import { useAuth } from '../../context/AuthContext';
 import './Layout.css';
 import '../ADMOB/AdMob.css';
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const { logout, user, userDisplayName } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
   };
 
   const isActive = (path) => location.pathname === path ? 'nav-link active' : 'nav-link';
-  const isMobileActive = (path) => location.pathname === path ? 'mobile-nav-link active' : 'mobile-nav-link';
+  const isTabActive = (path) => location.pathname === path ? 'tab-item active' : 'tab-item';
 
   const isApp = !!window.Capacitor?.platform;
 
@@ -57,17 +57,17 @@ const Layout = ({ children }) => {
 
       {isApp && (
         <div className="app-tab-bar">
-          <Link to="/home" className={isActive('/home')}>🏠<span>Home</span></Link>
-          <Link to="/precio" className={isActive('/precio')}>💰<span>Precio</span></Link>
-          <Link to="/tickets" className={isActive('/tickets')}>🎫<span>Tickets</span></Link>
-          <Link to="/lista" className={isActive('/lista')}>🛒<span>Lista</span></Link>
-          <Link to="/stats" className={isActive('/stats')}>📊<span>Stats</span></Link>
-          <Link to="/perfil" className={isActive('/perfil')}>👤<span>Perfil</span></Link>
+          <Link to="/home" className={isTabActive('/home')}>🏠<span>Home</span></Link>
+          <Link to="/precio" className={isTabActive('/precio')}>💰<span>Precio</span></Link>
+          <Link to="/tickets" className={isTabActive('/tickets')}>🎫<span>Tickets</span></Link>
+          <Link to="/lista" className={isTabActive('/lista')}>🛒<span>Lista</span></Link>
+          <Link to="/stats" className={isTabActive('/stats')}>📊<span>Stats</span></Link>
+          <Link to="/perfil" className={isTabActive('/perfil')}>👤<span>Perfil</span></Link>
         </div>
       )}
 
       <section className='layout-section'>
-        {children}
+        <Outlet />
       </section>
       
       {/* AdMob Banner */}
