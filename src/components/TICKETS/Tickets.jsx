@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
-import Tesseract from 'tesseract.js';
 import './Tickets.css';
 import Layout from '../Layout/Layout';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ToastProvider';
 import { getTickets, addTicket, deleteTicket } from '../../service/firestoreService';
 import { supermarkets, getSuperColor } from '../../service/supermarketService';
+import { analyzeTicketWithGemini } from '../../service/geminiService';
 
 const Tickets = () => {
   const { showSuccess, showError } = useToast();
@@ -21,6 +21,7 @@ const Tickets = () => {
   const [error, setError] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [scannedItems, setScannedItems] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -172,7 +173,8 @@ const Tickets = () => {
       cantidad: cantidadNum,
       opcion: opcion === 'Otro' ? customOpcion : opcion,
       fecha: date,
-      userId: user.uid
+      userId: user.uid,
+      items: scannedItems // Guardamos los productos detectados por la IA
     };
 
     try {
@@ -180,7 +182,8 @@ const Tickets = () => {
       await refreshData();
       setCantidad('');
       setOpcion('');
-      showSuccess("Ticket guardado correctamente");
+      setScannedItems([]); // Limpiamos los items escaneados
+      showSuccess("Ticket guardado correctamente con desglose de productos");
     } catch (error) {
       console.error('Error al guardar el gasto:', error);
       showError("Error al guardar el ticket: " + error.message);
@@ -286,39 +289,44 @@ const Tickets = () => {
 
   const handleScanTicket = async (imageSource) => {
     setScanning(true);
-    setScanProgress(0);
+    setScanProgress(10);
     
     try {
-      const result = await Tesseract.recognize(
-        imageSource,
-        'spa+eng',
-        {
-          logger: (m) => {
-            if (m.status === 'recognizing text') {
-              setScanProgress(Math.round(m.progress * 100));
-            }
+      setScanProgress(30);
+      const data = await analyzeTicketWithGemini(imageSource);
+      setScanProgress(90);
+      
+      if (data && data.total) {
+        setCantidad(data.total.toString().replace('.', ','));
+        if (data.productos) {
+          setScannedItems(data.productos);
+        }
+        if (data.supermercado) {
+          // Normalizar nombre del supermercado para el selector
+          const superMatch = supermarkets.find(s =>
+            data.supermercado.toLowerCase().includes(s.id.toLowerCase()) ||
+            s.name.toLowerCase().includes(data.supermercado.toLowerCase())
+          );
+
+          if (superMatch) {
+            setOpcion(superMatch.name);
+          } else {
+            setOpcion('Otro');
+            setCustomOpcion(data.supermercado);
           }
         }
-      );
-      
-      const text = result.data.text;
-      console.log('Texto extraído:', text);
-      
-      const total = extractTotal(text);
-      const supermercado = detectSupermarket(text);
-      
-      if (total) {
-        setCantidad(total.toString());
-        if (supermercado) {
-          setOpcion(supermercado);
-        }
-        showSuccess(`Ticket escaneado: ${total.toFixed(2)}€${supermercado ? ` - ${supermercado}` : ''}`);
+
+        showSuccess(`IA: Ticket de ${data.supermercado || 'Súper'} detectado. Total: ${data.total}€`);
+
+        // Aquí podrías guardar también los productos desglosados si actualizamos la DB
+        console.log('Productos detectados:', data.productos);
+
       } else {
-        showError('No se pudo detectar el total del ticket. Intenta una foto más clara.');
+        showError('La IA no pudo encontrar el total. Intenta otra foto.');
       }
     } catch (error) {
-      console.error('Error escaneando:', error);
-      showError('Error al escanear el ticket');
+      console.error('Error con Gemini:', error);
+      showError('Error al procesar con IA. Verifica tu API Key.');
     } finally {
       setScanning(false);
       setScanProgress(0);
@@ -437,6 +445,21 @@ const Tickets = () => {
               required
             />
           )}
+
+          {scannedItems.length > 0 && (
+            <div className="scanned-items-preview">
+              <h4>Productos detectados por IA:</h4>
+              <ul>
+                {scannedItems.slice(0, 5).map((item, idx) => (
+                  <li key={idx}>
+                    {item.nombre} - {item.precio}€
+                  </li>
+                ))}
+                {scannedItems.length > 5 && <li>... y {scannedItems.length - 5} más</li>}
+              </ul>
+            </div>
+          )}
+
           <button className='boton-tickets' type="submit" disabled={scanning}>AGREGAR</button>
         </form>
 

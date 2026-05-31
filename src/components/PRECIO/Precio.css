@@ -217,6 +217,31 @@
 }
 
 /* Selected Product Detail */
+.back-button {
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 25px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.back-button:hover {
+  background: white;
+  color: #1e293b;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transform: translateX(-5px);
+  border-color: #cbd5e1;
+}
+
 .selected-product {
   background: white;
   padding: 24px;
@@ -256,14 +281,153 @@
   margin-bottom: 4px;
 }
 
-/* Forms */
-.add-product-form {
-  background: white;
-  padding: 24px;
+/* Manual Prices Form */
+.manual-prices-form {
+  background: #fdfdfd;
+  padding: 25px;
   border-radius: 24px;
-  border: 2px solid #4f46e5;
-  margin-top: 20px;
+  border: 1px solid #e2e8f0;
+  margin-top: 25px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
+
+.manual-prices-form h4 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 5px;
+}
+
+.form-hint {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.price-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.supermarket-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #edf2f7;
+  border-radius: 12px;
+  font-size: 15px;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.supermarket-select:focus {
+  border-color: orange;
+}
+
+.price-input-group {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #edf2f7;
+  border-radius: 12px;
+  padding-right: 15px;
+  transition: border-color 0.2s;
+}
+
+.price-input-group:focus-within {
+  border-color: orange;
+}
+
+.price-input {
+  flex: 1;
+  border: none;
+  padding: 12px 15px;
+  font-size: 16px;
+  outline: none;
+  background: transparent;
+  font-weight: 700;
+}
+
+.price-input-group span {
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.add-price-btn {
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-price-btn:hover {
+  background: #0f172a;
+}
+
+.save-prices-button {
+  width: 100%;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+}
+
+/* Acciones del producto seleccionado */
+.selected-product-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.selected-action-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.selected-action-btn.edit { background: #f1f5f9; color: #475569; }
+.selected-action-btn.delete { background: #fee2e2; color: #b91c1c; }
+.selected-action-btn.list { background: #f0fdf4; color: #15803d; }
+
+.selected-action-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+}
+
+@media (min-width: 768px) {
+  .price-input-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .supermarket-select { flex: 2; }
+  .price-input-group { flex: 1; }
+  .add-price-btn { flex: 0.5; }
+}
+
+/* Precio Cards Mejoras */
 
 .custom-product-fields {
   display: grid;
@@ -326,6 +490,69 @@
   font-size: 24px;
   font-weight: 800;
   color: #1e293b;
+}
+
+.no-price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-value-placeholder {
+  font-size: 20px;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.check-price-link, .update-price-link {
+  font-size: 11px;
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.check-price-link:hover, .update-price-link:hover {
+  background: #e2e8f0;
+  color: #3730a3;
+}
+
+.update-price-link {
+  margin-top: auto;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.badge-mejor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #219653;
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.precio-card {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  padding: 20px 15px;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-height: 200px;
 }
 
 .supermarkets-list {

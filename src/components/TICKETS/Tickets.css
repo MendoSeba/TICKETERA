@@ -566,3 +566,34 @@ label.scan-btn:hover {
   gap: 10px;
   justify-content: center;
 }
+
+.scanned-items-preview {
+  background: #fff8f1;
+  border: 1px dashed #ff9800;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.scanned-items-preview h4 {
+  margin: 0 0 10px 0;
+  color: #e65100;
+  font-size: 14px;
+}
+
+.scanned-items-preview ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scanned-items-preview li {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 152, 0, 0.1);
+}
+
+.scanned-items-preview li:last-child {
+  border-bottom: none;
+}

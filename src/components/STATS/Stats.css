@@ -201,6 +201,130 @@
   background: #ff4d4d;
 }
 
+/* Productos más comprados */
+.products-card {
+  padding: 20px;
+}
+
+.top-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-item-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.product-item-stat:hover {
+  transform: translateX(5px);
+}
+
+.product-rank {
+  background: #FF6600;
+  color: white;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.product-info-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.product-count {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.product-trend {
+  font-size: 1rem;
+}
+
+.product-trend.up { color: #ef4444; }
+.product-trend.down { color: #10b981; }
+.product-trend.stable { color: #64748b; }
+
+/* Consejos de Inteligencia */
+.tips-card {
+  padding: 20px;
+}
+
+.tips-container-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tip-item-box {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  align-items: flex-start;
+  transition: transform 0.2s ease;
+}
+
+.tip-item-box:hover {
+  transform: scale(1.02);
+}
+
+.tip-item-box.ahorro {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+}
+
+.tip-item-box.tip {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+}
+
+.tip-item-box.horario {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+.tip-icon {
+  font-size: 1.5rem;
+  background: white;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tip-content h5 {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.tip-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

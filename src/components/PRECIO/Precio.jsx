@@ -5,6 +5,8 @@ import {
   getProductsByCategory,
   supermarkets,
   categories,
+  getSupermarketSearchUrl,
+  getProductWithStoredPrices,
 } from '../../service/supermarketService';
 import { loadPricesFromStorage, savePricesToStorage } from '../../service/storageService';
 import Layout from '../Layout/Layout';
@@ -179,19 +181,23 @@ const Precio = () => {
     }
   };
 
-  const handleProductSelect = (product) => {
+  const handleProductSelect = async (product) => {
     setSelectedProduct(product);
     setShowPriceForm(true);
     
-    const stored = loadPricesFromStorage();
-    const storedForProduct = {};
-    supermarkets.forEach(s => {
-      const key = `${product.name}_${s.id}`;
-      if (stored[key] !== undefined) {
-        storedForProduct[key] = stored[key];
-      }
-    });
-    setManualPrices(storedForProduct);
+    // Cargar precios de la nube y locales
+    try {
+      const prices = await getProductWithStoredPrices(product.name);
+      const newManualPrices = {};
+      prices.forEach(p => {
+        if (p.hasPrice) {
+          newManualPrices[`${product.name}_${p.id}`] = p.price;
+        }
+      });
+      setManualPrices(prev => ({ ...prev, ...newManualPrices }));
+    } catch (err) {
+      console.error("Error cargando precios:", err);
+    }
   };
 
   const handleEditProduct = (product, e) => {
@@ -323,6 +329,7 @@ if (snapshot.empty) {
         price: price,
         color: s.color,
         hasPrice: price !== null && price !== undefined && price !== '',
+        searchUrl: getSupermarketSearchUrl(s.id, selectedProduct.name),
       };
     });
   };
@@ -788,24 +795,43 @@ if (snapshot.empty) {
                       className={`precio-card ${!hasValue ? 'sin-precio' : ''} ${isLowest ? 'precio-mejor' : ''}`}
                     >
                       {isLowest && <span className='badge-mejor'>MEJOR PRECIO</span>}
-                      {!hasValue && <span className='badge-sin-precio'>Sin precio</span>}
                       <div className='card-supermarket-circle' style={{ backgroundColor: item.color }}>
                         <span>{item.supermarket.charAt(0)}</span>
                       </div>
                       <h3 className="supermarket-name-under" style={{ color: item.color }}>{item.supermarket}</h3>
                       <div className='card-price'>
                         {hasValue ? (
-                          <>
-                            <span className='price-value'>{parseFloat(item.price).toFixed(2)}€</span>
-                          </>
+                          <span className='price-value'>{parseFloat(item.price).toFixed(2)}€</span>
                         ) : (
-                          <span className='price-value-placeholder'>-</span>
+                          <div className="no-price-container">
+                            <span className='price-value-placeholder'>?</span>
+                            <a
+                              href={item.searchUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="check-price-link"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Consultar web ↗
+                            </a>
+                          </div>
                         )}
                       </div>
                       {isLowest && hasValue && pricesWithValues.length > 1 && (
                         <div className='card-ahorro'>
                           <span>Ahorra {getSavings()}€</span>
                         </div>
+                      )}
+                      {hasValue && (
+                        <a
+                          href={item.searchUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="update-price-link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Ver en tienda
+                        </a>
                       )}
                     </div>
                   );
